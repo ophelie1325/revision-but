@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F7F3EC">
+<title>Prépa BUT TC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fond:#F7F3EC; --carte:#FFFFFF; --encre:#241C16; --encre2:#6B6058; --encre3:#A79C8E;
+  --trait:#E3DCD1; --trait2:#F0EAE1;
+  --terre:#D9603C; --terre-fonce:#B14526; --terre-pale:#FAEDE7;
+  --c1:#B14526; --c2:#2E6B5E; --c3:#4A5BA8;
+  --or:#C08A1E; --or-pale:#FBF1DC; --or-fonce:#8F6410;
+  --rouge:#C33A28; --rouge-pale:#FBEAE6;
+  --ombre:0 1px 2px rgba(40,28,20,.05), 0 6px 16px rgba(40,28,20,.07);
+  --r:18px; --r2:13px; --hautNav:66px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Outfit',system-ui,-apple-system,sans-serif;background:var(--fond);color:var(--encre);
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3,h4{line-height:1.2;letter-spacing:-.02em;font-weight:700}
+:focus-visible{outline:2px solid var(--terre);outline-offset:2px;border-radius:6px}
+
+.app{max-width:520px;margin:0 auto;min-height:100vh;padding-bottom:calc(var(--hautNav) + env(safe-area-inset-bottom));position:relative}
+.ecran{padding:18px 16px 20px}
+.enTete{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:4px}
+.enTete h1{font-size:25px}
+.sousTitre{color:var(--encre2);font-size:14px;margin-bottom:18px}
+.jour{background:var(--carte);border-radius:999px;padding:5px 12px;font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;font-weight:600;color:var(--terre-fonce);box-shadow:var(--ombre);white-space:nowrap;flex:none}
+.iconeBtn{width:38px;height:38px;border-radius:12px;background:var(--carte);box-shadow:var(--ombre);
+  display:grid;place-items:center;font-size:17px;flex:none}
+
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,253,249,.94);backdrop-filter:blur(10px);
+  border-top:1px solid var(--trait);display:flex;z-index:40;padding-bottom:env(safe-area-inset-bottom)}
+.nav .in{max-width:520px;margin:0 auto;display:flex;width:100%}
+.nav button{flex:1;padding:9px 0 12px;font-size:11.5px;font-weight:600;color:var(--encre3);
+  display:flex;flex-direction:column;align-items:center;gap:2px}
+.nav button.act{color:var(--terre)}
+.nav .ic{font-size:19px;line-height:1}
+
+.bloc{background:var(--carte);border-radius:var(--r);padding:14px 15px;margin-bottom:11px;box-shadow:var(--ombre)}
+.bloc-t{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.point{width:10px;height:10px;border-radius:3px;flex:none}
+.bloc-nom{font-size:14px;font-weight:600;min-width:0}
+.bloc-meta{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--encre3);flex:none}
+
+.cta{display:block;width:100%;background:var(--terre);color:#fff;border-radius:var(--r2);padding:14px;
+  text-align:center;font-weight:600;font-size:15.5px;box-shadow:0 3px 0 var(--terre-fonce);margin-top:6px}
+.cta:active{transform:translateY(2px);box-shadow:0 1px 0 var(--terre-fonce)}
+.cta.sec{background:var(--carte);color:var(--encre);box-shadow:var(--ombre)}
+.cta[disabled]{opacity:.45;box-shadow:none}
+.btn{display:inline-flex;align-items:center;gap:6px;background:var(--carte);border-radius:11px;padding:9px 14px;
+  font-size:14px;font-weight:600;box-shadow:var(--ombre)}
+.btn.plein{background:var(--terre);color:#fff;box-shadow:0 2px 0 var(--terre-fonce)}
+.btn.mini{padding:6px 11px;font-size:13px;font-weight:500}
+.btn[disabled]{opacity:.45}
+.rang{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+
+.jauge{height:7px;background:var(--trait2);border-radius:4px;overflow:hidden}
+.jauge i{display:block;height:100%;background:var(--terre);border-radius:4px;transition:width .45s ease}
+.progLigne{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.progLigne .jauge{flex:1}
+.progLigne span{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--encre2);flex:none}
+
+.lecon{min-height:100vh;display:flex;flex-direction:column;padding:14px 16px calc(var(--hautNav) + 14px)}
+.lecon-haut{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.pts{display:flex;gap:3px;flex:1}
+.pts span{height:4px;flex:1;border-radius:2px;background:#E0D8CC;transition:background .3s}
+.pts span.f{background:var(--terre)}
+.fermer{font-size:22px;color:var(--encre3);line-height:1;padding:0 2px}
+.diapo{flex:1;display:flex;flex-direction:column;justify-content:center;padding:6px 0 18px;animation:entre .28s ease}
+@keyframes entre{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.kick{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--terre-fonce);margin-bottom:9px}
+.diapo h2{font-size:24px;margin-bottom:13px}
+.diapo h3{font-size:20px;margin-bottom:11px}
+.diapo p{font-size:15.5px;line-height:1.55;color:#3D332C;margin-bottom:11px}
+.diapo p strong{font-weight:600;color:var(--encre)}
+.encart{border-radius:var(--r2);padding:13px 14px;margin-top:6px;font-size:14.5px;line-height:1.5}
+.encart b.et{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;margin-bottom:5px;font-weight:600}
+.encart.astuce{background:var(--or-pale)} .encart.astuce b.et{color:var(--or-fonce)}
+.encart.piege{background:var(--rouge-pale)} .encart.piege b.et{color:var(--rouge)}
+.encart.garde{background:#E8F0EE} .encart.garde b.et{color:var(--c2)}
+.encart.info{background:var(--terre-pale)} .encart.info b.et{color:var(--terre-fonce)}
+.vocab{list-style:none}
+.vocab li{background:var(--carte);border-radius:var(--r2);padding:11px 13px;margin-bottom:8px;font-size:14.5px;
+  box-shadow:var(--ombre);line-height:1.45}
+.vocab b{display:block;font-size:14px;margin-bottom:2px}
+.vocab span{color:var(--encre2)}
+.etapes{list-style:none;counter-reset:e}
+.etapes li{counter-increment:e;display:flex;gap:11px;align-items:flex-start;margin-bottom:9px;font-size:14.5px;line-height:1.4}
+.etapes li::before{content:counter(e);flex:none;width:24px;height:24px;border-radius:8px;background:var(--terre);
+  color:#fff;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;display:grid;place-items:center;margin-top:1px}
+.chiffres{list-style:none}
+.chiffres li{display:flex;gap:11px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--trait);font-size:14.5px}
+.chiffres li:last-child{border:none}
+.chiffres b{font-family:'IBM Plex Mono',monospace;font-size:16px;color:var(--terre-fonce);flex:none;min-width:64px}
+.sources{list-style:none;font-size:13px}
+.sources li{padding:9px 0;border-bottom:1px solid var(--trait);color:var(--encre2);line-height:1.4}
+.sources li:last-child{border:none}
+.sources b{display:block;color:var(--encre);font-size:13.5px;font-weight:600}
+.sources a{color:var(--terre-fonce);word-break:break-all;font-size:12px;text-decoration:none;font-family:'IBM Plex Mono',monospace}
+
+.opt{display:block;width:100%;text-align:left;background:var(--carte);border:1.5px solid var(--trait);
+  border-radius:var(--r2);padding:13px 14px;margin-bottom:9px;font-size:15px;line-height:1.4;box-shadow:var(--ombre)}
+.opt.pris{border-color:var(--terre);background:var(--terre-pale)}
+.opt.juste{border-color:var(--c2);background:#E8F0EE}
+.opt.faux{border-color:var(--rouge);background:var(--rouge-pale)}
+.verdict{border-radius:var(--r2);padding:13px 14px;margin:12px 0;font-size:14.5px;line-height:1.5}
+.verdict.ok{background:#E8F0EE} .verdict.ko{background:var(--rouge-pale)}
+.verdict b{display:block;margin-bottom:3px}
+.champ{display:block;font-size:13px;font-weight:600;color:var(--encre2);margin:0 0 6px}
+input[type=text],input[type=password],input[type=date],input[type=number],select,textarea{
+  width:100%;padding:12px 13px;border:1.5px solid var(--trait);border-radius:var(--r2);background:var(--carte)}
+textarea{min-height:150px;resize:vertical;line-height:1.5}
+.duo{display:grid;gap:11px;grid-template-columns:1fr 1fr}
+.puce{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:999px;background:var(--carte);
+  font-size:12.5px;font-weight:500;box-shadow:var(--ombre);color:var(--encre2)}
+.puce.on{background:var(--terre);color:#fff;box-shadow:0 2px 0 var(--terre-fonce)}
+.puce.mono{font-family:'IBM Plex Mono',monospace;font-size:11px}
+.liste-puces{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.avis{border-radius:var(--r2);padding:12px 14px;margin-bottom:14px;font-size:14px;line-height:1.5;background:var(--or-pale)}
+.avis.info{background:var(--terre-pale)} .avis.err{background:var(--rouge-pale)}
+.avis b{display:block;margin-bottom:3px}
+.vide{text-align:center;padding:38px 16px;color:var(--encre2)}
+.vide .em{font-size:34px;margin-bottom:10px}
+.vide h3{font-size:17px;margin-bottom:6px;color:var(--encre)}
+.carteAct{display:flex;align-items:center;gap:12px;background:var(--carte);border-radius:var(--r);padding:14px 15px;
+  margin-bottom:10px;box-shadow:var(--ombre);width:100%;text-align:left}
+.carteAct .ic{width:40px;height:40px;border-radius:12px;background:var(--terre-pale);display:grid;place-items:center;
+  font-size:18px;flex:none}
+.carteAct .tx{flex:1;min-width:0}
+.carteAct .tx b{display:block;font-size:15px;font-weight:600}
+.carteAct .tx small{font-size:12.5px;color:var(--encre2)}
+.carteAct .fl{color:var(--encre3);font-size:18px}
+.tableau{width:100%;border-collapse:collapse;font-size:14px}
+.tableau th,.tableau td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--trait)}
+.tableau th{font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--encre3);font-weight:500}
+.tableau td.n{font-family:'IBM Plex Mono',monospace;text-align:right}
+.chrono{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--terre-fonce)}
+.src{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--encre3);border-bottom:1px dotted var(--trait)}
+.srcTxt{display:none;font-size:13.5px;color:var(--encre2);background:var(--trait2);padding:10px 12px;
+  border-radius:10px;margin:8px 0;font-style:italic;line-height:1.45}
+.srcTxt.ouvert{display:block}
+.semaine{border-left:2px solid var(--trait);padding:0 0 15px 14px;position:relative}
+.semaine::before{content:"";position:absolute;left:-5px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--terre)}
+.semaine .quand{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--encre3);text-transform:uppercase;letter-spacing:.08em}
+
+.depli{background:var(--carte);border-radius:var(--r2);margin-bottom:8px;box-shadow:var(--ombre);overflow:hidden}
+.depli>summary{padding:11px 14px;font-size:14px;font-weight:600;cursor:pointer;list-style:none;
+  display:flex;justify-content:space-between;align-items:center;gap:8px}
+.depli>summary::-webkit-details-marker{display:none}
+.depli>summary::after{content:"›";color:var(--encre3);font-size:17px;transform:rotate(90deg)}
+.depli[open]>summary::after{transform:rotate(-90deg)}
+.depli .corps{padding:0 14px 12px;font-size:13.5px;color:var(--encre2);line-height:1.5}
+.depli .corps li{margin:0 0 7px 16px}
+
+.horsCours{background:#EEF1F8;border-left:3px solid var(--c3);padding:10px 12px;border-radius:0;margin:8px 0;font-size:13.5px;line-height:1.45}
+.horsCours .et{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--c3);font-weight:600;margin-bottom:4px}
+.triLigne{display:flex;gap:10px;align-items:flex-start;background:var(--carte);border-radius:var(--r2);
+  padding:11px 13px;margin-bottom:8px;box-shadow:var(--ombre)}
+.triLigne input[type=checkbox]{width:19px;height:19px;flex:none;margin-top:2px;accent-color:var(--terre)}
+.triLigne .tx{flex:1;min-width:0;font-size:14px;line-height:1.4}
+.triLigne select{width:auto;padding:5px 8px;font-size:12px;flex:none}
+
+#impression{display:none}
+@media print{
+  body{background:#fff}
+  .app,.nav{display:none !important}
+  #impression{display:block}
+  @page{size:A4;margin:12mm 11mm}
+  .f{font-family:'Outfit',sans-serif;color:#241C16;font-size:11pt;line-height:1.5;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .f .bandeau{height:4pt;background:#D9603C;margin-bottom:0}
+  .f .tete{border-bottom:1pt solid #E3DCD1;padding:7pt 0 8pt;margin-bottom:10pt}
+  .f .code{font-family:'IBM Plex Mono',monospace;font-size:9pt;color:#B14526;letter-spacing:.06em}
+  .f .meta{font-family:'IBM Plex Mono',monospace;font-size:8pt;color:#8A8074;float:right}
+  .f h1{font-size:15pt;margin-top:4pt;font-weight:700}
+  .f .ue{font-size:9.5pt;color:#6B6058;margin-top:3pt}
+  .f section{display:flex;gap:0;border-top:1pt solid #E3DCD1;break-inside:avoid;page-break-inside:avoid}
+  .f section:first-of-type{border-top:none}
+  .f .marge{width:26mm;flex:none;padding:9pt 5pt 9pt 0;border-right:1pt solid #E3DCD1;
+    font-family:'IBM Plex Mono',monospace;font-size:8.5pt;line-height:1.3;color:#241C16}
+  .f .corps{flex:1;padding:9pt 0 9pt 7pt;min-width:0}
+  .f .n{display:flex;gap:7pt;margin-bottom:8pt;break-inside:avoid}
+  .f .n:last-child{margin-bottom:0}
+  .f .n>.num{font-family:'IBM Plex Mono',monospace;font-size:8.5pt;color:#B14526;flex:none;padding-top:1.5pt}
+  .f .n>.txt{flex:1;min-width:0}
+  .f .terme{font-weight:600}
+  .f mark{background:#FBF1DC;padding:0 2pt}
+  .f .cadre{border:1pt solid #C8BEB0;border-radius:2pt;padding:7pt 9pt;margin-bottom:7pt;break-inside:avoid}
+  .f .cadre.chaud{background:#FAEDE7;border-color:#E8B9A6}
+  .f .cadre.froid{background:#EEF1F8;border-color:#B9C2DE}
+  .f .alerte{border-left:3pt solid #C33A28;padding-left:8pt;margin-bottom:7pt;break-inside:avoid}
+  .f .ex{font-style:italic;color:#4A4038}
+  .f .ajout{border-left:3pt solid #4A5BA8;padding-left:8pt;margin-bottom:7pt;break-inside:avoid}
+  .f .ajout .lab{font-family:'IBM Plex Mono',monospace;font-size:7.5pt;text-transform:uppercase;
+    letter-spacing:.07em;color:#4A5BA8;display:block;margin-bottom:2pt}
+  .f .ajout a{font-size:7.5pt;color:#4A5BA8;word-break:break-all}
+  .f .lignes div{border-bottom:1pt solid #E3DCD1;height:16pt}
+  .f .pied{border-top:1pt solid #E3DCD1;margin-top:9pt;padding-top:5pt;
+    font-family:'IBM Plex Mono',monospace;font-size:8pt;color:#A79C8E;display:flex;justify-content:space-between}
+  .f.nb .bandeau{background:#241C16}
+  .f.nb .code,.f.nb .n>.num{color:#241C16}
+  .f.nb .cadre.chaud,.f.nb .cadre.froid{background:none;border-color:#8A8074}
+  .f.nb mark{background:none;border-bottom:1.5pt solid #241C16}
+  .f.nb .alerte{border-left-color:#241C16}
+  .f.nb .ajout{border-left-color:#241C16}
+  .f.nb .ajout .lab,.f.nb .ajout a{color:#241C16}
+  .f.compact{font-size:9.5pt;line-height:1.35}
+  .f.compact h1{font-size:13pt}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<nav class="nav" id="nav"></nav>
+<div id="impression"></div>
+<script>
+"use strict";
+/* =========================================================================
+   1. RÉFÉRENTIEL — programme national B.U.T. TC (annexe 25, 2022)
+      et maquette des enseignements BUT1 TC 2024-2025, IUT de Perpignan,
+      antenne de Carcassonne.
+   ========================================================================= */
+const COMP = {
+  1:{code:"UE1", nom:"Marketer",   coul:"var(--c1)", verbe:"Conduire les actions marketing"},
+  2:{code:"UE2", nom:"Vendre",     coul:"var(--c2)", verbe:"Vendre une offre commerciale"},
+  3:{code:"UE3", nom:"Communiquer",coul:"var(--c3)", verbe:"Communiquer l'offre commerciale"}
+};
+
+/* c = coefficient par UE, tel qu'il figure sur la maquette. h = heures étudiant. */
+const RESS = [
+ {id:"R1.01", s:1, nom:"Fondamentaux du marketing et comportement du consommateur", c:{1:2.5}, h:35,
+  cles:["marketing","consommateur","besoin","segmentation","cible","positionnement","comportement","mix"]},
+ {id:"R1.02", s:1, nom:"Fondamentaux de la vente", c:{2:3}, h:24,
+  cles:["vente","vendeur","client","argumentaire","decouverte","objection","closing","prospect"]},
+ {id:"R1.03", s:1, nom:"Fondamentaux de la communication commerciale", c:{3:2}, h:18,
+  cles:["communication","annonceur","media","hors media","message","cible","support","campagne"]},
+ {id:"R1.04", s:1, nom:"Études marketing - 1", c:{1:0.5,3:0.5}, h:18,
+  cles:["etude","questionnaire","echantillon","enquete","qualitatif","quantitatif","panel","sondage"]},
+ {id:"R1.05", s:1, nom:"Environnement économique de l'entreprise", c:{1:1}, h:18,
+  cles:["economie","marche","offre","demande","concurrence","inflation","croissance","pib"]},
+ {id:"R1.06", s:1, nom:"Environnement juridique de l'entreprise", c:{1:0.5,3:1}, h:18,
+  cles:["droit","juridique","contrat","societe","responsabilite","personne morale","tribunal"]},
+ {id:"R1.07", s:1, nom:"Techniques quantitatives et représentations - 1", c:{1:0.5,2:1.5}, h:18,
+  cles:["statistique","moyenne","mediane","ecart type","pourcentage","graphique","indice","tableau"]},
+ {id:"R1.08", s:1, nom:"Éléments financiers de l'entreprise", c:{1:0.5,2:0.5}, h:12,
+  cles:["bilan","compte de resultat","charge","produit","actif","passif","resultat"]},
+ {id:"R1.09", s:1, nom:"Rôle et organisation de l'entreprise sur son marché", c:{1:1}, h:12,
+  cles:["entreprise","organisation","organigramme","fonction","secteur","filiere","partie prenante"]},
+ {id:"R1.10", s:1, nom:"Initiation à la conduite de projet", c:{2:0.5,3:0.5}, h:8,
+  cles:["projet","planning","gantt","jalon","livrable","equipe","objectif"]},
+ {id:"R1.11", s:1, nom:"Langue A anglais du commerce - 1", c:{1:0.5,3:1}, h:20,
+  cles:["english","business","the ","of the","company","customer","market"]},
+ {id:"R1.12", s:1, nom:"Langue B du commerce - 1", c:{1:0.5,3:1}, h:20,
+  cles:["espanol","el ","la empresa","mercado","cliente","venta"]},
+ {id:"R1.13", s:1, nom:"Ressources et culture numériques - 1", c:{1:0.5,2:1,3:0.5}, h:20,
+  cles:["numerique","tableur","logiciel","fichier","donnee","internet","bureautique"]},
+ {id:"R1.14", s:1, nom:"Expression, communication et culture - 1", c:{1:0.5,2:1,3:0.5}, h:20,
+  cles:["expression","oral","ecrit","argumentation","synthese","prise de parole","culture"]},
+ {id:"R1.15", s:1, nom:"Projet personnel et professionnel - 1", c:{1:0.5,2:0.5,3:0.5}, h:14,
+  cles:["ppp","projet professionnel","metier","cv","lettre","orientation","competence"]},
+ {id:"R2.01", s:2, nom:"Marketing mix", c:{1:2}, h:18,
+  cles:["mix","produit","prix","distribution","promotion","4p","gamme","marque"]},
+ {id:"R2.02", s:2, nom:"Prospection et négociation", c:{2:3}, h:24,
+  cles:["prospection","negociation","fichier","phoning","rendez vous","concession","accord"]},
+ {id:"R2.03", s:2, nom:"Moyens de la communication commerciale", c:{3:2.5}, h:18,
+  cles:["media","affichage","radio","presse","internet","promotion des ventes","relations publiques"]},
+ {id:"R2.04", s:2, nom:"Études marketing - 2", c:{1:1.5}, h:18,
+  cles:["etude","analyse","tri croise","depouillement","representativite","biais"]},
+ {id:"R2.05", s:2, nom:"Relations contractuelles commerciales", c:{1:0.5,2:0.5,3:0.5}, h:18,
+  cles:["contrat","vente","clause","garantie","consommateur","cgv","obligation","retractation"]},
+ {id:"R2.06", s:2, nom:"Techniques quantitatives et représentations - 2", c:{1:0.5,2:0.5,3:0.5}, h:23,
+  cles:["probabilite","correlation","regression","serie","tendance","previsions"]},
+ {id:"R2.07", s:2, nom:"Coûts, marges et prix d'une offre simple", c:{1:0.5,2:0.5,3:0.5}, h:18,
+  cles:["cout","marge","prix","taux","coefficient","seuil de rentabilite","tva"]},
+ {id:"R2.08", s:2, nom:"Connaissance des canaux de commercialisation et distribution", c:{1:1}, h:14,
+  cles:["distribution","canal","circuit","grossiste","detaillant","franchise","centrale"]},
+ {id:"R2.09", s:2, nom:"Psychologie sociale", c:{2:0.5,3:0.5}, h:18,
+  cles:["psychologie","groupe","influence","perception","attitude","motivation","persuasion"]},
+ {id:"R2.10", s:2, nom:"Gestion et conduite de projet", c:{1:0.5,2:0.5}, h:10,
+  cles:["projet","planification","budget","risque","pilotage","reunion","indicateur"]},
+ {id:"R2.11", s:2, nom:"Langue A anglais du commerce - 2", c:{1:0.5,2:0.5,3:0.5}, h:24,
+  cles:["english","meeting","report","negotiation","supplier","invoice"]},
+ {id:"R2.12", s:2, nom:"Langue B du commerce - 2", c:{1:0.5,2:0.5,3:0.5}, h:24,
+  cles:["espanol","negociacion","factura","proveedor","reunion"]},
+ {id:"R2.13", s:2, nom:"Ressources et culture numériques - 2", c:{1:0.5,2:0.5,3:0.5}, h:18,
+  cles:["numerique","base de donnees","tableur","publication","reseau social","outil"]},
+ {id:"R2.14", s:2, nom:"Expression, communication et culture - 2", c:{1:0.5,2:0.5,3:0.5}, h:23,
+  cles:["expression","rapport","soutenance","note","reformulation","ecoute"]},
+ {id:"R2.15", s:2, nom:"Projet personnel et professionnel - 2", c:{1:0.5,2:0.5,3:0.5}, h:10,
+  cles:["ppp","stage","entretien","reseau","portfolio","bilan"]}
+];
+const SAE = [
+ {id:"SAÉ 1.1", s:1, nom:"Communication commerciale : création d'un support imprimé", c:{3:5}},
+ {id:"SAÉ 1.2", s:1, nom:"Marketing : positionnement d'une offre simple sur un marché", c:{1:6}},
+ {id:"SAÉ 1.3", s:1, nom:"Vente : démarche de prospection", c:{2:6}},
+ {id:"SAÉ 2.1", s:2, nom:"Marketing : marketing mix", c:{1:3}},
+ {id:"SAÉ 2.2", s:2, nom:"Vente : initiation au jeu de rôle de négociation", c:{2:3}},
+ {id:"SAÉ 2.3", s:2, nom:"Communication commerciale : plan de communication", c:{3:2}},
+ {id:"SAÉ 2.4", s:2, nom:"Projet transverse", c:{1:1,2:1,3:1}},
+ {id:"SAÉ 2.5", s:2, nom:"Prospection téléphonique", c:{2:1}},
+ {id:"Stage", s:2, nom:"Stage de première année, quatre semaines", c:{1:1,2:1,3:1}},
+ {id:"Portfolio", s:2, nom:"Démarche portfolio", c:{1:1,2:1,3:1}}
+];
+const RESSOURCE = id => RESS.find(r => r.id === id) || SAE.find(r => r.id === id) || null;
+const TOUTES = () => RESS.concat(SAE);
+function coefTotal(r){ return Object.keys(r.c).reduce((s,k) => s + r.c[k], 0); }
+function ueDominante(r){
+  let best = 1, v = -1;
+  Object.keys(r.c).forEach(k => { if(r.c[k] > v){ v = r.c[k]; best = Number(k); } });
+  return best;
+}
+
+const TYPES = {
+  qcm:"QCM", qcmMulti:"QCM à réponses multiples", vf:"Vrai ou faux", flash:"Flashcard",
+  cloze:"Texte à trous", paires:"Appariement", ouverte:"Question ouverte",
+  erreur:"Chasse à l'erreur", situation:"Mise en situation", ordre:"Remise en ordre"
+};
+
+/* =========================================================================
+   2. LES CINQ PARCOURS — choix au semestre 3.
+      Objectifs et ressources : programme national, annexe 25.
+      Disponibilité et IUT : fiche Parcoursup de la formation et Onisep.
+   ========================================================================= */
+const PARCOURS = [
+ {id:"MMPV", nom:"Marketing et management du point de vente", ici:true, coul:"var(--c1)",
+  objectif:"Former à la gestion de l'espace de vente, en travaillant les deux dimensions du métier : animer une équipe d'un côté, piloter l'espace de vente de l'autre. Les diplômés peuvent prétendre aux métiers de la distribution, dans tout type de point de vente.",
+  comps:["Management — manager une équipe commerciale sur un espace de vente",
+         "Retail marketing — piloter un espace de vente"],
+  ress:["Management de la performance du point de vente","Marketing du point de vente","Merchandising",
+        "Management des équipes 1 et 2","GRC","Parcours expérience client","Supply chain",
+        "Droit de la distribution","Trade marketing","Prise de décision et pilotage"],
+  iut:[], note:"Proposé à Carcassonne."},
+ {id:"MDEE", nom:"Marketing digital, e-business et entrepreneuriat", ici:true, coul:"var(--c3)",
+  objectif:"Former aux activités commerciales digitales : piloter et gérer ces activités d'une part, développer un projet commercial digital pouvant mener à la création d'une start-up d'autre part.",
+  comps:["Marketing digital — gérer une activité digitale",
+         "E-business et entrepreneuriat — développer un projet e-business"],
+  ress:["Stratégie de marketing digital","Créativité et innovation","Conduite de projet digital",
+        "Stratégie e-commerce","Business model 1 et 2","Référencement","Stratégie social media et e-CRM",
+        "Stratégie de contenu et rédaction web","Logistique et supply chain","Trafic management et analyse d'audience"],
+  iut:[], note:"Proposé à Carcassonne."},
+ {id:"SME", nom:"Stratégie de marque et événementiel", ici:false, coul:"var(--terre)",
+  objectif:"Former aux métiers du management de la marque et de l'événementiel. Les diplômés contribuent au rayonnement de la marque, à sa valorisation, et interviennent dans le pilotage et la réalisation des projets événementiels.",
+  comps:["Branding — élaborer l'identité d'une marque",
+         "Événementiel — manager un projet événementiel"],
+  ress:["Marketing de l'évènementiel 1 et 2","Fondamentaux de la communication de marque",
+        "Relations publiques et relations presse","Stratégie de développement de marque 1 et 2",
+        "Marketing digital de la marque","Conception graphique","Organisation et logistique 1 et 2",
+        "Gestion commerciale 1 et 2","Évènementiel sectoriel"],
+  iut:[{reg:"Occitanie", l:[]},
+       {reg:"Régions limitrophes", l:[
+         "IUT de Toulon, site de La Garde, université de Toulon — temps plein et apprentissage",
+         "IUT de Bayonne et du Pays Basque, université de Pau et des Pays de l'Adour — temps plein et apprentissage",
+         "IUT d'Angoulême, université de Poitiers — temps plein et apprentissage"]}],
+  note:"Ma recherche n'a fait ressortir aucun IUT d'Occitanie proposant ce parcours. Cela ne prouve pas qu'il n'en existe pas : à vérifier sur Parcoursup au moment du choix."},
+ {id:"BI", nom:"Business international : achat et vente", ici:false, coul:"var(--c2)",
+  objectif:"Former au marketing et au commerce à l'international, en développant des compétences stratégiques et opérationnelles dans un contexte international. Les diplômés peuvent occuper des postes dans les métiers du commerce international.",
+  comps:[],
+  ress:["Stratégie et veille à l'international","Marketing et vente à l'international","Stratégie achats",
+        "Techniques du commerce international 1 et 2","Management interculturel","Approvisionnements",
+        "Droit international","Logistique et supply chain","Marketing achat",
+        "Anglais appliqué au business international"],
+  iut:[{reg:"Occitanie", l:[
+         "IUT de Tarbes, université de technologie de Tarbes Occitanie Pyrénées — temps plein et apprentissage",
+         "IUT de Montpellier, université de Montpellier — temps plein et apprentissage",
+         "IUT de Béziers, université de Montpellier — temps plein"]},
+       {reg:"Régions limitrophes", l:[
+         "IUT de Bordeaux, site de Bordeaux-Bastide, université de Bordeaux — temps plein et apprentissage",
+         "IUT de Bayonne et du Pays Basque, université de Pau et des Pays de l'Adour — temps plein et apprentissage"]}],
+  note:"Les intitulés exacts des deux compétences propres à ce parcours n'ont pas pu être extraits du programme national de façon fiable : ils ne sont pas affichés ici plutôt que d'être approximés."},
+ {id:"BDMRC", nom:"Business développement et management de la relation client", ici:false, coul:"var(--or-fonce)",
+  objectif:"Former au développement de l'activité commerciale tout en veillant à la satisfaction du client, pour bâtir une relation durable. Les diplômés contribuent au développement d'affaires et au management de la relation client.",
+  comps:[],
+  ress:["Marketing B2B","Fondamentaux de la relation client","Fondamentaux du management de l'équipe commerciale",
+        "Relation client omnicanal","Développement des pratiques managériales","Management de la valeur client",
+        "Marketing des services","Pilotage de l'équipe commerciale","Management des comptes-clés",
+        "Nouveaux comportements des clients"],
+  iut:[{reg:"Occitanie", l:[
+         "IUT de Tarbes, université de technologie de Tarbes Occitanie Pyrénées — temps plein et apprentissage",
+         "IUT de Figeac, université Toulouse - Jean Jaurès — temps plein et apprentissage"]},
+       {reg:"Régions limitrophes", l:[]}],
+  note:"Les intitulés exacts des deux compétences propres à ce parcours n'ont pas pu être extraits du programme national de façon fiable : ils ne sont pas affichés ici plutôt que d'être approximés."}
+];
+const PARC = id => PARCOURS.find(p => p.id === id) || null;
+
+/* =========================================================================
+   3. ÉTAT ET STOCKAGE
+   ========================================================================= */
+const CLE = "buttc_v1";
+let memoire = null, stockageOk = true;
+const etatVierge = () => ({
+  version:1,
+  reglages:{moteur:"gemini", cleGemini:"", modele:"", modeles:[], complements:true,
+    dateRentree:"", dateExamen:"", debitVoix:1, voix:""},
+  cours:[], progres:{}, examens:[], prep:{}
+});
+let S = etatVierge();
+function charger(){
+  try{
+    const brut = localStorage.getItem(CLE);
+    if(brut){ const o = JSON.parse(brut); S = Object.assign(etatVierge(), o);
+      S.reglages = Object.assign(etatVierge().reglages, o.reglages || {}); }
+  }catch(e){ stockageOk = false; }
+}
+function sauver(){
+  if(!stockageOk){ memoire = S; return; }
+  try{ localStorage.setItem(CLE, JSON.stringify(S)); }
+  catch(e){ stockageOk = false; memoire = S; }
+}
+
+/* =========================================================================
+   4. OUTILS
+   ========================================================================= */
+const $ = s => document.querySelector(s);
+const uid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+function esc(t){ return String(t==null?"":t).replace(/[&<>"']/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+const JOUR = 86400000;
+function dateFr(iso){ if(!iso) return "—";
+  const d = new Date(iso); if(isNaN(d)) return "—";
+  return d.toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric"}); }
+function joursEntre(a,b){ return Math.round((new Date(b) - new Date(a)) / JOUR); }
+function melanger(t){ const a = t.slice();
+  for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a; }
+function tronquer(t,n){ t = String(t||"").trim(); return t.length > n ? t.slice(0,n-1).trim() + "…" : t; }
+function normaliser(t){ return String(t||"").toLowerCase()
+  .normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9\s]/g," ").replace(/\s+/g," ").trim(); }
+const MOTS_VIDES = new Set(("le la les un une des du de d au aux et ou mais donc or ni car que qui quoi dont " +
+  "ce cet cette ces son sa ses leur leurs il elle ils elles on nous vous se sont est etre avec sans pour par dans " +
+  "sur sous entre chez vers apres avant lors selon afin ainsi plus moins tres peu tout tous toute toutes a en y " +
+  "lui eux meme comme").split(" "));
+function motsCles(t, n=6){
+  const vus = new Set(); const out = [];
+  normaliser(t).split(" ").forEach(m => {
+    if(m.length > 4 && !MOTS_VIDES.has(m) && !vus.has(m)){ vus.add(m); out.push(m); }
+  });
+  return out.slice(0, n);
+}
+function telecharger(nom, contenu, type){
+  const b = new Blob([contenu], {type: type || "application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(b); a.download = nom;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+
+/* =========================================================================
+   5. LECTURE DU COURS
+   Les prises de notes sont fragmentaires : les seuils sont volontairement
+   bas, et la mise en forme d'origine (titres, gras, listes) est conservée
+   parce qu'elle dit déjà ce qui est important.
+   ========================================================================= */
+const UNITES = "%|€|k€|M€|mois|ans?|jours?|semaines?|heures?|h|min|km|m|kg|g|L|ml|pts?|points?|ECTS|/20|/10";
+const RE_CHIFFRE = new RegExp("(?:^|[\\s(])(\\d+(?:[.,]\\d+)?)\\s?(" + UNITES + ")(?![a-zA-Zéèà])", "");
+const RE_FORMULE = /(=|\btaux\b|\bmarge\b|\bcoefficient\b|\bratio\b|\bseuil\b|\bcalcul)/i;
+const RE_JURI = /(article [LRD]\.?\s?\d|code (?:de la consommation|de commerce|du travail|civil)|loi (?:n°\s?)?\d|décret|règlement \(UE\)|RGPD|directive)/i;
+const RE_PIEGE = /\b(attention|jamais|ne (?:doit|peut|faut) (?:pas|jamais)|interdit|obligatoire|piège|erreur|à ne pas confondre|contrairement à|nuance|sauf)\b/i;
+const RE_EXEMPLE = /\b(par exemple|ex\s?:|exemple\s?:|cas de|illustration)\b/i;
+const RE_DEF = /^(.{2,70}?)\s*(?::|\s[—–-]\s)\s*(.{12,})$/;
+const RE_DEF_VERBE = /^(.{2,60}?)\s+(?:est|sont|désigne|désignent|correspond à|correspondent à|se définit comme|consiste à|permet de)\s+(.{10,})$/i;
+const RE_PUCE = /^\s*(?:[-•–*·>]|\d{1,2}\s*[.)°]|[a-h]\s*[.)]|[IVX]{1,4}\s*[.)])\s+(.{2,})$/;
+
+function decouper(texte){
+  const lignes = texte.replace(/\r/g,"").split("\n").map(l => l.replace(/\s+$/,""));
+  const blocs = [];
+  lignes.forEach(l => {
+    const t = l.trim();
+    if(!t){ blocs.push({type:"vide", txt:"", fort:[]}); return; }
+    const p = t.match(RE_PUCE);
+    if(p){ blocs.push({type:"puce", txt:p[1].trim(), brut:t, fort:[]}); return; }
+    const estTitre = t.length < 85 && !/[.;:!?]$/.test(t) &&
+      /^[A-ZÉÈÀÇ0-9]/.test(t) && t.split(" ").length <= 12 && !RE_DEF.test(t);
+    blocs.push({type: estTitre ? "titre" : "para", txt:t, fort:[]});
+  });
+  return blocs;
+}
+
+/* Conversion du HTML issu de mammoth : on récupère la hiérarchie et le gras. */
+function depuisHtml(html){
+  const doc = new DOMParser().parseFromString("<div>" + html + "</div>", "text/html");
+  const blocs = [];
+  const forts = new Set();
+  doc.querySelectorAll("strong,b,em,u,mark").forEach(e => {
+    const t = (e.textContent || "").trim();
+    if(t.length > 2 && t.length < 90) forts.add(t);
+  });
+  doc.querySelectorAll("h1,h2,h3,h4,p,li,td,th").forEach(e => {
+    const t = (e.textContent || "").replace(/\s+/g," ").trim();
+    if(!t) return;
+    const n = e.tagName.toLowerCase();
+    const type = /^h[1-4]$/.test(n) ? "titre" : (n === "li" ? "puce" : "para");
+    const propres = [];
+    e.querySelectorAll("strong,b,em,u,mark").forEach(x => {
+      const s = (x.textContent || "").trim();
+      if(s.length > 2 && s.length < 90) propres.push(s);
+    });
+    blocs.push({type, txt:t, brut:t, fort:propres, niveau: /^h([1-4])$/.test(n) ? Number(n[1]) : 0});
+  });
+  return {blocs, forts:[...forts], texte: blocs.map(b => b.txt).join("\n")};
+}
+
+function phrases(texte){
+  return texte.replace(/\s+/g," ")
+    .split(/(?<=[.!?;])\s+(?=[A-ZÉÈÀÇ0-9«"])/)
+    .map(p => p.trim()).filter(p => p.length > 15 && p.length < 400);
+}
+function detecterRessource(texte){
+  const n = " " + normaliser(texte) + " ";
+  let meilleur = null, best = 0;
+  RESS.forEach(r => {
+    let score = 0;
+    (r.cles || []).forEach(c => {
+      const cn = normaliser(c);
+      if(!cn) return;
+      const occ = n.split(" " + cn).length - 1;
+      if(occ > 0) score += occ * (cn.includes(" ") ? 3 : 1.6);
+    });
+    if(score > best){ best = score; meilleur = r.id; }
+  });
+  return best >= 4 ? meilleur : null;
+}
+
+/* =========================================================================
+   6. GARDE-FOU DONNÉES PERSONNELLES
+   ========================================================================= */
+const SONDES = [
+  {re:/\b(?:M\.|Mme|Mlle|Monsieur|Madame)\s+[A-ZÉÈÀ][a-zéèêàçï]+/g, quoi:"nom précédé d'une civilité"},
+  {re:/\b[\w.+-]+@[\w-]+\.[a-z]{2,}\b/gi,                           quoi:"adresse électronique"},
+  {re:/\b0[1-9](?:[\s.-]?\d{2}){4}\b/g,                             quoi:"numéro de téléphone"},
+  {re:/\b\d{13}(?:\s?\d{2})?\b/g,                                   quoi:"numéro à 13 chiffres"},
+  {re:/\b(?:SIRET|SIREN)\s?:?\s?\d{6,}/gi,                          quoi:"identifiant d'entreprise"}
+];
+function sonderDonnees(t){
+  const trouves = [];
+  SONDES.forEach(s => { s.re.lastIndex = 0; if(s.re.test(t)) trouves.push(s.quoi); });
+  return trouves;
+}
+function anonymiser(t){
+  let r = t;
+  r = r.replace(/\b(M\.|Mme|Mlle|Monsieur|Madame)\s+[A-ZÉÈÀ][a-zéèêàçï]+(?:\s+[A-ZÉÈÀ][A-ZÉÈÀa-zéèêàçï]+)?/g, "$1 [NOM]");
+  r = r.replace(/\b[\w.+-]+@[\w-]+\.[a-z]{2,}\b/gi, "[COURRIEL]");
+  r = r.replace(/\b0[1-9](?:[\s.-]?\d{2}){4}\b/g, "[TÉLÉPHONE]");
+  r = r.replace(/\b\d{13}(?:\s?\d{2})?\b/g, "[IDENTIFIANT]");
+  r = r.replace(/\b(SIRET|SIREN)\s?:?\s?\d{6,}/gi, "$1 [IDENTIFIANT]");
+  return r;
+}
+
+/* =========================================================================
+   7. MOTEUR LOCAL — repli hors ligne, sans intelligence artificielle.
+   Tout ce qui sort d'ici provient littéralement des notes importées.
+   ========================================================================= */
+function analyseLocale(src, ressId){
+  const blocs = src.blocs || decouper(src.texte);
+  const texte = src.texte;
+  const forts = src.forts || [];
+  const phr = phrases(texte);
+  const notions = [], parCoeur = [], calculs = [], juridique = [], pieges = [], exemples = [], sigles = [];
+
+  const vus = new Set();
+  blocs.forEach(b => {
+    if(b.type === "vide") return;
+    const m = b.txt.match(RE_DEF) || b.txt.match(RE_DEF_VERBE);
+    if(m){
+      const terme = m[1].replace(/^[-•–*·>\d.)\s]+/,"")
+        .replace(/^(?:les|le|la|un|une|des|du)\s+/i,"").replace(/^l['’]\s*/i,"").trim();
+      const def = m[2].trim();
+      const k = normaliser(terme);
+      if(terme.length > 1 && terme.length < 70 && def.length > 8 && !vus.has(k)){
+        vus.add(k); notions.push({terme, def, src:b.txt});
+      }
+    }
+  });
+  /* les termes mis en gras par la prof sont considérés comme saillants */
+  forts.forEach(f => {
+    const k = normaliser(f);
+    if(vus.has(k) || f.length < 3) return;
+    const ligne = blocs.find(b => b.txt.includes(f) && b.txt.length > f.length + 12);
+    if(ligne){ vus.add(k); notions.push({terme:f, def:ligne.txt, src:ligne.txt, saillant:true}); }
+  });
+
+  let ms;
+  const vusSig = new Set();
+  const reSig1 = /\b([A-ZÉÈ]{2,6})\s*\(([^)]{4,80})\)/g;
+  while((ms = reSig1.exec(texte)) !== null){
+    if(!vusSig.has(ms[1])){ vusSig.add(ms[1]); sigles.push({sigle:ms[1], sens:ms[2].trim(), src:ms[0]}); }
+  }
+  const reSig2 = /([a-zéèêàç][^.()\n]{4,80})\s*\(([A-ZÉÈ]{2,6})\)/g;
+  while((ms = reSig2.exec(texte)) !== null){
+    if(!vusSig.has(ms[2])){ vusSig.add(ms[2]); sigles.push({sigle:ms[2], sens:ms[1].trim(), src:ms[0]}); }
+  }
+
+  phr.forEach(p => {
+    if(RE_CHIFFRE.test(p) && parCoeur.length < 20) parCoeur.push({txt:p, src:p});
+    if(RE_FORMULE.test(p) && RE_CHIFFRE.test(p) && calculs.length < 12) calculs.push({txt:p, src:p});
+    if(RE_JURI.test(p) && juridique.length < 12) juridique.push({txt:p, src:p});
+    if(RE_PIEGE.test(p) && pieges.length < 12) pieges.push({txt:p, src:p});
+    if(RE_EXEMPLE.test(p) && exemples.length < 10) exemples.push({txt:p, src:p});
+  });
+  blocs.forEach(b => {
+    if(b.type === "puce" && b.txt.length > 12 && b.txt.length < 260 && parCoeur.length < 26)
+      parCoeur.push({txt:b.txt, src:b.txt});
+  });
+
+  const titre = (blocs.find(b => b.type === "titre") || {txt:""}).txt;
+  const fiche = {
+    resume: phr.slice(0,2).join(" "),
+    notions: notions.slice(0,20), parCoeur: parCoeur.slice(0,18), calculs: calculs.slice(0,8),
+    juridique: juridique.slice(0,8), pieges: pieges.slice(0,10), exemples: exemples.slice(0,8),
+    sigles: sigles.slice(0,15), ajouts: [], titreDetecte: titre
+  };
+  return {fiche, items: itemsLocaux(fiche, ressId)};
+}
+
+function itemsLocaux(fiche, ressId){
+  const items = [];
+  const base = t => ({id:uid(), ressId, type:t, cree:Date.now(), origine:"local"});
+  fiche.notions.forEach(d => {
+    items.push(Object.assign(base("flash"), {recto:d.terme, verso:d.def, source:d.src}));
+    if(d.def.length >= 40){
+      items.push(Object.assign(base("ouverte"), {
+        question:"Explique : " + d.terme, attendu:d.def, motsCles:motsCles(d.def, 6), source:d.src}));
+    }
+  });
+  fiche.sigles.forEach(s => items.push(Object.assign(base("flash"), {recto:s.sigle, verso:s.sens, source:s.src})));
+  if(fiche.notions.length >= 4){
+    fiche.notions.forEach((d,i) => {
+      const autres = melanger(fiche.notions.filter((_,j) => j !== i)).slice(0,3);
+      if(autres.length < 3) return;
+      const opts = melanger([d.def].concat(autres.map(a => a.def))).map(o => tronquer(o, 150));
+      if(new Set(opts).size !== opts.length) return;
+      items.push(Object.assign(base("qcm"), {
+        question:"Que désigne « " + d.terme + " » ?", options:opts,
+        reponse:opts.findIndex(o => o === tronquer(d.def,150)), source:d.src}));
+    });
+    const lot = melanger(fiche.notions).slice(0,5);
+    items.push(Object.assign(base("paires"), {
+      question:"Associe chaque terme à sa définition.",
+      paires: lot.map(d => [d.terme, tronquer(d.def, 110)]),
+      source: lot.map(d => d.src).join(" — ")}));
+  }
+  fiche.parCoeur.forEach(c => {
+    const m = c.txt.match(RE_CHIFFRE);
+    if(!m) return;
+    const val = m[1] + (m[2] ? " " + m[2] : "");
+    items.push(Object.assign(base("cloze"), {
+      question: c.txt.replace(m[1] + (m[0].includes(" " + m[2]) ? " " : "") + m[2], "_____"),
+      reponse: val, source:c.txt}));
+  });
+  fiche.parCoeur.slice(0,10).forEach((c,i) => {
+    const m = c.txt.match(RE_CHIFFRE);
+    if(!m) return;
+    const vrai = i % 2 === 0;
+    let enonce = c.txt;
+    if(!vrai){
+      const n = parseFloat(m[1].replace(",","."));
+      let faux = n < 10 ? n + 1 : Math.round(n * (Math.random() < .5 ? 1.5 : 0.5));
+      if(faux === n) faux = n + 2;
+      enonce = c.txt.replace(m[1], String(faux).replace(".", ","));
+    }
+    items.push(Object.assign(base("vf"), {
+      question: enonce, reponse: vrai,
+      correction: vrai ? "Énoncé conforme aux notes." : "Faux : la valeur des notes est « " + m[1] + " " + m[2] + " ».",
+      source: c.txt}));
+  });
+  return items;
+}
+
+/* =========================================================================
+   8. MOTEUR GEMINI — deux appels distincts.
+   Le premier travaille uniquement sur les notes. Le second, facultatif,
+   active la recherche Google de Gemini : les liens retenus proviennent
+   des métadonnées renvoyées par l'API, jamais du texte du modèle.
+   ========================================================================= */
+const API = "https://generativelanguage.googleapis.com/v1beta";
+
+async function listerModeles(cle){
+  const r = await fetch(API + "/models?key=" + encodeURIComponent(cle));
+  if(!r.ok) throw new Error("La clé a été refusée (code " + r.status + ").");
+  const d = await r.json();
+  return (d.models || [])
+    .filter(m => (m.supportedGenerationMethods || []).includes("generateContent"))
+    .filter(m => !/embedding|aqa|imagen|veo|tts/i.test(m.name))
+    .map(m => ({id:m.name.replace(/^models\//,""), nom:m.displayName || m.name}));
+}
+
+function consigne(ressId){
+  const r = RESSOURCE(ressId);
+  const ctx = r ? "Ces notes relèvent de la ressource « " + r.nom + " » du B.U.T. Techniques de commercialisation." : "";
+  return [
+"Tu aides une étudiante de première année de B.U.T. Techniques de commercialisation à réviser.",
+ctx,
+"Le texte fourni est une PRISE DE NOTES de cours : fragmentaire, abrégée, parfois incomplète.",
+"",
+"RÈGLES ABSOLUES :",
+"1. Tu peux reformuler un fragment en phrase complète et lisible. Tu ne peux PAS changer son sens.",
+"2. Tu n'ajoutes AUCUNE connaissance extérieure dans la fiche. Si les notes ne disent pas, tu ne dis pas.",
+"3. Chaque élément porte un champ \"src\" citant littéralement le fragment des notes dont il vient.",
+"4. Si tu as dû deviner le sens d'un fragment trop elliptique, mets \"incertain\": true sur cet élément.",
+"5. Repère ce qui est important : ce qui est titré, répété, mis en avant, défini, chiffré, ou présenté comme une règle.",
+"6. Réponds en français, sauf pour les ressources de langue.",
+"",
+"Réponds UNIQUEMENT par un objet JSON valide, sans texte autour :",
+'{"fiche":{"resume":"2 phrases maximum",',
+'"notions":[{"terme":"","def":"","src":"","incertain":false}],',
+'"parCoeur":[{"txt":"","src":""}],',
+'"calculs":[{"txt":"","src":""}],',
+'"juridique":[{"txt":"","src":""}],',
+'"pieges":[{"txt":"","src":""}],',
+'"exemples":[{"txt":"","src":""}],',
+'"sigles":[{"sigle":"","sens":"","src":""}],',
+'"lacunes":["point que les notes abordent sans l\'expliquer"]},',
+'"items":[',
+'{"type":"qcm","question":"","options":["","","",""],"reponse":0,"correction":"","source":""},',
+'{"type":"qcmMulti","question":"","options":["","",""],"reponses":[0,2],"correction":"","source":""},',
+'{"type":"vf","question":"","reponse":true,"correction":"","source":""},',
+'{"type":"flash","recto":"","verso":"","source":""},',
+'{"type":"cloze","question":"phrase avec _____","reponse":"","source":""},',
+'{"type":"ouverte","question":"","attendu":"","motsCles":["",""],"source":""},',
+'{"type":"situation","question":"mise en situation commerciale tirée des notes","attendu":"","motsCles":["",""],"source":""},',
+'{"type":"erreur","question":"situation contenant une erreur à repérer","attendu":"","motsCles":["",""],"source":""},',
+'{"type":"ordre","question":"Remets ces étapes dans l\'ordre.","etapes":["","",""],"source":""}',
+"]}",
+"",
+"Vise 6 à 12 notions et 18 à 30 exercices variés. Pour \"ordre\", donne les étapes DANS LE BON ORDRE.",
+"Le champ \"lacunes\" liste les points que les notes mentionnent sans les développer : sois précis et bref."
+  ].join("\n");
+}
+
+async function appelGemini(cle, modele, corps){
+  const r = await fetch(API + "/models/" + encodeURIComponent(modele) + ":generateContent?key=" + encodeURIComponent(cle),
+    {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(corps)});
+  if(!r.ok){
+    let d = ""; try{ d = (await r.json()).error.message; }catch(e){}
+    throw new Error("Gemini a renvoyé une erreur " + r.status + (d ? " : " + d : "") + ".");
+  }
+  return await r.json();
+}
+
+async function analyseGemini(texte, ressId, cle, modele){
+  const d = await appelGemini(cle, modele, {
+    systemInstruction:{parts:[{text:consigne(ressId)}]},
+    contents:[{role:"user", parts:[{text:"NOTES DE COURS :\n\n" + texte}]}],
+    generationConfig:{temperature:0.2, responseMimeType:"application/json", maxOutputTokens:8192}
+  });
+  const cand = (d.candidates || [])[0];
+  if(!cand) throw new Error("Gemini n'a rien renvoyé. Les notes sont peut-être trop longues : coupe-les en deux.");
+  const brut = ((cand.content && cand.content.parts) || []).map(p => p.text || "").join("");
+  let o;
+  try{ o = JSON.parse(brut.replace(/^```json\s*|```\s*$/g,"").trim()); }
+  catch(e){ throw new Error("La réponse de Gemini n'était pas exploitable. Relance l'analyse."); }
+  return normaliserSortieIA(o, ressId);
+}
+
+/* Second appel : compléments extérieurs, avec recherche web activée.
+   On ne garde que les URL présentes dans groundingMetadata. */
+async function complementsGemini(fiche, ressId, cle, modele){
+  const r = RESSOURCE(ressId);
+  const lacunes = (fiche.lacunes || []).slice(0,5);
+  const sujets = lacunes.length ? lacunes : (fiche.notions || []).slice(0,4).map(n => n.terme);
+  if(!sujets.length) return [];
+  const q = [
+    "Contexte : cours de " + (r ? r.nom : "commerce") + " en B.U.T. Techniques de commercialisation, France.",
+    "Pour chacun des points suivants, donne une précision courte et exacte, en français, en t'appuyant sur une recherche web :",
+    sujets.map((s,i) => (i+1) + ". " + s).join("\n"),
+    "",
+    "Trois phrases maximum par point. Pas de liste de liens dans ta réponse, pas d'URL écrite à la main.",
+    "Format : une ligne par point, préfixée du numéro et d'un tiret."
+  ].join("\n");
+  let d;
+  try{
+    d = await appelGemini(cle, modele, {
+      contents:[{role:"user", parts:[{text:q}]}],
+      tools:[{google_search:{}}],
+      generationConfig:{temperature:0.1, maxOutputTokens:2048}
+    });
+  }catch(e){ return []; }
+  const cand = (d.candidates || [])[0];
+  if(!cand) return [];
+  const txt = ((cand.content && cand.content.parts) || []).map(p => p.text || "").join("");
+  const gm = cand.groundingMetadata || {};
+  const liens = (gm.groundingChunks || [])
+    .map(c => c && c.web ? {url:c.web.uri, titre:c.web.title || c.web.uri} : null)
+    .filter(Boolean);
+  if(!liens.length) return [];
+  return txt.split("\n").map(l => l.trim())
+    .filter(l => /^\d+\s*[.)-]/.test(l) && l.length > 25)
+    .slice(0, sujets.length)
+    .map((l,i) => ({txt: l.replace(/^\d+\s*[.)-]\s*/,"").trim(),
+      sujet: sujets[i] || "", liens: liens.slice(0,3)}));
+}
+
+function normaliserSortieIA(o, ressId){
+  const f = o.fiche || {};
+  const tab = x => Array.isArray(x) ? x : [];
+  const lst = (k, champs) => tab(f[k]).filter(x => x && x[champs[0]]).map(x => {
+    const r = {}; champs.forEach(c => r[c] = x[c] || "");
+    r.src = x.src || ""; if(x.incertain === true) r.incertain = true; return r;
+  });
+  const fiche = {
+    resume: f.resume || "",
+    notions: lst("notions", ["terme","def"]),
+    parCoeur: lst("parCoeur", ["txt"]),
+    calculs: lst("calculs", ["txt"]),
+    juridique: lst("juridique", ["txt"]),
+    pieges: lst("pieges", ["txt"]),
+    exemples: lst("exemples", ["txt"]),
+    sigles: lst("sigles", ["sigle","sens"]),
+    lacunes: tab(f.lacunes).filter(x => typeof x === "string"),
+    ajouts: []
+  };
+  const items = [];
+  tab(o.items).forEach(it => {
+    if(!it || !TYPES[it.type]) return;
+    const b = {id:uid(), ressId, type:it.type, cree:Date.now(), origine:"gemini",
+      source: it.source || "", correction: it.correction || ""};
+    if(it.type === "qcm" && Array.isArray(it.options) && it.options.length >= 2){
+      items.push(Object.assign(b, {question:it.question, options:it.options,
+        reponse: Math.max(0, Math.min(it.options.length - 1, Number(it.reponse) || 0))}));
+    } else if(it.type === "qcmMulti" && Array.isArray(it.options) && Array.isArray(it.reponses) && it.reponses.length){
+      items.push(Object.assign(b, {question:it.question, options:it.options,
+        reponses: it.reponses.map(Number).filter(n => n >= 0 && n < it.options.length)}));
+    } else if(it.type === "vf" && it.question){
+      items.push(Object.assign(b, {question:it.question, reponse: it.reponse === true || it.reponse === "true"}));
+    } else if(it.type === "flash" && it.recto && it.verso){
+      items.push(Object.assign(b, {recto:it.recto, verso:it.verso}));
+    } else if(it.type === "cloze" && it.question && it.reponse){
+      items.push(Object.assign(b, {question:it.question, reponse:it.reponse}));
+    } else if((it.type === "ouverte" || it.type === "erreur" || it.type === "situation") && it.question){
+      items.push(Object.assign(b, {question:it.question, attendu:it.attendu || "",
+        motsCles: Array.isArray(it.motsCles) && it.motsCles.length ? it.motsCles : motsCles(it.attendu || "", 6)}));
+    } else if(it.type === "ordre" && Array.isArray(it.etapes) && it.etapes.length >= 3){
+      items.push(Object.assign(b, {question: it.question || "Remets ces étapes dans l'ordre.", etapes:it.etapes}));
+    }
+  });
+  return {fiche, items};
+}
+
+/* =========================================================================
+   9. PROGRESSION — trois boîtes, erreurs confiantes
+   ========================================================================= */
+const DELAIS = {1:0, 2:2, 3:7};
+function prog(id){
+  if(!S.progres[id]) S.progres[id] = {boite:1, vus:0, ok:0, ko:0, dernier:0, prochain:0, erreurConfiante:false};
+  return S.progres[id];
+}
+function majProg(id, juste, sur){
+  const p = prog(id);
+  p.vus++; p.dernier = Date.now();
+  if(juste){ p.ok++; p.boite = Math.min(3, p.boite + 1); if(p.ok >= p.ko) p.erreurConfiante = false; }
+  else{ p.ko++; p.boite = 1; if(sur === true) p.erreurConfiante = true; }
+  p.prochain = Date.now() + DELAIS[p.boite] * JOUR;
+  sauver();
+}
+function tousItems(){ return S.cours.flatMap(c => c.items.map(i => Object.assign({coursId:c.id, coursTitre:c.titre}, i))); }
+function itemsDus(){ const t = Date.now(); return tousItems().filter(i => { const p = S.progres[i.id]; return !p || p.prochain <= t; }); }
+function carnetErreurs(){ return tousItems().filter(i => { const p = S.progres[i.id]; return p && p.ko > 0 && p.boite === 1; }); }
+function erreursConfiantes(){ return tousItems().filter(i => { const p = S.progres[i.id]; return p && p.erreurConfiante; }); }
+function statsRess(id){
+  const its = tousItems().filter(i => i.ressId === id);
+  const sus = its.filter(i => S.progres[i.id] && S.progres[i.id].boite === 3);
+  return {total:its.length, sus:sus.length, part: its.length ? Math.round(sus.length / its.length * 100) : 0};
+}
+function statsUE(ue){
+  let total = 0, sus = 0;
+  TOUTES().forEach(r => { if(r.c[ue]){ const s = statsRess(r.id); total += s.total; sus += s.sus; } });
+  return {total, sus, part: total ? Math.round(sus / total * 100) : 0};
+}
+
+/* =========================================================================
+   10. FICHE IMPRIMABLE
+   Une colonne de marge à gauche, le corps à droite, une rubrique par
+   section, rien d'imprimé qui soit vide. Les rubriques hors cours sont
+   visuellement distinctes et portent leur source.
+   ========================================================================= */
+const RUBRIQUES = [
+  {k:"notions",  t:"Notions",            liste:false},
+  {k:"parCoeur", t:"À savoir par cœur",  liste:true, cadre:"chaud"},
+  {k:"calculs",  t:"Formules et calculs",liste:true, cadre:"chaud"},
+  {k:"juridique",t:"Cadre juridique",    liste:true},
+  {k:"pieges",   t:"Erreurs classiques", liste:true, alerte:true},
+  {k:"exemples", t:"Exemples",           liste:true, ex:true},
+  {k:"sigles",   t:"Sigles",             liste:false}
+];
+
+function cleTri(c){ if(!c.tri) c.tri = {off:{}, fort:{}}; return c.tri; }
+function estRetire(c, ref){ return !!cleTri(c).off[ref]; }
+function niveauDe(c, ref){ return cleTri(c).fort[ref] || "normal"; }
+
+function ligneImp(c, ref, corps){
+  if(estRetire(c, ref)) return "";
+  const n = niveauDe(c, ref);
+  if(n === "surligne") return "<div><mark>" + corps + "</mark></div>";
+  if(n === "cadre") return '<div class="cadre">' + corps + "</div>";
+  return "<div>" + corps + "</div>";
+}
+function section(titre, corps){
+  return corps ? '<section><div class="marge">' + esc(titre) + '</div><div class="corps">' + corps + "</div></section>" : "";
+}
+
+function imprimerFiche(id, mode){
+  const c = S.cours.find(x => x.id === id); if(!c) return;
+  const r = RESSOURCE(c.ressId), f = c.fiche;
+  const cls = "f" + (mode === "nb" ? " nb" : "") + (mode === "compact" ? " compact" : "");
+  const ue = r ? ueDominante(r) : 1;
+  let h = '<div class="' + cls + '"><div class="bandeau"></div><div class="tete">' +
+    '<span class="meta">' + (r ? esc("coef " + coefTotal(r) + " · " + (r.h ? r.h + " h" : "SAÉ")) : "") + "</span>" +
+    '<span class="code">' + esc(c.ressId || "—") + "</span>" +
+    "<h1>" + esc(c.titre) + "</h1>" +
+    '<div class="ue">' + esc(COMP[ue].code + " " + COMP[ue].nom) + " · semestre " + (r ? r.s : "—") + "</div></div>";
+
+  if(f.resume && mode !== "compact") h += '<section><div class="marge">En deux mots</div><div class="corps">' + esc(f.resume) + "</div></section>";
+
+  RUBRIQUES.forEach(rb => {
+    const l = (f[rb.k] || []).filter((_,i) => !estRetire(c, rb.k + i));
+    if(!l.length) return;
+    let corps = "";
+    if(rb.k === "notions"){
+      let n = 0;
+      corps = (f[rb.k] || []).map((x,i) => {
+        if(estRetire(c, "notions" + i)) return "";
+        n++;
+        const inc = x.incertain ? ' <span style="font-size:8pt;color:#8A8074">(à vérifier)</span>' : "";
+        const corpsN = '<span class="terme">' + esc(x.terme) + "</span> — " + esc(x.def) + inc;
+        const niv = niveauDe(c, "notions" + i);
+        const inner = niv === "surligne" ? "<mark>" + corpsN + "</mark>"
+          : niv === "cadre" ? '<div class="cadre">' + corpsN + "</div>" : corpsN;
+        return '<div class="n"><span class="num">' + String(n).padStart(2,"0") + '</span><span class="txt">' + inner + "</span></div>";
+      }).join("");
+    } else if(rb.k === "sigles"){
+      corps = (f[rb.k] || []).map((x,i) => estRetire(c, "sigles" + i) ? "" :
+        '<div><span class="terme">' + esc(x.sigle) + "</span> — " + esc(x.sens) + "</div>").join("");
+    } else {
+      corps = (f[rb.k] || []).map((x,i) => {
+        const ref = rb.k + i;
+        if(estRetire(c, ref)) return "";
+        let inner = esc(x.txt);
+        if(rb.ex) inner = '<span class="ex">' + inner + "</span>";
+        if(rb.alerte) return '<div class="alerte">' + inner + "</div>";
+        return ligneImp(c, ref, inner);
+      }).join("");
+      if(rb.cadre && corps) corps = '<div class="cadre ' + rb.cadre + '">' + corps + "</div>";
+    }
+    h += section(rb.t, corps);
+  });
+
+  if((f.ajouts || []).length){
+    const corps = f.ajouts.map((a,i) => estRetire(c, "ajouts" + i) ? "" :
+      '<div class="ajout"><span class="lab">Hors cours · à vérifier avec ta prof</span>' +
+      esc(a.txt) + "<br>" + (a.liens || []).map(x => '<a>' + esc(tronquer(x.url, 70)) + "</a>").join("<br>") + "</div>").join("");
+    h += section("Compléments", corps);
+  }
+
+  if(mode !== "compact"){
+    h += section("Mes questions", '<div class="lignes"><div></div><div></div><div></div><div></div></div>');
+  }
+  h += '<div class="pied"><span>' + esc(c.titre ? tronquer(c.titre, 46) : "") + "</span><span>" +
+    esc("importé le " + dateFr(c.date)) + "</span></div></div>";
+  $("#impression").innerHTML = h;
+  window.print();
+}
+
+function imprimerErreurs(){
+  const l = carnetErreurs();
+  if(!l.length) return;
+  const parR = {};
+  l.forEach(i => (parR[i.ressId] = parR[i.ressId] || []).push(i));
+  let h = '<div class="f"><div class="bandeau"></div><div class="tete"><span class="meta">' +
+    l.length + " exercice" + (l.length>1?"s":"") + "</span>" +
+    '<span class="code">CARNET D\'ERREURS</span><h1>Ce que je rate encore</h1></div>';
+  Object.keys(parR).forEach(id => {
+    const r = RESSOURCE(id);
+    const corps = parR[id].map(i => {
+      let rep = "";
+      if(i.type === "flash") rep = i.verso;
+      else if(i.type === "qcm") rep = i.options[i.reponse];
+      else if(i.type === "qcmMulti") rep = (i.reponses||[]).map(n => i.options[n]).join(" ; ");
+      else if(i.type === "vf") rep = i.reponse ? "Vrai" : "Faux";
+      else if(i.type === "cloze") rep = i.reponse;
+      else if(i.type === "ordre") rep = i.etapes.join(" → ");
+      else if(i.type === "paires") rep = i.paires.map(p => p[0] + " → " + p[1]).join(" ; ");
+      else rep = i.attendu || (i.motsCles || []).join(", ");
+      return '<div class="n"><span class="num">·</span><span class="txt"><span class="terme">' +
+        esc(i.question || i.recto || "") + "</span><br>" + esc(tronquer(rep, 240)) + "</span></div>";
+    }).join("");
+    h += section(r ? r.id : id, corps);
+  });
+  $("#impression").innerHTML = h + '<div class="pied"><span>Carnet d\'erreurs</span><span>' +
+    esc(dateFr(new Date().toISOString())) + "</span></div></div>";
+  window.print();
+}
+
+/* =========================================================================
+   11. LECTURE AUDIO ET FICHIERS
+   ========================================================================= */
+function lire(texte){
+  if(!window.speechSynthesis){ ui.message = {titre:"Lecture indisponible", txt:"Ce navigateur ne propose pas de synthèse vocale."}; rendre(); return; }
+  speechSynthesis.cancel();
+  const m = new SpeechSynthesisUtterance(texte);
+  m.lang = "fr-FR"; m.rate = Number(S.reglages.debitVoix) || 1;
+  const v = speechSynthesis.getVoices().find(x => x.name === S.reglages.voix);
+  if(v) m.voice = v;
+  speechSynthesis.speak(m);
+}
+function texteFiche(c){
+  const f = c.fiche;
+  return [c.titre, f.resume,
+    (f.notions||[]).map(d => d.terme + " : " + d.def).join(". "),
+    (f.parCoeur||[]).map(p => p.txt).join(". ")].filter(Boolean).join(". ");
+}
+function scriptExterne(src){
+  return new Promise((ok, ko) => {
+    if(document.querySelector('script[src="' + src + '"]')) return ok();
+    const s = document.createElement("script");
+    s.src = src; s.onload = () => ok();
+    s.onerror = () => ko(new Error("Chargement impossible : une connexion est nécessaire pour lire ce format."));
+    document.head.appendChild(s);
+  });
+}
+async function lireFichier(f){
+  const nom = f.name.toLowerCase();
+  if(/\.(txt|md|csv)$/.test(nom)){ const t = await f.text(); return {texte:t, blocs:decouper(t), forts:[]}; }
+  if(/\.docx$/.test(nom)){
+    await scriptExterne("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js");
+    const buf = await f.arrayBuffer();
+    const r = await window.mammoth.convertToHtml({arrayBuffer: buf});
+    return depuisHtml(r.value || "");
+  }
+  if(/\.pdf$/.test(nom)){
+    await scriptExterne("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    const buf = await f.arrayBuffer();
+    const doc = await window.pdfjsLib.getDocument({data: buf}).promise;
+    let t = "";
+    for(let p = 1; p <= doc.numPages; p++){
+      const page = await doc.getPage(p);
+      const c = await page.getTextContent();
+      t += c.items.map(i => i.str).join(" ") + "\n\n";
+    }
+    return {texte:t, blocs:decouper(t), forts:[]};
+  }
+  throw new Error("Format non pris en charge.");
+}
+
+/* =========================================================================
+   12. LEÇON D'ENTRÉE — vérifiée le 6 septembre 2026.
+   Rien n'est écrit ici sans source consultable, listée en fin de leçon.
+   ========================================================================= */
+const LECONS = {
+SOCLE: {titre:"Comprendre le BUT avant d'y entrer", duree:"10 min", diapos:[
+ {t:"intro", kick:"Pour commencer", titre:"Trois ans, et un vocabulaire à apprivoiser",
+  texte:"Le BUT ne fonctionne pas comme le lycée. Il n'y a pas des matières notées séparément, mais des compétences qu'on prouve. Le vocabulaire déroute la première semaine — ressources, SAÉ, portfolio, apprentissages critiques. Une fois ces mots en place, tout le reste devient lisible."},
+
+ {t:"notion", kick:"Le diplôme", titre:"Ce que tu prépares exactement",
+  paras:["Le Bachelor Universitaire de Technologie est un diplôme national public, en trois ans, qui confère le grade de licence. Techniques de commercialisation forme à intervenir dans toutes les étapes de la commercialisation d'un bien ou d'un service : de l'étude de marché à la vente, en passant par la stratégie marketing, la communication commerciale, la négociation et la relation client.",
+   "À Carcassonne, la formation représente 2 400 heures et 180 ECTS, dont 600 heures de projets tutorés."],
+  encart:{type:"info", titre:"Bon à savoir", texte:"Le BUT a remplacé le DUT, qui se faisait en deux ans. Les manuels et les témoignages d'avant 2021 décrivent donc une organisation qui n'existe plus."}},
+
+ {t:"notion", kick:"L'ossature", titre:"Trois compétences, trois UE",
+  paras:["En première année, tout est structuré par trois compétences, identiques dans tous les IUT de France : Marketer, c'est-à-dire conduire les actions marketing ; Vendre, c'est-à-dire vendre une offre commerciale ; Communiquer, c'est-à-dire communiquer l'offre commerciale.",
+   "Sur ta maquette, ces trois compétences sont exactement tes trois UE, et elles pèsent le même poids : 10 ECTS chacune, à chaque semestre."],
+  encart:{type:"astuce", titre:"À retenir", texte:"Aucune des trois n'est secondaire. Se dire « je suis plutôt vente » ne dispense d'aucune : les trois se valident."}},
+
+ {t:"vocab", kick:"Le vocabulaire", titre:"Les six mots à connaître avant la rentrée", mots:[
+  {m:"Ressource", d:"Un enseignement classique, avec un code du type R1.01. Il apporte les savoirs dont tu auras besoin."},
+  {m:"SAÉ", d:"Situation d'apprentissage et d'évaluation. Une mise en situation concrète où tu mobilises plusieurs ressources à la fois. C'est là que la compétence se prouve."},
+  {m:"Apprentissage critique", d:"Codé AC, c'est un résultat attendu précis. Il dit ce que tu dois savoir faire pour atteindre un niveau de compétence."},
+  {m:"Composante essentielle", d:"Codée CE, elle décrit la manière dont la compétence doit être exercée : avec quelle rigueur, dans quel respect des règles."},
+  {m:"Portfolio", d:"Un dossier que tu construis tout au long des trois ans, où tu démontres toi-même la progression de tes compétences."},
+  {m:"PPP", d:"Projet personnel et professionnel. Le travail sur ton orientation, tes stages, ton métier visé."}]},
+
+ {t:"notion", kick:"Une particularité", titre:"Une même matière compte plusieurs fois",
+  paras:["Sur ta maquette, la plupart des enseignements apparaissent dans les trois UE, avec un coefficient différent à chaque fois. Techniques quantitatives pèse 0,5 en Marketer mais 1,5 en Vendre. Ressources et culture numériques pèse 1 en Vendre et 0,5 ailleurs.",
+   "Autrement dit, une matière que tu négliges ne fait pas baisser une seule note : elle en fait baisser trois, de façon inégale."],
+  encart:{type:"piege", titre:"Le vrai piège", texte:"Les matières les plus lourdes ne sont pas celles qu'on croit. Fondamentaux de la vente pèse 3 à lui seul, et la SAÉ Vente pèse 6. Une SAÉ ratée coûte bien plus cher qu'un contrôle raté."}},
+
+ {t:"etapes", kick:"Le déroulé", titre:"À quoi ressemble ta première année",
+  etapes:["Semestre 1 : les fondamentaux du marketing, de la vente et de la communication commerciale, plus trois SAÉ",
+   "Semestre 2 : marketing mix, prospection et négociation, moyens de la communication, et cinq SAÉ",
+   "Toujours en semestre 2 : quatre semaines de stage",
+   "Semestre 3, en deuxième année : tu choisis ton parcours de spécialisation"],
+  note:"Le choix du parcours se fait donc en cours de deuxième année, pas à l'entrée. Tu as le temps de voir ce qui te plaît."},
+
+ {t:"chiffres", kick:"Ton IUT", titre:"Les repères de Carcassonne", lignes:[
+  {v:"58 / 28 / 14", l:"étudiants en cours magistral, en travaux dirigés, en travaux pratiques"},
+  {v:"4 sem.", l:"de stage en première année"},
+  {v:"8 puis 10", l:"semaines de stage en deuxième puis troisième année"},
+  {v:"2", l:"parcours proposés sur place : point de vente, et marketing digital"}],
+  note:"Les langues sont l'anglais et l'espagnol. L'alternance est possible à partir de la deuxième année, et la mobilité internationale au semestre 3."},
+
+ {t:"quiz", kick:"Vérification", question:"Tu passes plus de temps sur le marketing que sur la vente, parce que c'est ce qui t'intéresse. Que se passe-t-il ?",
+  options:["Rien, seule l'UE Marketer en profite",
+   "Les trois UE bougent, car la plupart des matières comptent dans les trois avec des coefficients différents",
+   "C'est la moyenne générale qui compte, donc l'équilibre se fait tout seul"],
+  bonne:1,
+  expl:"Sur la maquette, presque chaque enseignement est affecté aux trois UE avec des coefficients distincts. Négliger une matière ne pénalise pas une note, mais trois — et pas de la même façon."},
+
+ {t:"encart", kick:"Attention, ça a changé", titre:"Le DUT n'existe plus", type:"garde",
+  texte:"Beaucoup de contenus en ligne — vidéos, forums, fiches d'orientation — décrivent encore le DUT Techniques de commercialisation, en deux ans, organisé en modules. Le BUT l'a remplacé : trois ans, grade licence, organisation par compétences et par SAÉ, spécialisation à partir du semestre 3. Si une source parle de DUT en deux ans, elle est périmée."},
+
+ {t:"notion", kick:"Honnêteté", titre:"Ce que cette application ne sait pas encore",
+  paras:["Trois points n'ont pas pu être vérifiés de façon fiable, et ne sont donc écrits nulle part dans l'application : les règles exactes de validation et de compensation entre UE, les modalités précises d'évaluation, et la durée des stages de deuxième et troisième année, sur laquelle les deux sources officielles de l'IUT ne disent pas la même chose.",
+   "Pose ces questions à la scolarité pendant la semaine d'intégration. Ce sont exactement les questions qui font bonne impression."],
+  encart:{type:"info", titre:"La règle générale", texte:"En cas d'écart entre cette application et ce que dit ton IUT, c'est ton IUT qui a raison. Toujours."}},
+
+ {t:"quiz", kick:"Vérification", question:"Une SAÉ, c'est quoi ?",
+  options:["Un examen de fin de semestre",
+   "Une mise en situation concrète où tu mobilises plusieurs ressources pour prouver une compétence",
+   "Un stage obligatoire en entreprise"],
+  bonne:1,
+  expl:"Situation d'apprentissage et d'évaluation. C'est le cœur du BUT : la compétence ne se prouve pas sur une interrogation, mais sur une situation qui ressemble au métier. Et ça pèse lourd — jusqu'à 6 de coefficient."},
+
+ {t:"sources", kick:"Pour aller vérifier", titre:"Sources de cette leçon", liste:[
+  {titre:"Programme national du B.U.T. Techniques de commercialisation", ref:"Annexe 25, ministère de l'Enseignement supérieur — compétences, ressources, SAÉ, parcours", url:"https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2023-12/techniques-de-commercialisation-30885.pdf"},
+  {titre:"Université de Perpignan Via Domitia", ref:"Fiche BUT TC, campus de Carcassonne — durée, ECTS, heures, stages, langues, alternance", url:"https://formations.univ-perp.fr/diplome/but/but-techniques-de-commercialisation"},
+  {titre:"Parcoursup, fiche de la formation", ref:"IUT de Perpignan, site de Carcassonne — effectifs, parcours ouverts, attendus nationaux", url:"https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=2470"},
+  {titre:"Maquette des enseignements BUT1 TC", ref:"Offre 2024-2025, UPVD — ECTS, coefficients et volumes horaires par UE", url:""},
+  {titre:"Onisep", ref:"BUT techniques de commercialisation — les cinq parcours et les établissements", url:"https://www.onisep.fr/ressources/univers-formation/formations/post-bac/but-techniques-de-commercialisation-parcours-strategie-de-marque-et-evenementiel"}],
+  note:"Vérifié le 6 septembre 2026. La maquette utilisée est celle de l'offre 2024-2025 : les coefficients et volumes horaires ont pu évoluer depuis."}
+]}
+};
+const LECONS_PRETES = Object.keys(LECONS);
+
+/* =========================================================================
+   13. INTERFACE
+   ========================================================================= */
+let ui = {tab:"prep", ecran:"accueil", lecon:null, parcours:null, fiche:null, session:null,
+  filtreUE:"", importTexte:"", importSrc:null, importRess:"", importTitre:"",
+  avisRGPD:null, rgpdIgnore:false, occupe:false, etape:"", message:null,
+  resultat:null, quizRep:null};
+
+function progLecon(k){ if(!S.prep[k]) S.prep[k] = {index:0, termine:false, quiz:{}}; return S.prep[k]; }
+function leconsFaites(){ return LECONS_PRETES.filter(k => S.prep[k] && S.prep[k].termine).length; }
+
+function aller(tab, ecran){ ui.tab = tab; ui.ecran = ecran || "accueil"; ui.message = null; rendre(); window.scrollTo(0,0); }
+
+function rendre(){
+  $("#nav").innerHTML = '<div class="in">' +
+    '<button data-act="nav" data-tab="prep" class="' + (ui.tab==="prep"?"act":"") + '"><span class="ic">◈</span>Préparation</button>' +
+    '<button data-act="nav" data-tab="rev" class="' + (ui.tab==="rev"?"act":"") + '"><span class="ic">◇</span>Révision</button></div>';
+  const ecrans = {
+    "prep/accueil":ecranPrep, "prep/lecon":ecranLecon, "prep/parcours":ecranParcours,
+    "rev/accueil":ecranRev, "rev/import":ecranImport, "rev/fiches":ecranFiches, "rev/fiche":ecranFiche,
+    "rev/tri":ecranTri, "rev/reviser":ecranReviser, "rev/session":ecranSession,
+    "rev/examen":ecranExamen, "rev/planning":ecranPlanning, "reglages":ecranReglages
+  };
+  const f = ecrans[ui.ecran === "reglages" ? "reglages" : ui.tab + "/" + ui.ecran] || ecranPrep;
+  let h = "";
+  if(ui.ecran !== "lecon" && ui.ecran !== "session"){
+    if(ui.message) h += '<div class="ecran" style="padding-bottom:0"><div class="avis ' + (ui.message.type||"info") + '">' +
+      "<b>" + esc(ui.message.titre) + "</b>" + esc(ui.message.txt) + "</div></div>";
+    if(!stockageOk) h += '<div class="ecran" style="padding-bottom:0"><div class="avis"><b>Rien ne sera conservé</b>' +
+      "Le navigateur bloque l'enregistrement local. Ouvre le fichier depuis ton appareil pour garder ta progression.</div></div>";
+  }
+  $("#app").innerHTML = h + f();
+}
+function entete(titre, sous, badge){
+  return '<div class="enTete"><div><h1>' + titre + "</h1></div>" +
+    (badge ? '<span class="jour">' + badge + "</span>" : "") +
+    '<button class="iconeBtn" data-act="ecran" data-e="reglages" aria-label="Réglages">⚙</button></div>' +
+    (sous ? '<p class="sousTitre">' + sous + "</p>" : "");
+}
+function retour(vers, titre){
+  return '<div class="enTete"><div style="display:flex;align-items:center;gap:10px">' +
+    '<button class="iconeBtn" data-act="ecran" data-e="' + vers + '" aria-label="Retour">‹</button><h1>' + titre + "</h1></div>" +
+    '<button class="iconeBtn" data-act="ecran" data-e="reglages" aria-label="Réglages">⚙</button></div>';
+}
+function carte(ic, titre, sous, ecran){
+  return '<button class="carteAct" data-act="ecran" data-e="' + ecran + '">' +
+    '<span class="ic">' + ic + '</span><span class="tx"><b>' + esc(titre) + "</b><small>" + esc(sous) + "</small></span>" +
+    '<span class="fl">›</span></button>';
+}
+function joursRentree(){
+  const d = S.reglages.dateRentree;
+  if(!d) return null;
+  const j = joursEntre(new Date(), d);
+  return j >= 0 ? j : null;
+}
+function encartHtml(e){
+  return '<div class="encart ' + e.type + '">' + (e.titre ? '<b class="et">' + esc(e.titre) + "</b>" : "") + esc(e.texte) + "</div>";
+}
+
+/* ---- onglet Préparation ---- */
+function ecranPrep(){
+  const j = joursRentree();
+  let h = '<div class="ecran">' + entete("Préparation",
+    "Prendre de l'avance avant la rentrée", j !== null ? "J–" + j : null);
+  const p = progLecon("SOCLE");
+  h += '<div class="progLigne"><div class="jauge"><i style="width:' +
+    (p.termine ? 100 : Math.round(p.index / Math.max(1, LECONS.SOCLE.diapos.length) * 100)) + '%"></i></div>' +
+    "<span>" + (p.termine ? "leçon faite" : (p.index + 1) + "/" + LECONS.SOCLE.diapos.length) + "</span></div>";
+  h += '<button class="carteAct" data-act="ouvrir-lecon" data-l="SOCLE">' +
+    '<span class="ic">◈</span><span class="tx"><b>Comprendre le BUT</b><small>' +
+    (p.termine ? "revoir · " : (p.index > 0 ? "reprendre · " : "")) + LECONS.SOCLE.diapos.length + " écrans · " + LECONS.SOCLE.duree +
+    "</small></span><span class=\"fl\">›</span></button>";
+  h += carte("◆", "Choisir mon parcours", "les cinq spécialisations, et où les faire", "parcours");
+
+  h += '<p class="kick" style="margin-top:20px">Les trois compétences</p>';
+  [1,2,3].forEach(u => {
+    const st = statsUE(u);
+    h += '<div class="bloc"><div class="bloc-t"><span class="point" style="background:' + COMP[u].coul + '"></span>' +
+      '<span class="bloc-nom">' + esc(COMP[u].code + " · " + COMP[u].nom) + "</span>" +
+      '<span class="bloc-meta">10 ECTS</span></div>' +
+      '<div style="font-size:13.5px;color:var(--encre2);line-height:1.45">' + esc(COMP[u].verbe) +
+      (st.total ? " · " + st.total + " exercices, " + st.part + " % acquis" : "") + "</div></div>";
+  });
+  h += '<div class="avis" style="margin-top:14px"><b>Ce que sont ces contenus</b>' +
+    "Une mise en route, pas un cours. Chaque leçon finit par ses sources et sa date de vérification. " +
+    "En cas d'écart avec ce que dit ton IUT, c'est ton IUT qui fait foi.</div>";
+  return h + "</div>";
+}
+
+function ecranLecon(){
+  const L = LECONS[ui.lecon];
+  if(!L){ ui.ecran = "accueil"; return ecranPrep(); }
+  const p = progLecon(ui.lecon);
+  const i = Math.min(p.index, L.diapos.length - 1);
+  const d = L.diapos[i];
+  let h = '<div class="lecon"><div class="lecon-haut">' +
+    '<button class="fermer" data-act="fermer-lecon" aria-label="Fermer">×</button>' +
+    '<div class="pts">' + L.diapos.map((_,k) => '<span class="' + (k <= i ? "f" : "") + '"></span>').join("") + "</div>" +
+    '<span class="src">' + (i+1) + "/" + L.diapos.length + '</span></div><div class="diapo">';
+  h += '<p class="kick">' + esc(d.kick || "") + "</p>";
+  if(d.t === "intro"){
+    h += "<h2>" + esc(d.titre) + "</h2><p>" + esc(d.texte) + "</p>";
+  } else if(d.t === "notion"){
+    h += "<h3>" + esc(d.titre) + "</h3>" + d.paras.map(x => "<p>" + esc(x) + "</p>").join("");
+    if(d.encart) h += encartHtml(d.encart);
+  } else if(d.t === "vocab"){
+    h += "<h3>" + esc(d.titre) + '</h3><ul class="vocab">' +
+      d.mots.map(m => "<li><b>" + esc(m.m) + "</b><span>" + esc(m.d) + "</span></li>").join("") + "</ul>";
+  } else if(d.t === "etapes"){
+    h += "<h3>" + esc(d.titre) + '</h3><ol class="etapes">' + d.etapes.map(e => "<li>" + esc(e) + "</li>").join("") + "</ol>";
+    if(d.note) h += encartHtml({type:"info", titre:"Précision", texte:d.note});
+  } else if(d.t === "chiffres"){
+    h += "<h3>" + esc(d.titre) + '</h3><ul class="chiffres">' +
+      d.lignes.map(l => "<li><b>" + esc(l.v) + "</b><span>" + esc(l.l) + "</span></li>").join("") + "</ul>";
+    if(d.note) h += '<p style="font-size:13.5px;color:var(--encre2);margin-top:10px">' + esc(d.note) + "</p>";
+  } else if(d.t === "encart"){
+    h += "<h3>" + esc(d.titre) + "</h3>" + encartHtml({type:d.type, titre:"", texte:d.texte});
+  } else if(d.t === "quiz"){
+    h += "<h3>" + esc(d.question) + "</h3>";
+    d.options.forEach((o,k) => {
+      let cl = "opt";
+      if(ui.quizRep !== null){ if(k === d.bonne) cl = "opt juste"; else if(k === ui.quizRep) cl = "opt faux"; }
+      h += '<button class="' + cl + '" data-act="quiz" data-k="' + k + '"' + (ui.quizRep !== null ? " disabled" : "") + ">" + esc(o) + "</button>";
+    });
+    if(ui.quizRep !== null){
+      const bon = ui.quizRep === d.bonne;
+      h += '<div class="verdict ' + (bon ? "ok" : "ko") + '"><b>' + (bon ? "C'est ça." : "Pas tout à fait.") + "</b>" + esc(d.expl) + "</div>";
+    }
+  } else if(d.t === "sources"){
+    h += "<h3>" + esc(d.titre) + '</h3><ul class="sources">' + d.liste.map(s =>
+      "<li><b>" + esc(s.titre) + "</b>" + esc(s.ref) +
+      (s.url ? '<br><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(tronquer(s.url,58)) + "</a>"
+             : '<br><span class="src">document transmis par l\'IUT</span>') + "</li>").join("") + "</ul>";
+    if(d.note) h += '<p style="font-size:13.5px;color:var(--encre2);margin-top:12px">' + esc(d.note) + "</p>";
+  }
+  h += "</div>";
+  const dernier = i === L.diapos.length - 1;
+  const bloque = d.t === "quiz" && ui.quizRep === null;
+  h += '<div style="display:flex;gap:9px;align-items:center">' +
+    (i > 0 ? '<button class="btn" data-act="diapo-prec">Retour</button>' : "") +
+    '<button class="cta" style="flex:1;margin-top:0" data-act="diapo-suiv"' + (bloque ? " disabled" : "") + ">" +
+    (bloque ? "Choisis une réponse" : (dernier ? "Terminer" : "Continuer")) + "</button></div>";
+  return h + "</div>";
+}
+
+function ecranParcours(){
+  let h = '<div class="ecran">' + retour("accueil", "Mon parcours");
+  h += '<p class="sousTitre">Cinq spécialisations existent au niveau national. Le choix se fait au semestre 3, ' +
+    "en deuxième année. Deux sont proposées à Carcassonne.</p>";
+  PARCOURS.forEach(p => {
+    h += '<div class="bloc"><div class="bloc-t"><span class="point" style="background:' + p.coul + '"></span>' +
+      '<span class="bloc-nom">' + esc(p.nom) + "</span>" +
+      '<span class="bloc-meta" style="color:' + (p.ici ? "var(--terre-fonce)" : "var(--encre3)") + '">' +
+      (p.ici ? "sur place" : "ailleurs") + "</span></div>";
+    h += '<div style="font-size:13.5px;color:var(--encre2);line-height:1.5;margin-bottom:10px">' + esc(p.objectif) + "</div>";
+    if(p.comps.length){
+      h += '<details class="depli"><summary>Les deux compétences ajoutées</summary><div class="corps"><ul>' +
+        p.comps.map(c => "<li>" + esc(c) + "</li>").join("") + "</ul></div></details>";
+    }
+    h += '<details class="depli"><summary>Ce que tu étudies en plus</summary><div class="corps"><ul>' +
+      p.ress.map(r => "<li>" + esc(r) + "</li>").join("") + "</ul></div></details>";
+    if(!p.ici){
+      const total = p.iut.reduce((s,g) => s + g.l.length, 0);
+      h += '<details class="depli"><summary>Où le faire' + (total ? " · " + total : "") + '</summary><div class="corps">';
+      p.iut.forEach(g => {
+        h += "<p style=\"font-weight:600;color:var(--encre);margin:6px 0 4px\">" + esc(g.reg) + "</p>";
+        h += g.l.length ? "<ul>" + g.l.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>"
+          : "<p style=\"color:var(--encre3)\">Aucun établissement trouvé lors de la vérification.</p>";
+      });
+      h += "</div></details>";
+    }
+    if(p.note) h += '<div style="font-size:12.5px;color:var(--encre3);line-height:1.45;margin-top:8px">' + esc(p.note) + "</div>";
+    h += "</div>";
+  });
+  h += '<div class="avis" style="margin-top:6px"><b>À vérifier au moment du choix</b>' +
+    "Les listes d'IUT ont été relevées sur l'Onisep le 6 septembre 2026 et couvrent l'Occitanie et les régions limitrophes. " +
+    "L'offre change d'une année sur l'autre : confirme sur Parcoursup ou auprès de l'établissement.</div>";
+  return h + "</div>";
+}
+
+/* ---- onglet Révision ---- */
+function ecranRev(){
+  const items = tousItems().length, dus = itemsDus().length, err = carnetErreurs().length;
+  let h = '<div class="ecran">' + entete("Révision",
+    "Fiches et exercices tirés de tes propres notes", items ? items + " exercices" : null);
+  if(!S.cours.length){
+    h += '<div class="vide"><div class="em">◇</div><h3>Rien à réviser pour l\'instant</h3>' +
+      "<p>Cet onglet ne contient que ce que tu y déposes. Importe des notes de cours : l'application en tire une fiche imprimable et des exercices.</p></div>" +
+      '<button class="cta" data-act="ecran" data-e="import">Importer un premier cours</button>';
+    return h + "</div>";
+  }
+  h += '<div class="progLigne"><div class="jauge"><i style="width:' +
+    (items ? Math.round((items - dus)/items*100) : 0) + '%"></i></div><span>' + dus + " à revoir</span></div>";
+  h += carte("↻", "Réviser maintenant", dus + " exercice" + (dus>1?"s":"") + " à échéance", "reviser");
+  h += carte("✎", "Carnet d'erreurs", err ? err + " à reprendre" : "aucune erreur en attente", "reviser");
+  h += carte("▤", "Mes fiches", S.cours.length + " cours importé" + (S.cours.length>1?"s":""), "fiches");
+  h += carte("＋", "Importer un cours", "coller des notes ou déposer un fichier", "import");
+  h += carte("◷", "Épreuve blanche", "série chronométrée sur tes exercices", "examen");
+  h += carte("▦", "Planning", S.reglages.dateExamen ? "rétroplanning actif" : "définir une échéance", "planning");
+  return h + "</div>";
+}
+
+function ecranImport(){
+  const ia = S.reglages.moteur === "gemini";
+  let h = '<div class="ecran">' + retour("accueil", "Importer");
+  if(ui.avisRGPD && !ui.rgpdIgnore){
+    h += '<div class="avis"><b>Données peut-être identifiantes</b>' +
+      "Repéré : " + esc(ui.avisRGPD.join(", ")) + ". S'il s'agit d'un cas fictif ou déjà anonymisé, continue." +
+      (ia ? " En mode Gemini, le texte part chez Google." : "") +
+      '<div class="rang"><button class="btn plein mini" data-act="anonymiser">Anonymiser</button>' +
+      '<button class="btn mini" data-act="rgpd-ignorer">Cas fictif, continuer</button></div></div>';
+  }
+  h += '<label class="champ" for="i-titre">Titre</label>' +
+    '<input type="text" id="i-titre" data-bind="importTitre" value="' + esc(ui.importTitre) + '" placeholder="Segmentation et ciblage">' +
+    '<label class="champ" for="i-ress" style="margin-top:12px">Ressource</label>' +
+    '<select id="i-ress" data-bind="importRess"><option value="">— choisir —</option>' +
+    "<optgroup label=\"Semestre 1\">" + RESS.filter(r => r.s === 1).map(r =>
+      '<option value="' + r.id + '"' + (ui.importRess===r.id?" selected":"") + ">" + r.id + " · " + esc(tronquer(r.nom,40)) + "</option>").join("") + "</optgroup>" +
+    "<optgroup label=\"Semestre 2\">" + RESS.filter(r => r.s === 2).map(r =>
+      '<option value="' + r.id + '"' + (ui.importRess===r.id?" selected":"") + ">" + r.id + " · " + esc(tronquer(r.nom,40)) + "</option>").join("") + "</optgroup>" +
+    "<optgroup label=\"SAÉ\">" + SAE.map(r =>
+      '<option value="' + r.id + '"' + (ui.importRess===r.id?" selected":"") + ">" + esc(r.id + " · " + tronquer(r.nom,36)) + "</option>").join("") + "</optgroup>" +
+    "</select>" +
+    '<label class="champ" for="i-txt" style="margin-top:12px">Tes notes</label>' +
+    '<textarea id="i-txt" data-bind="importTexte" placeholder="Colle tes notes ici…">' + esc(ui.importTexte) + "</textarea>" +
+    '<div class="rang"><label class="btn mini" for="i-fic">Déposer un fichier</label>' +
+    '<input type="file" id="i-fic" accept=".txt,.md,.docx,.pdf" style="display:none">' +
+    '<span class="puce mono">' + (ia ? "Gemini" : "local") + "</span></div>" +
+    '<button class="cta" data-act="analyser"' + (ui.occupe?" disabled":"") + ">" +
+    (ui.occupe ? esc(ui.etape || "Analyse en cours…") : "Analyser") + "</button>";
+  if(!ia) h += '<div class="avis info" style="margin-top:14px"><b>Mode local</b>' +
+    "Hors ligne, l'analyse se limite à ce qu'elle sait repérer mécaniquement : définitions, valeurs chiffrées, " +
+    "termes mis en gras, listes. Elle ne hiérarchise pas. Repasse en mode Gemini dès que tu as du réseau.</div>";
+  else h += '<div class="avis info" style="margin-top:14px"><b>Un fichier Word donne un bien meilleur résultat</b>' +
+    "Les titres, le gras et les listes de ton document sont conservés et servent à repérer ce qui compte. " +
+    "Un PDF perd cette mise en forme.</div>";
+  return h + "</div>";
+}
+
+function ecranFiches(){
+  let h = '<div class="ecran">' + retour("accueil", "Mes fiches");
+  if(!S.cours.length) return h + '<div class="vide"><div class="em">▤</div><h3>Aucune fiche</h3><p>Chaque cours importé en produit une.</p></div></div>';
+  const q = ui.filtreUE;
+  h += '<div class="liste-puces"><button class="puce' + (q?"":" on") + '" data-act="filtre" data-ue="">Toutes</button>';
+  [...new Set(S.cours.map(c => c.ressId))].forEach(id =>
+    h += '<button class="puce mono' + (q===id?" on":"") + '" data-act="filtre" data-ue="' + id + '">' + esc(id) + "</button>");
+  h += "</div>";
+  (q ? S.cours.filter(c => c.ressId === q) : S.cours).forEach(c => {
+    const r = RESSOURCE(c.ressId), ue = r ? ueDominante(r) : 1;
+    h += '<button class="bloc" style="display:block;width:100%;text-align:left" data-act="ouvrir-fiche" data-id="' + c.id + '">' +
+      '<div class="bloc-t"><span class="point" style="background:' + COMP[ue].coul + '"></span>' +
+      '<span class="bloc-nom">' + esc(tronquer(c.titre,32)) + "</span>" +
+      '<span class="bloc-meta">' + esc(c.ressId || "") + " · " + c.items.length + " ex.</span></div>" +
+      '<div style="font-size:13.5px;color:var(--encre2);line-height:1.45">' +
+      esc(tronquer(c.fiche.resume || "Fiche disponible", 110)) + "</div></button>";
+  });
+  return h + "</div>";
+}
+
+function ligneSrc(x, ref){
+  const s = x.src || x.source || "";
+  return s ? ' <button class="src" data-act="src" data-cible="' + ref + '">source</button>' +
+    '<div class="srcTxt" id="' + ref + '">« ' + esc(tronquer(s,300)) + " »</div>" : "";
+}
+function ecranFiche(){
+  const c = S.cours.find(x => x.id === ui.fiche);
+  if(!c){ ui.ecran = "fiches"; return ecranFiches(); }
+  const r = RESSOURCE(c.ressId), f = c.fiche;
+  let h = '<div class="ecran">' + retour("fiches", esc(tronquer(c.titre, 20)));
+  h += '<div class="liste-puces"><span class="puce mono">' + esc(c.ressId || "—") + "</span>" +
+    (r ? '<span class="puce mono">coef ' + coefTotal(r) + "</span>" : "") +
+    '<span class="puce mono">' + c.items.length + " exercices</span>" +
+    '<span class="puce mono">' + (c.origine === "gemini" ? "Gemini" : "local") + "</span></div>" +
+    '<div class="rang">' +
+    '<button class="btn plein mini" data-act="session" data-source="cours" data-id="' + c.id + '">Réviser</button>' +
+    '<button class="btn mini" data-act="ecran" data-e="tri">Préparer la fiche</button>' +
+    '<button class="btn mini" data-act="imprimer" data-id="' + c.id + '" data-mode="couleur">Imprimer</button>' +
+    '<button class="btn mini" data-act="lire" data-id="' + c.id + '">Écouter</button>' +
+    '<button class="btn mini" data-act="stop-lecture">Stop</button>' +
+    '<button class="btn mini" data-act="supprimer" data-id="' + c.id + '">Supprimer</button></div>';
+  if(f.resume) h += '<p style="margin-bottom:14px">' + esc(f.resume) + "</p>";
+  const sect = (t, corps) => corps ? '<p class="kick" style="margin-top:16px">' + t + "</p>" + corps : "";
+  h += sect("Notions", (f.notions||[]).length ? '<ul class="vocab">' + f.notions.map((x,i) =>
+    "<li><b>" + esc(x.terme) + (x.incertain ? ' <span class="src">à vérifier</span>' : "") + "</b><span>" +
+    esc(x.def) + "</span>" + ligneSrc(x,"nt"+i) + "</li>").join("") + "</ul>" : "");
+  [["parCoeur","À savoir par cœur","pc"],["calculs","Formules et calculs","ca"],
+   ["juridique","Cadre juridique","ju"],["pieges","Erreurs classiques","pi"],["exemples","Exemples","ex"]].forEach(([k,t,p]) => {
+    h += sect(t, (f[k]||[]).length ? '<ul class="vocab">' + f[k].map((x,i) =>
+      "<li><span>" + esc(x.txt) + "</span>" + ligneSrc(x, p+i) + "</li>").join("") + "</ul>" : "");
+  });
+  h += sect("Sigles", (f.sigles||[]).length ? '<ul class="vocab">' + f.sigles.map(x =>
+    "<li><b>" + esc(x.sigle) + "</b><span>" + esc(x.sens) + "</span></li>").join("") + "</ul>" : "");
+  if((f.ajouts||[]).length){
+    h += '<p class="kick" style="margin-top:16px">Compléments hors cours</p>';
+    f.ajouts.forEach(a => {
+      h += '<div class="horsCours"><span class="et">Ne vient pas de tes notes</span>' + esc(a.txt) +
+        (a.liens||[]).map(x => '<br><a href="' + esc(x.url) + '" target="_blank" rel="noopener" style="font-size:12px;color:var(--c3);word-break:break-all">' +
+        esc(tronquer(x.titre || x.url, 60)) + "</a>").join("") + "</div>";
+    });
+  }
+  if((f.lacunes||[]).length){
+    h += '<p class="kick" style="margin-top:16px">Ce que tes notes n\'expliquent pas</p><ul class="vocab">' +
+      f.lacunes.map(x => "<li><span>" + esc(x) + "</span></li>").join("") + "</ul>";
+  }
+  return h + "</div>";
+}
+
+function ecranTri(){
+  const c = S.cours.find(x => x.id === ui.fiche);
+  if(!c){ ui.ecran = "fiches"; return ecranFiches(); }
+  const t = cleTri(c), f = c.fiche;
+  let h = '<div class="ecran">' + retour("fiche", "Préparer la fiche");
+  h += '<p class="sousTitre">Décoche ce qui n\'a pas sa place. Choisis ce que tu veux voir ressortir. ' +
+    "Trier maintenant, c'est déjà réviser.</p>";
+  const bloc = (k, titre, get) => {
+    const l = f[k] || [];
+    if(!l.length) return "";
+    let s = '<p class="kick" style="margin-top:16px">' + titre + "</p>";
+    l.forEach((x,i) => {
+      const ref = k + i;
+      s += '<div class="triLigne"><input type="checkbox" data-act="tri-off" data-ref="' + ref + '"' +
+        (t.off[ref] ? "" : " checked") + '><span class="tx">' + esc(tronquer(get(x), 150)) + "</span>" +
+        '<select data-act="tri-fort" data-ref="' + ref + '">' +
+        ['<option value="normal">normal</option>',
+         '<option value="surligne">surligné</option>',
+         '<option value="cadre">encadré</option>'].join("").replace('value="' + (t.fort[ref]||"normal") + '"',
+           'value="' + (t.fort[ref]||"normal") + '" selected') + "</select></div>";
+    });
+    return s;
+  };
+  h += bloc("notions", "Notions", x => x.terme + " — " + x.def);
+  h += bloc("parCoeur", "À savoir par cœur", x => x.txt);
+  h += bloc("calculs", "Formules et calculs", x => x.txt);
+  h += bloc("juridique", "Cadre juridique", x => x.txt);
+  h += bloc("pieges", "Erreurs classiques", x => x.txt);
+  h += bloc("exemples", "Exemples", x => x.txt);
+  h += bloc("sigles", "Sigles", x => x.sigle + " — " + x.sens);
+  h += bloc("ajouts", "Compléments hors cours", x => x.txt);
+  h += '<p class="kick" style="margin-top:20px">Imprimer</p><div class="rang">' +
+    '<button class="btn plein mini" data-act="imprimer" data-id="' + c.id + '" data-mode="couleur">En couleur</button>' +
+    '<button class="btn mini" data-act="imprimer" data-id="' + c.id + '" data-mode="nb">Noir et blanc</button>' +
+    '<button class="btn mini" data-act="imprimer" data-id="' + c.id + '" data-mode="compact">Compacte</button></div>' +
+    '<p style="font-size:12.5px;color:var(--encre3)">La version noir et blanc garde la hiérarchie sans aplats de couleur : ' +
+    "utile sur les imprimantes de l'IUT.</p>";
+  return h + "</div>";
+}
+
+/* ---- sessions ---- */
+const DELAIS_TXT = "Réussi, l'exercice monte d'une boîte : revu le jour même, puis à deux jours, puis à une semaine.";
+let minuteur = null;
+function mmss(s){ return String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0"); }
+function corrigerItem(it, choix, assoc, ordre){
+  switch(it.type){
+    case "qcm": return choix === it.reponse;
+    case "qcmMulti": { const a=(choix||[]).slice().sort().join(","), b=(it.reponses||[]).slice().sort().join(",");
+      return a === b && a !== ""; }
+    case "vf": return choix === it.reponse;
+    case "cloze": return normaliser(choix) === normaliser(it.reponse) && normaliser(choix) !== "";
+    case "ordre": return (ordre||[]).join(",") === it.etapes.map((_,i)=>i).join(",");
+    case "paires": return it.paires.every((p,i) => String((assoc||{})[i]) === String(i));
+    default: return null;
+  }
+}
+function motsTrouves(rep, cles){ const n = " " + normaliser(rep) + " ";
+  return (cles||[]).map(c => ({mot:c, ok:n.includes(normaliser(c))})); }
+function autoNote(it, rep){ const m = motsTrouves(rep||"", it.motsCles);
+  return m.length ? m.filter(x=>x.ok).length / m.length >= .5 : false; }
+
+function ouvrirSession(liste, mode, limite){
+  if(!liste.length){ ui.message = {titre:"Rien ici", txt:"Aucun exercice ne correspond à ce filtre."}; rendre(); return; }
+  ui.session = {liste:melanger(liste), i:0, mode, limite:limite||null, debut:Date.now(),
+    etat:"q", choix:null, sur:null, ordre:[], assoc:{}, resultats:[], melangeD:null};
+  if(mode === "sprint") ui.session.liste = ui.session.liste.slice(0,10);
+  preparerQuestion();
+  ui.ecran = "session"; ui.tab = "rev"; rendre(); lancerMinuteur();
+}
+function preparerQuestion(){
+  const s = ui.session, it = s.liste[s.i];
+  s.etat = "q"; s.choix = it.type === "qcmMulti" ? [] : null; s.sur = null; s.assoc = {}; s.melangeD = null;
+  s.ordre = it.type === "ordre" ? melanger(it.etapes.map((_,i)=>i)) : [];
+}
+function lancerMinuteur(){
+  clearInterval(minuteur);
+  if(!ui.session || (ui.session.mode !== "sprint" && ui.session.mode !== "examen")) return;
+  minuteur = setInterval(() => {
+    const el = document.getElementById("chrono");
+    if(!el || !ui.session){ clearInterval(minuteur); return; }
+    const e = Math.floor((Date.now() - ui.session.debut)/1000);
+    if(ui.session.limite){ const r = ui.session.limite - e;
+      if(r <= 0){ clearInterval(minuteur); terminerSession(); return; }
+      el.textContent = mmss(r); } else el.textContent = mmss(e);
+  }, 1000);
+}
+function carteSession(ic, titre, sous, source, actif){
+  return '<button class="carteAct" data-act="session" data-source="' + source + '"' + (actif?"":" disabled") + ">" +
+    '<span class="ic">' + ic + '</span><span class="tx"><b>' + esc(titre) + "</b><small>" + esc(sous) + "</small></span>" +
+    '<span class="fl">›</span></button>';
+}
+function ecranReviser(){
+  let h = '<div class="ecran">' + retour("accueil", "Réviser");
+  if(!tousItems().length) return h + '<div class="vide"><div class="em">◇</div><h3>Aucun exercice</h3>' +
+    "<p>Ils naissent des notes que tu importes.</p></div>" +
+    '<button class="cta" data-act="ecran" data-e="import">Importer un cours</button></div>';
+  const dus = itemsDus().length, err = carnetErreurs().length, conf = erreursConfiantes().length;
+  h += '<p class="sousTitre">' + DELAIS_TXT + "</p>";
+  h += carteSession("↻", "Révision du jour", dus + " à échéance", "dus", dus);
+  h += carteSession("⏱", "Sprint chronométré", "dix questions contre la montre", "sprint", 1);
+  h += carteSession("✎", "Carnet d'erreurs", err + " en attente", "erreurs", err);
+  h += carteSession("！", "Erreurs confiantes", conf + " ratée" + (conf>1?"s":"") + " en te croyant sûre", "confiantes", conf);
+  h += '<div class="rang"><button class="btn mini" data-act="fiche-erreurs"' + (err?"":" disabled") + ">Imprimer mes points faibles</button></div>";
+  h += '<p class="kick" style="margin-top:18px">Par ressource</p><div class="liste-puces">';
+  TOUTES().forEach(r => { const st = statsRess(r.id);
+    if(st.total) h += '<button class="puce mono" data-act="session" data-source="ress" data-ress="' + r.id + '">' +
+      esc(r.id) + " · " + st.total + "</button>"; });
+  return h + "</div></div>";
+}
+
+function ecranSession(){
+  const s = ui.session;
+  if(!s){ ui.ecran = "reviser"; return ecranReviser(); }
+  const it = s.liste[s.i], r = RESSOURCE(it.ressId), examen = s.mode === "examen";
+  let h = '<div class="lecon"><div class="lecon-haut">' +
+    '<button class="fermer" data-act="quitter-session" aria-label="Quitter">×</button>' +
+    '<div class="pts">' + s.liste.map((_,k) => '<span class="' + (k < s.i ? "f" : "") + '"></span>').join("") + "</div>" +
+    ((s.mode==="sprint"||examen) ? '<span class="chrono" id="chrono">00:00</span>'
+      : '<span class="src">' + (s.i+1) + "/" + s.liste.length + "</span>") +
+    '</div><div class="diapo"><p class="kick">' + esc((r?r.id:"") + " · " + (TYPES[it.type]||it.type)) + "</p>";
+
+  if(it.type === "flash"){
+    h += "<h3>" + esc(it.recto) + "</h3>";
+    if(s.etat === "c") h += '<div class="verdict ok">' + esc(it.verso) + "</div>";
+  } else h += "<h3>" + esc(it.question || "") + "</h3>";
+
+  if(it.type === "qcm" || it.type === "qcmMulti"){
+    const multi = it.type === "qcmMulti";
+    if(multi) h += '<p style="font-size:13.5px;color:var(--encre2)">Plusieurs réponses possibles.</p>';
+    it.options.forEach((o,k) => {
+      let cl = "opt";
+      const pris = multi ? (s.choix||[]).includes(k) : s.choix === k;
+      if(pris) cl += " pris";
+      if(s.etat === "c" && !examen){
+        const bon = multi ? (it.reponses||[]).includes(k) : k === it.reponse;
+        cl = bon ? "opt juste" : (pris ? "opt faux" : "opt");
+      }
+      h += '<button class="' + cl + '" data-act="choix" data-k="' + k + '"' + (s.etat==="c"?" disabled":"") + ">" + esc(o) + "</button>";
+    });
+  } else if(it.type === "vf"){
+    [["Vrai",true],["Faux",false]].forEach(pair => {
+      const lab = pair[0], val = pair[1];
+      let cl = "opt";
+      if(s.choix === val) cl += " pris";
+      if(s.etat === "c" && !examen) cl = val === it.reponse ? "opt juste" : (s.choix === val ? "opt faux" : "opt");
+      h += '<button class="' + cl + '" data-act="choix" data-v="' + val + '"' + (s.etat==="c"?" disabled":"") + ">" + lab + "</button>";
+    });
+  } else if(it.type === "cloze"){
+    h += '<input type="text" id="rep" placeholder="Ta réponse" value="' + esc(s.choix||"") + '"' + (s.etat==="c"?" disabled":"") + ">";
+  } else if(it.type === "ouverte" || it.type === "erreur" || it.type === "situation"){
+    h += '<textarea id="rep" style="min-height:110px" placeholder="Ta réponse"' + (s.etat==="c"?" disabled":"") + ">" + esc(s.choix||"") + "</textarea>";
+  } else if(it.type === "ordre"){
+    h += s.ordre.map((idx,pos) => '<div class="opt" style="display:flex;align-items:center;gap:10px">' +
+      '<span class="src">' + (pos+1) + '</span><span style="flex:1">' + esc(it.etapes[idx]) + "</span>" +
+      '<button class="btn mini" data-act="monter" data-p="' + pos + '"' + (pos===0||s.etat==="c"?" disabled":"") + ">↑</button>" +
+      '<button class="btn mini" data-act="descendre" data-p="' + pos + '"' + (pos===s.ordre.length-1||s.etat==="c"?" disabled":"") + ">↓</button></div>").join("");
+  } else if(it.type === "paires"){
+    if(!s.melangeD) s.melangeD = melanger(it.paires.map((p,i) => ({i, txt:p[1]})));
+    it.paires.forEach((p,i) => {
+      h += '<div style="margin-bottom:9px"><div style="font-size:14.5px;font-weight:600;margin-bottom:4px">' + esc(p[0]) + "</div>" +
+        '<select data-act="assoc" data-i="' + i + '"' + (s.etat==="c"?" disabled":"") + '><option value="">— choisir —</option>' +
+        s.melangeD.map(d => '<option value="' + d.i + '"' + (String(s.assoc[i])===String(d.i)?" selected":"") + ">" +
+          esc(tronquer(d.txt,70)) + "</option>").join("") + "</select></div>";
+    });
+  }
+
+  if(s.etat === "q"){
+    if(!examen) h += '<div class="rang"><span style="font-size:13.5px;color:var(--encre2)">Tu es sûre ?</span>' +
+      '<button class="puce' + (s.sur===true?" on":"") + '" data-act="sur" data-v="1">Sûre</button>' +
+      '<button class="puce' + (s.sur===false?" on":"") + '" data-act="sur" data-v="0">Pas sûre</button></div>';
+    h += '</div><div style="display:flex;gap:9px">' +
+      '<button class="btn" data-act="passer">Passer</button>' +
+      '<button class="cta" style="flex:1;margin-top:0" data-act="valider">' +
+      (it.type==="flash" ? "Retourner" : (examen ? "Valider" : "Vérifier")) + "</button></div></div>";
+    return h;
+  }
+  const j = s.dernierJuste;
+  if(j !== null && j !== undefined){
+    h += '<div class="verdict ' + (j?"ok":"ko") + '"><b>' + (j?"Juste.":"Raté.") + "</b>" +
+      (it.correction ? esc(it.correction)+" " : "") +
+      (!j && it.type==="cloze" ? "Réponse attendue : « " + esc(it.reponse) + " »." : "") +
+      (!j && it.type==="ordre" ? "Ordre attendu : " + it.etapes.map((e,k)=>(k+1)+". "+esc(e)).join(" ") : "") +
+      (!j && it.type==="paires" ? it.paires.map(p => esc(p[0])+" → "+esc(tronquer(p[1],70))).join("<br>") : "") + "</div>";
+  }
+  if(it.type==="ouverte"||it.type==="erreur"||it.type==="situation"){
+    const m = motsTrouves(s.choix||"", it.motsCles);
+    h += '<div class="verdict ok"><b>Éléments attendus</b><div class="liste-puces" style="margin:6px 0">' +
+      m.map(x => '<span class="puce">' + (x.ok?"✓":"○") + " " + esc(x.mot) + "</span>").join("") + "</div>" +
+      (it.attendu ? esc(it.attendu) : "") + "</div>";
+  }
+  if(it.source) h += '<button class="src" data-act="src" data-cible="srcq">Voir le passage de tes notes</button>' +
+    '<div class="srcTxt" id="srcq">« ' + esc(tronquer(it.source,380)) + " »</div>";
+  h += "</div>";
+  if(j === null || j === undefined || it.type === "flash"){
+    h += '<div style="display:flex;gap:9px;align-items:center">' +
+      '<span style="font-size:14px;color:var(--encre2)">Tu l\'avais ?</span>' +
+      '<button class="btn mini" data-act="auto" data-v="0">Non</button>' +
+      '<button class="cta" style="flex:1;margin-top:0" data-act="auto" data-v="1">Oui</button></div>';
+  } else h += '<button class="cta" data-act="suivant">Suivant</button>';
+  return h + "</div>";
+}
+
+function valider(){
+  const s = ui.session, it = s.liste[s.i];
+  if(["cloze","ouverte","erreur","situation"].includes(it.type)){
+    const el = document.getElementById("rep"); if(el) s.choix = el.value;
+  }
+  const j = corrigerItem(it, s.choix, s.assoc, s.ordre);
+  s.dernierJuste = j;
+  if(s.mode === "examen"){
+    s.resultats.push({id:it.id, ressId:it.ressId, juste: j === null ? autoNote(it, s.choix) : j});
+    suivant(); return;
+  }
+  if(j !== null && j !== undefined){ majProg(it.id, j, s.sur); s.resultats.push({id:it.id, ressId:it.ressId, juste:j}); }
+  s.etat = "c"; rendre();
+}
+function suivant(){
+  const s = ui.session; s.i++;
+  if(s.i >= s.liste.length){ terminerSession(); return; }
+  preparerQuestion(); rendre(); window.scrollTo(0,0);
+}
+function terminerSession(){
+  clearInterval(minuteur);
+  const s = ui.session; if(!s) return;
+  if(s.mode === "examen"){
+    const r = calculerExamen(s); S.examens.push(r); sauver();
+    ui.resultat = r; ui.session = null; ui.ecran = "examen"; rendre(); return;
+  }
+  const t = s.resultats.length, b = s.resultats.filter(x => x.juste).length;
+  ui.session = null; ui.ecran = "reviser";
+  ui.message = {type:"info", titre:"Session terminée",
+    txt: t ? b + " réussite" + (b>1?"s":"") + " sur " + t + "." : "Session close."};
+  rendre();
+}
+function lancerSession(source, ress, id){
+  let l = [];
+  if(source === "dus") l = itemsDus();
+  else if(source === "erreurs") l = carnetErreurs();
+  else if(source === "confiantes") l = erreursConfiantes();
+  else if(source === "ress") l = tousItems().filter(i => i.ressId === ress);
+  else if(source === "cours"){ const c = S.cours.find(x => x.id === id); l = c ? c.items.slice() : []; }
+  else if(source === "sprint"){ l = itemsDus(); if(l.length < 10) l = tousItems(); }
+  ouvrirSession(l, source === "sprint" ? "sprint" : "libre");
+}
+
+/* ---- épreuve blanche, planning, réglages ---- */
+function composerExamen(nb){
+  const dispo = tousItems().filter(i => i.type !== "flash");
+  if(dispo.length < 5) return [];
+  const parR = {}; dispo.forEach(i => (parR[i.ressId] = parR[i.ressId] || []).push(i));
+  const ids = Object.keys(parR);
+  const poids = id => { const r = RESSOURCE(id); return r ? coefTotal(r) : 1; };
+  const pt = ids.reduce((s,id) => s + poids(id), 0);
+  let out = [];
+  ids.forEach(id => { const part = Math.max(1, Math.round(nb * poids(id) / pt));
+    out = out.concat(melanger(parR[id]).slice(0, part)); });
+  return melanger(out).slice(0, nb);
+}
+function calculerExamen(s){
+  const parR = {};
+  s.resultats.forEach(r => { const e = parR[r.ressId] = parR[r.ressId] || {total:0,bons:0};
+    e.total++; if(r.juste) e.bons++; });
+  const ress = Object.keys(parR).map(id => { const r = RESSOURCE(id), e = parR[id];
+    return {id, nom:r?r.nom:id, coef:r?coefTotal(r):1, total:e.total, bons:e.bons,
+      note: Math.round(e.bons/e.total*200)/10}; });
+  const ues = [1,2,3].map(u => {
+    const l = ress.filter(x => { const r = RESSOURCE(x.id); return r && r.c[u]; });
+    if(!l.length) return {ue:u, presente:false};
+    const p = l.reduce((s2,x) => s2 + RESSOURCE(x.id).c[u], 0);
+    const note = Math.round(l.reduce((s2,x) => s2 + x.note * RESSOURCE(x.id).c[u], 0)/p*10)/10;
+    return {ue:u, presente:true, note};
+  });
+  return {date:new Date().toISOString(), duree:Math.round((Date.now()-s.debut)/1000),
+    questions:s.resultats.length, bons:s.resultats.filter(r=>r.juste).length, ress, ues};
+}
+function tableauResultats(r){
+  let h = '<table class="tableau"><thead><tr><th>Ressource</th><th>Score</th><th>Note</th></tr></thead><tbody>';
+  r.ress.forEach(x => h += "<tr><td>" + esc(x.id) + '</td><td class="n">' + x.bons + "/" + x.total + "</td>" +
+    '<td class="n">' + x.note.toFixed(1) + "</td></tr>");
+  h += "</tbody></table>";
+  r.ues.filter(u => u.presente).forEach(u => {
+    h += '<div class="bloc" style="margin-top:10px"><div class="bloc-t">' +
+      '<span class="point" style="background:' + COMP[u.ue].coul + '"></span>' +
+      '<span class="bloc-nom">' + esc(COMP[u.ue].code + " " + COMP[u.ue].nom) + "</span>" +
+      '<span class="bloc-meta">' + u.note.toFixed(1) + "/20</span></div>" +
+      '<div style="font-size:13px;color:var(--encre2)">Moyenne pondérée par les coefficients de ta maquette.</div></div>';
+  });
+  return h + '<p style="font-size:12.5px;color:var(--encre3);margin-top:10px">' +
+    "Ce n'est pas une simulation de jury : les règles exactes de validation et de compensation du BUT n'ont pas pu " +
+    "être vérifiées, elles ne sont donc pas reproduites ici. Ces notes ne servent qu'à repérer où tu es faible.</p>";
+}
+function ecranExamen(){
+  const dispo = tousItems().filter(i => i.type !== "flash").length;
+  let h = '<div class="ecran">' + retour("accueil", "Épreuve blanche");
+  if(dispo < 10){
+    h += '<div class="avis"><b>Pas encore assez de matière</b>' + dispo + " exercice" + (dispo>1?"s":"") +
+      " disponible" + (dispo>1?"s":"") + ", il en faut dix au minimum.</div>";
+  } else {
+    h += '<div class="duo"><div><label class="champ" for="e-nb">Questions</label>' +
+      '<input type="number" id="e-nb" min="10" max="60" value="' + Math.min(20,dispo) + '"></div>' +
+      '<div><label class="champ" for="e-min">Minutes</label><input type="number" id="e-min" min="5" max="180" value="30"></div></div>' +
+      '<button class="cta" data-act="lancer-examen">Commencer</button>';
+  }
+  if(ui.resultat){
+    h += '<p class="kick" style="margin-top:18px">Résultat · ' + ui.resultat.bons + "/" + ui.resultat.questions +
+      " en " + mmss(ui.resultat.duree) + "</p>" + tableauResultats(ui.resultat);
+  } else if(S.examens.length){
+    h += '<p class="kick" style="margin-top:18px">Épreuves passées</p><table class="tableau"><tbody>' +
+      S.examens.slice().reverse().map(e => "<tr><td>" + dateFr(e.date) + '</td><td class="n">' + e.bons + "/" + e.questions +
+      '</td><td class="n">' + mmss(e.duree) + "</td></tr>").join("") + "</tbody></table>";
+  }
+  return h + "</div>";
+}
+function ecranPlanning(){
+  const d = S.reglages.dateExamen;
+  let h = '<div class="ecran">' + retour("accueil", "Planning");
+  h += '<label class="champ" for="p-date">Prochaine échéance</label>' +
+    '<input type="date" id="p-date" data-bind="dateExamen" value="' + esc(d||"") + '">';
+  if(!d) return h + '<div class="avis info" style="margin-top:14px"><b>Aucune date</b>' +
+    "Renseigne un contrôle, une SAÉ à rendre ou une fin de semestre pour construire le rétroplanning.</div></div>";
+  const j = joursEntre(new Date(), d);
+  if(j <= 0) return h + '<div class="avis" style="margin-top:14px"><b>Date passée</b>Choisis une date à venir.</div></div>';
+  const actives = TOUTES().filter(r => statsRess(r.id).total > 0);
+  if(!actives.length) return h + '<div class="avis" style="margin-top:14px"><b>Aucun cours importé</b>' +
+    "Le plan se construit sur les ressources que tu alimentes.</div></div>";
+  const sem = Math.max(1, Math.min(12, Math.ceil(j/7)));
+  const scores = actives.map(r => { const s = statsRess(r.id);
+    return {r, poids: coefTotal(r) * (1 + (100 - s.part)/100), part:s.part, total:s.total}; })
+    .sort((a,b) => b.poids - a.poids);
+  h += '<p class="sousTitre" style="margin-top:14px">' + j + " jours, soit " + sem + " semaine" + (sem>1?"s":"") + " de travail.</p>";
+  for(let k = 0; k < sem; k++){
+    const lot = scores.filter((_,i) => i % sem === k);
+    h += '<div class="semaine"><div class="quand">Semaine ' + (k+1) + " — dès le " +
+      dateFr(new Date(Date.now()+k*7*JOUR).toISOString()) + "</div>" +
+      '<h4 style="font-size:15px">' + (lot.length ? lot.map(x => esc(x.r.id)).join(" · ") : "Reprise libre") + "</h4>" +
+      lot.map(x => '<div style="font-size:13.5px;color:var(--encre2)">' + esc(tronquer(x.r.nom,48)) +
+        " — " + x.total + " exercices, " + x.part + " % acquis</div>").join("") + "</div>";
+  }
+  return h + '<p style="font-size:12.5px;color:var(--encre3)">Les ressources à fort coefficient et peu acquises passent en premier. ' +
+    "La révision du jour reste prioritaire : elle suit les échéances des trois boîtes.</p></div>";
+}
+function ecranReglages(){
+  const r = S.reglages;
+  const voix = (window.speechSynthesis ? speechSynthesis.getVoices() : []).filter(v => /fr/i.test(v.lang));
+  let h = '<div class="ecran">' + retour("accueil", "Réglages");
+  h += '<p class="kick">Dates</p>' +
+    '<label class="champ" for="r-rentree">Rentrée</label>' +
+    '<input type="date" id="r-rentree" data-bind="dateRentree" value="' + esc(r.dateRentree||"") + '">' +
+    '<label class="champ" for="r-exam" style="margin-top:12px">Prochaine échéance</label>' +
+    '<input type="date" id="r-exam" data-bind="dateExamen" value="' + esc(r.dateExamen||"") + '">';
+  h += '<p class="kick" style="margin-top:20px">Moteur d\'analyse</p><div class="liste-puces">' +
+    '<button class="puce' + (r.moteur==="gemini"?" on":"") + '" data-act="moteur" data-v="gemini">Gemini</button>' +
+    '<button class="puce' + (r.moteur==="local"?" on":"") + '" data-act="moteur" data-v="local">Local, hors ligne</button></div>';
+  if(r.moteur === "local"){
+    h += '<p style="font-size:14px;color:var(--encre2)">Rien ne quitte l\'appareil. L\'analyse repère définitions, ' +
+      "valeurs chiffrées, termes en gras et listes, mais ne hiérarchise pas ce qui est important.</p>";
+  } else {
+    h += '<label class="champ" for="g-cle">Clé Google AI Studio</label>' +
+      '<input type="password" id="g-cle" data-bind="cleGemini" value="' + esc(r.cleGemini) + '" placeholder="AIza…">' +
+      '<label class="champ" for="g-mod" style="margin-top:12px">Modèle</label>' +
+      '<select id="g-mod" data-bind="modele">' + (r.modeles.length ? r.modeles.map(m =>
+        '<option value="' + esc(m.id) + '"' + (r.modele===m.id?" selected":"") + ">" + esc(m.nom) + "</option>").join("")
+        : '<option value="">— charger la liste —</option>') + "</select>" +
+      '<div class="rang"><button class="btn mini" data-act="charger-modeles">Charger les modèles</button></div>' +
+      '<div class="rang"><button class="puce' + (r.complements?" on":"") + '" data-act="complements">' +
+      "Compléments hors cours : " + (r.complements ? "activés" : "désactivés") + "</button></div>" +
+      '<p style="font-size:13px;color:var(--encre2)">Quand ils sont activés, un second appel cherche sur le web des ' +
+      "précisions sur les points que tes notes laissent en suspens. Ces compléments apparaissent dans une rubrique à part, " +
+      "avec leurs liens : ils ne viennent pas de ton cours et sont à confirmer avec ta prof.</p>" +
+      '<p style="font-size:13px;color:var(--encre2)">La clé reste sur cet appareil. Sur l\'offre gratuite, Google peut ' +
+      "utiliser les contenus transmis pour entraîner ses modèles.</p>";
+  }
+  h += '<p class="kick" style="margin-top:20px">Lecture audio</p>' +
+    '<label class="champ" for="v-voix">Voix</label>' +
+    '<select id="v-voix" data-bind="voix"><option value="">Voix par défaut</option>' +
+    voix.map(v => '<option value="' + esc(v.name) + '"' + (r.voix===v.name?" selected":"") + ">" + esc(v.name) + "</option>").join("") + "</select>" +
+    '<label class="champ" for="v-deb" style="margin-top:12px">Débit</label>' +
+    '<input type="number" id="v-deb" data-bind="debitVoix" min="0.5" max="2" step="0.1" value="' + r.debitVoix + '">';
+  h += '<p class="kick" style="margin-top:20px">Sauvegarde</p><div class="rang">' +
+    '<button class="btn mini" data-act="exporter">Exporter</button>' +
+    '<label class="btn mini" for="i-json">Importer</label>' +
+    '<input type="file" id="i-json" accept=".json" style="display:none">' +
+    '<button class="btn mini" data-act="tout-effacer" style="color:var(--rouge)">Tout effacer</button></div>' +
+    '<p style="font-size:12.5px;color:var(--encre3)">La leçon de préparation n\'est pas effacée par ce bouton : ' +
+    "seuls tes cours, fiches, exercices et résultats le sont.</p>";
+  return h + "</div>";
+}
+
+/* =========================================================================
+   14. ACTIONS
+   ========================================================================= */
+async function analyser(){
+  const texte = (ui.importTexte||"").trim();
+  if(texte.length < 120){
+    ui.message = {titre:"Texte trop court", txt:"Quelques paragraphes au minimum pour produire une fiche utile."};
+    rendre(); return;
+  }
+  const al = sonderDonnees(texte);
+  if(al.length && !ui.rgpdIgnore){ ui.avisRGPD = al; rendre(); return; }
+  const ressId = ui.importRess || detecterRessource(texte);
+  if(!ressId){
+    ui.message = {titre:"Ressource à préciser", txt:"Elle n'a pas pu être déduite du texte : choisis-la dans la liste."};
+    rendre(); return;
+  }
+  ui.occupe = true; ui.etape = "Lecture des notes…"; ui.message = null; rendre();
+  const src = (ui.importSrc && ui.importSrc.texte === texte) ? ui.importSrc
+    : {texte, blocs:decouper(texte), forts:[]};
+  let res, origine = S.reglages.moteur;
+  try{
+    if(origine === "gemini"){
+      if(!S.reglages.cleGemini || !S.reglages.modele)
+        throw new Error("Renseigne la clé et le modèle dans les réglages, ou repasse en mode local.");
+      ui.etape = "Analyse par Gemini…"; rendre();
+      res = await analyseGemini(texte, ressId, S.reglages.cleGemini, S.reglages.modele);
+      if(S.reglages.complements){
+        ui.etape = "Recherche des compléments…"; rendre();
+        try{
+          const aj = await complementsGemini(res.fiche, ressId, S.reglages.cleGemini, S.reglages.modele);
+          res.fiche.ajouts = aj;
+        }catch(e){ res.fiche.ajouts = []; }
+      }
+    } else res = analyseLocale(src, ressId);
+  }catch(e){
+    ui.occupe = false; ui.etape = "";
+    ui.message = {type:"err", titre:"Analyse interrompue", txt:e.message}; rendre(); return;
+  }
+  if(!res.items.length){
+    ui.occupe = false; ui.etape = "";
+    ui.message = {titre:"Aucun exercice tiré de ce texte",
+      txt:"Des notes structurées — titres, listes, définitions, chiffres — donnent de bien meilleurs résultats."};
+    rendre(); return;
+  }
+  const r = RESSOURCE(ressId);
+  const titre = (ui.importTitre||"").trim() || res.fiche.titreDetecte || (r ? r.nom : "Cours");
+  const c = {id:uid(), titre, ressId, date:new Date().toISOString(), origine, fiche:res.fiche,
+    items:res.items.map(i => Object.assign(i, {ressId})), texte, tri:{off:{}, fort:{}}};
+  S.cours.push(c); sauver();
+  ui.occupe = false; ui.etape = ""; ui.importTexte = ""; ui.importTitre = ""; ui.importRess = ""; ui.importSrc = null;
+  ui.avisRGPD = null; ui.rgpdIgnore = false; ui.fiche = c.id; ui.ecran = "fiche";
+  const nAj = (res.fiche.ajouts || []).length;
+  ui.message = {type:"info", titre:"Fiche créée",
+    txt: res.items.length + " exercices générés" + (nAj ? ", plus " + nAj + " complément" + (nAj>1?"s":"") + " hors cours à vérifier" : "") + "."};
+  rendre(); window.scrollTo(0,0);
+}
+
+document.addEventListener("click", async e => {
+  const el = e.target.closest("[data-act]");
+  if(!el || el.disabled) return;
+  const a = el.dataset.act, s = ui.session;
+  switch(a){
+    case "nav": ui.session = null; clearInterval(minuteur); aller(el.dataset.tab, "accueil"); break;
+    case "ecran": ui.ecran = el.dataset.e; ui.message = null; rendre(); window.scrollTo(0,0); break;
+    case "filtre": ui.filtreUE = el.dataset.ue; rendre(); break;
+    case "src": { const c = document.getElementById(el.dataset.cible); if(c) c.classList.toggle("ouvert"); break; }
+
+    case "ouvrir-lecon": {
+      ui.lecon = el.dataset.l;
+      const p = progLecon(ui.lecon);
+      if(p.termine) p.index = 0;
+      ui.quizRep = null; ui.ecran = "lecon"; sauver(); rendre(); window.scrollTo(0,0); break;
+    }
+    case "fermer-lecon": ui.ecran = "accueil"; ui.quizRep = null; rendre(); break;
+    case "quiz": {
+      const p = progLecon(ui.lecon);
+      const d = LECONS[ui.lecon].diapos[p.index];
+      ui.quizRep = Number(el.dataset.k);
+      p.quiz[p.index] = ui.quizRep === d.bonne;
+      sauver(); rendre(); break;
+    }
+    case "diapo-suiv": {
+      const p = progLecon(ui.lecon), L = LECONS[ui.lecon];
+      if(p.index >= L.diapos.length - 1){
+        p.termine = true; p.index = L.diapos.length - 1; sauver();
+        ui.ecran = "accueil"; ui.quizRep = null;
+        ui.message = {type:"info", titre:"Leçon terminée", txt:L.titre + " — tu peux la reprendre quand tu veux."};
+      } else { p.index++; ui.quizRep = null; sauver(); }
+      rendre(); window.scrollTo(0,0); break;
+    }
+    case "diapo-prec": { const p = progLecon(ui.lecon); if(p.index > 0) p.index--; ui.quizRep = null; sauver(); rendre(); window.scrollTo(0,0); break; }
+
+    case "ouvrir-fiche": ui.fiche = el.dataset.id; ui.ecran = "fiche"; rendre(); window.scrollTo(0,0); break;
+    case "imprimer": imprimerFiche(el.dataset.id, el.dataset.mode); break;
+    case "fiche-erreurs": imprimerErreurs(); break;
+    case "lire": { const c = S.cours.find(x => x.id === el.dataset.id); if(c) lire(texteFiche(c)); break; }
+    case "stop-lecture": if(window.speechSynthesis) speechSynthesis.cancel(); break;
+    case "supprimer":
+      if(confirm("Supprimer ce cours, sa fiche et ses exercices ?")){
+        const c = S.cours.find(x => x.id === el.dataset.id);
+        if(c) c.items.forEach(i => delete S.progres[i.id]);
+        S.cours = S.cours.filter(x => x.id !== el.dataset.id);
+        sauver(); ui.ecran = "fiches"; rendre();
+      } break;
+    case "analyser": await analyser(); break;
+    case "anonymiser": ui.importTexte = anonymiser(ui.importTexte); ui.avisRGPD = null; ui.rgpdIgnore = true;
+      ui.message = {type:"info", titre:"Texte anonymisé", txt:"Relis-le avant de lancer l'analyse."}; rendre(); break;
+    case "rgpd-ignorer": ui.rgpdIgnore = true; ui.avisRGPD = null; rendre(); break;
+
+    case "session": lancerSession(el.dataset.source, el.dataset.ress, el.dataset.id); break;
+    case "choix": {
+      const it = s.liste[s.i];
+      if(it.type === "qcmMulti"){ const k = Number(el.dataset.k); s.choix = s.choix || [];
+        s.choix = s.choix.includes(k) ? s.choix.filter(x => x !== k) : s.choix.concat([k]); }
+      else if(it.type === "vf") s.choix = el.dataset.v === "true";
+      else s.choix = Number(el.dataset.k);
+      rendre(); break;
+    }
+    case "sur": s.sur = el.dataset.v === "1"; rendre(); break;
+    case "monter": { const p = Number(el.dataset.p); const t = s.ordre[p-1]; s.ordre[p-1] = s.ordre[p]; s.ordre[p] = t; rendre(); break; }
+    case "descendre": { const p = Number(el.dataset.p); const t = s.ordre[p+1]; s.ordre[p+1] = s.ordre[p]; s.ordre[p] = t; rendre(); break; }
+    case "valider": valider(); break;
+    case "passer": if(s.mode === "examen") s.resultats.push({id:s.liste[s.i].id, ressId:s.liste[s.i].ressId, juste:false}); suivant(); break;
+    case "auto": { const it = s.liste[s.i], j = el.dataset.v === "1";
+      majProg(it.id, j, s.sur); s.resultats.push({id:it.id, ressId:it.ressId, juste:j}); suivant(); break; }
+    case "suivant": suivant(); break;
+    case "quitter-session": terminerSession(); break;
+    case "lancer-examen": {
+      const nb = Math.max(10, Math.min(60, Number(document.getElementById("e-nb").value) || 20));
+      const mn = Math.max(5, Math.min(180, Number(document.getElementById("e-min").value) || 30));
+      ui.resultat = null; ouvrirSession(composerExamen(nb), "examen", mn*60); break;
+    }
+
+    case "moteur": S.reglages.moteur = el.dataset.v; sauver(); rendre(); break;
+    case "complements": S.reglages.complements = !S.reglages.complements; sauver(); rendre(); break;
+    case "charger-modeles": {
+      if(!S.reglages.cleGemini){ ui.message = {titre:"Clé manquante", txt:"Colle d'abord ta clé Google AI Studio."}; rendre(); break; }
+      el.textContent = "Chargement…";
+      try{
+        const m = await listerModeles(S.reglages.cleGemini);
+        S.reglages.modeles = m;
+        if(!S.reglages.modele && m.length){
+          const pref = m.find(x => /flash/i.test(x.id) && !/lite|preview|exp/i.test(x.id)) || m.find(x => /flash/i.test(x.id)) || m[0];
+          S.reglages.modele = pref.id;
+        }
+        sauver(); ui.message = {type:"info", titre:"Modèles chargés", txt:m.length + " modèles disponibles."};
+      }catch(err){ ui.message = {type:"err", titre:"Clé refusée", txt:err.message}; }
+      rendre(); break;
+    }
+    case "exporter": telecharger("prepa-but-tc-" + new Date().toISOString().slice(0,10) + ".json", JSON.stringify(S, null, 1)); break;
+    case "tout-effacer":
+      if(confirm("Effacer tes cours, fiches, exercices et résultats ? La progression de la leçon est conservée.")){
+        const prep = S.prep, regl = S.reglages;
+        S = etatVierge(); S.prep = prep; S.reglages = regl;
+        sauver(); ui.fiche = null; aller("rev", "accueil");
+      } break;
+  }
+});
+
+document.addEventListener("change", async e => {
+  const t = e.target;
+  if(t.id === "i-fic" && t.files[0]){
+    const f = t.files[0];
+    ui.message = {type:"info", titre:"Lecture du fichier", txt:f.name}; rendre();
+    try{
+      const src = await lireFichier(f);
+      ui.importSrc = src; ui.importTexte = src.texte;
+      if(!ui.importTitre) ui.importTitre = f.name.replace(/\.[^.]+$/,"");
+      if(!ui.importRess) ui.importRess = detecterRessource(src.texte) || "";
+      const al = sonderDonnees(src.texte);
+      ui.avisRGPD = al.length ? al : null; ui.rgpdIgnore = false;
+      ui.message = {type:"info", titre:"Fichier lu",
+        txt: src.texte.length + " caractères" + (src.forts.length ? " · " + src.forts.length + " termes en gras repérés" : "") +
+          (ui.importRess ? " · ressource proposée : " + ui.importRess : "") + "."};
+    }catch(err){ ui.message = {type:"err", titre:"Lecture impossible", txt:err.message}; }
+    rendre(); return;
+  }
+  if(t.id === "i-json" && t.files[0]){
+    try{
+      const o = JSON.parse(await t.files[0].text());
+      if(!o || !Array.isArray(o.cours)) throw new Error("Ce fichier ne contient pas de sauvegarde.");
+      if(confirm("Remplacer les données actuelles ?")){
+        S = Object.assign(etatVierge(), o); sauver(); ui.fiche = null; aller("rev","accueil");
+      }
+    }catch(err){ ui.message = {type:"err", titre:"Import impossible", txt:err.message}; rendre(); }
+    return;
+  }
+  const act = t.closest("[data-act]");
+  if(act && act.dataset.act === "assoc"){ ui.session.assoc[Number(act.dataset.i)] = t.value; return; }
+  if(act && act.dataset.act === "tri-off"){
+    const c = S.cours.find(x => x.id === ui.fiche); if(!c) return;
+    const tri = cleTri(c);
+    if(t.checked) delete tri.off[act.dataset.ref]; else tri.off[act.dataset.ref] = true;
+    sauver(); return;
+  }
+  if(act && act.dataset.act === "tri-fort"){
+    const c = S.cours.find(x => x.id === ui.fiche); if(!c) return;
+    cleTri(c).fort[act.dataset.ref] = t.value; sauver(); return;
+  }
+  const b = t.dataset.bind;
+  if(!b) return;
+  if(b in ui){
+    ui[b] = t.value;
+    if(b === "importTexte"){
+      const al = sonderDonnees(t.value);
+      ui.avisRGPD = al.length ? al : null;
+      if(!ui.importRess){ const d = detecterRessource(t.value); if(d) ui.importRess = d; }
+      rendre();
+    }
+  } else {
+    S.reglages[b] = t.value; sauver();
+    if(["dateExamen","dateRentree","voix","debitVoix"].includes(b)) rendre();
+  }
+});
+document.addEventListener("input", e => {
+  const b = e.target.dataset.bind;
+  if(b === "importTexte" || b === "importTitre") ui[b] = e.target.value;
+});
+document.addEventListener("keydown", e => {
+  if(e.key === "Enter" && e.target.id === "rep" && e.target.tagName === "INPUT"){ e.preventDefault(); valider(); }
+});
+if(window.speechSynthesis) speechSynthesis.onvoiceschanged = () => { if(ui.ecran === "reglages") rendre(); };
+
+charger();
+if(!S.prep) S.prep = {};
+rendre();
+</script>
+</body>
+</html>
