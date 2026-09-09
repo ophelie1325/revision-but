@@ -188,6 +188,56 @@ textarea{min-height:150px;resize:vertical;line-height:1.5}
 .pdfZone canvas{display:block;width:100%;height:auto}
 .pdfZone .cadreSel{position:absolute;border:2px solid var(--terre);background:rgba(217,96,60,.14);
   pointer-events:none;border-radius:2px}
+/* ---- tableau de bord ---- */
+.anneaux{display:flex;gap:10px;justify-content:center;margin:4px 0 16px;flex-wrap:wrap}
+.anneau{display:flex;flex-direction:column;align-items:center;gap:5px}
+.anneau svg{display:block}
+.anneau .lab{font-size:11.5px;color:var(--encre2);text-align:center;max-width:96px;line-height:1.25}
+.anneau .val{font-family:'IBM Plex Mono',monospace;font-weight:600}
+.grandAnneau{display:flex;align-items:center;gap:16px;background:var(--carte);border-radius:var(--r);
+  padding:16px 18px;box-shadow:var(--ombre);margin-bottom:12px}
+.grandAnneau .chiffres{flex:1;min-width:0}
+.grandAnneau .chiffres b{display:block;font-family:'IBM Plex Mono',monospace;font-size:22px;line-height:1.1}
+.grandAnneau .chiffres small{display:block;font-size:12.5px;color:var(--encre2);margin-top:2px}
+.boites{display:flex;gap:6px;margin-bottom:6px}
+.boites .b{flex:1;border-radius:8px;padding:9px 6px;text-align:center}
+.boites .b b{display:block;font-family:'IBM Plex Mono',monospace;font-size:16px}
+.boites .b small{font-size:10.5px;display:block;margin-top:1px}
+.boites .b1{background:var(--rouge-pale);color:var(--rouge)}
+.boites .b2{background:var(--or-pale);color:var(--or-fonce)}
+.boites .b3{background:#E8F0EE;color:var(--c2)}
+.activite{display:flex;align-items:flex-end;gap:3px;height:64px;margin:6px 0 4px}
+.activite .j{flex:1;background:var(--trait2);border-radius:3px 3px 0 0;position:relative;min-height:3px}
+.activite .j i{position:absolute;left:0;right:0;bottom:0;background:var(--terre);border-radius:3px 3px 0 0;display:block}
+.activite .j.vide{background:var(--trait2)}
+.legJours{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;
+  font-size:10px;color:var(--encre3);margin-bottom:14px}
+.ligneMat{display:flex;align-items:center;gap:11px;background:var(--carte);border-radius:var(--r2);
+  padding:10px 12px;margin-bottom:7px;box-shadow:var(--ombre)}
+.ligneMat .tx{flex:1;min-width:0}
+.ligneMat .tx b{display:block;font-size:14px;font-weight:600;line-height:1.25}
+.ligneMat .tx small{display:block;font-size:12px;color:var(--encre2);line-height:1.35}
+.ligneMat .btn{flex:none}
+.legSeg{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:11.5px;
+  color:var(--encre2);margin:-8px 0 16px}
+.legSeg span{display:inline-flex;align-items:center;gap:5px}
+.legSeg i{width:9px;height:9px;border-radius:3px;display:inline-block}
+.grilleOutils{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.outil{position:relative;background:var(--carte);border-radius:var(--r2);padding:12px 6px 10px;
+  box-shadow:var(--ombre);display:flex;flex-direction:column;align-items:center;gap:5px;min-height:76px;
+  justify-content:center;transition:transform .12s}
+.outil:active{transform:scale(.96)}
+.outil .ic{font-size:19px;line-height:1}
+.outil .nom{font-size:11.5px;color:var(--encre2);text-align:center;line-height:1.2}
+.outil .pastille{position:absolute;top:6px;right:8px;background:var(--terre);color:#fff;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;min-width:17px;height:17px;
+  border-radius:9px;display:grid;place-items:center;padding:0 4px}
+.choixGros{display:flex;gap:10px;margin-bottom:14px}
+.choixGros button{flex:1;background:var(--carte);border-radius:var(--r);padding:18px 12px;box-shadow:var(--ombre);
+  display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center}
+.choixGros .ic{font-size:24px;line-height:1}
+.choixGros b{font-size:15px}
+.choixGros small{font-size:12px;color:var(--encre2);line-height:1.3}
 .boite{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;width:22px;height:22px;
   border-radius:7px;display:grid;place-items:center;flex:none;background:var(--trait2);color:var(--encre3)}
 .boite.b1{background:var(--rouge-pale);color:var(--rouge)}
@@ -507,7 +557,7 @@ const etatVierge = () => ({
   reglages:{moteur:"gemini", cleGemini:"", modele:"", modeles:[], complements:true,
     dateRentree:"", dateExamen:"", debitVoix:1, voix:""},
   cours:[], progres:{}, examens:[], prep:{}, notes:[], sae:{}, questions:{}, lexique:[],
-  oral:[], oralPassages:[], codes2022:true, prepProgres:{}
+  oral:[], oralPassages:[], codes2022:true, prepProgres:{}, journal:{}, journalPrep:{}
 });
 let S = etatVierge();
 /* Les codes de ressources ont d'abord suivi l'ordre de la maquette de l'IUT.
@@ -1032,20 +1082,6 @@ async function appelGemini(cle, modele, corps){
   return await r.json();
 }
 
-async function analyseGemini(texte, ressId, cle, modele){
-  const d = await appelGemini(cle, modele, {
-    systemInstruction:{parts:[{text:consigne(ressId)}]},
-    contents:[{role:"user", parts:[{text:"NOTES DE COURS :\n\n" + texte}]}],
-    generationConfig:{temperature:0.2, responseMimeType:"application/json", maxOutputTokens:8192}
-  });
-  const cand = (d.candidates || [])[0];
-  if(!cand) throw new Error("Gemini n'a rien renvoyé. Les notes sont peut-être trop longues : coupe-les en deux.");
-  const brut = ((cand.content && cand.content.parts) || []).map(p => p.text || "").join("");
-  let o;
-  try{ o = JSON.parse(brut.replace(/^```json\s*|```\s*$/g,"").trim()); }
-  catch(e){ throw new Error("La réponse de Gemini n'était pas exploitable. Relance l'analyse."); }
-  return normaliserSortieIA(o, ressId);
-}
 
 /* Second appel : compléments extérieurs, avec recherche web activée.
    On ne garde que les URL présentes dans groundingMetadata. */
@@ -1398,8 +1434,27 @@ function prog(id, b){
   if(!t[id]) t[id] = {boite:1, vus:0, ok:0, ko:0, dernier:0, prochain:0, erreurConfiante:false};
   return t[id];
 }
+/* Journal d'activité : un compteur par jour et par banque, pour le tableau de bord. */
+function noterJournal(b, juste){
+  const cle = b === "prep" ? "journalPrep" : "journal";
+  if(!S[cle]) S[cle] = {};
+  const j = new Date().toISOString().slice(0,10);
+  if(!S[cle][j]) S[cle][j] = {n:0, ok:0};
+  S[cle][j].n++;
+  if(juste) S[cle][j].ok++;
+}
+function activite(b, jours){
+  const cle = b === "prep" ? "journalPrep" : "journal";
+  const t = S[cle] || {}, out = [];
+  for(let i = jours - 1; i >= 0; i--){
+    const d = new Date(Date.now() - i * JOUR).toISOString().slice(0,10);
+    out.push(Object.assign({jour:d}, t[d] || {n:0, ok:0}));
+  }
+  return out;
+}
 function majProg(id, juste, sur, b){
   const p = prog(id, b);
+  noterJournal(b, juste);
   p.vus++; p.dernier = Date.now();
   if(juste){ p.ok++; p.boite = Math.min(3, p.boite + 1); if(p.ok >= p.ko) p.erreurConfiante = false; }
   else{ p.ko++; p.boite = 1; if(sur === true) p.erreurConfiante = true; }
@@ -1436,11 +1491,6 @@ function itemsDusPrep(){
 function erreursPrep(){
   return itemsPrep().filter(i => { const p = S.prepProgres[i.id]; return p && p.ko > 0 && p.boite === 1; });
 }
-function statsPrep(lecon){
-  const l = itemsPrep(lecon);
-  const sus = l.filter(i => S.prepProgres[i.id] && S.prepProgres[i.id].boite === 3);
-  return {total:l.length, sus:sus.length, part: l.length ? Math.round(sus.length / l.length * 100) : 0};
-}
 function itemsDus(){ const t = Date.now(); return tousItems().filter(i => { const p = S.progres[i.id]; return !p || p.prochain <= t; }); }
 function carnetErreurs(){ return tousItems().filter(i => { const p = S.progres[i.id]; return p && p.ko > 0 && p.boite === 1; }); }
 function erreursConfiantes(){ return tousItems().filter(i => { const p = S.progres[i.id]; return p && p.erreurConfiante; }); }
@@ -1448,11 +1498,6 @@ function statsRess(id){
   const its = tousItems().filter(i => i.ressId === id);
   const sus = its.filter(i => S.progres[i.id] && S.progres[i.id].boite === 3);
   return {total:its.length, sus:sus.length, part: its.length ? Math.round(sus.length / its.length * 100) : 0};
-}
-function statsUE(ue){
-  let total = 0, sus = 0;
-  TOUTES().forEach(r => { if(r.c[ue]){ const s = statsRess(r.id); total += s.total; sus += s.sus; } });
-  return {total, sus, part: total ? Math.round(sus / total * 100) : 0};
 }
 
 /* =========================================================================
@@ -4651,27 +4696,29 @@ let ui = {tab:"prep", ecran:"accueil", lecon:null, parcours:null, fiche:null, se
   vignettes:{}, pdfBuf:null, pdfPage:1, pdfTotal:0, pdfRecharge:false, sel:null,
   photos:[], transcrit:false, illisibles:0, lirePos:0,
   semestre:1, noteRess:"", noteLib:"", noteVal:"", minutes:20,
-  langue:"A", lexFr:"", lexEtr:"", lexEx:"", lexTexte:"", lexColler:false,
+  langue:"A", lexFr:"", lexEtr:"", lexEx:"", lexTexte:"", lexColler:false, famPrep:"",
   oral:null, oralCours:""};
 
 function progLecon(k){ if(!S.prep[k]) S.prep[k] = {index:0, termine:false, quiz:{}}; return S.prep[k]; }
-function leconsFaites(){ return LECONS_PRETES.filter(k => S.prep[k] && S.prep[k].termine).length; }
 
-function aller(tab, ecran){ ui.tab = tab; ui.ecran = ecran || "accueil"; ui.message = null; rendre(); window.scrollTo(0,0); }
-
+function aller(tab, ecran){
+  ui.tab = tab; ui.ecran = ecran || "accueil"; ui.message = null;
+  rendre(); window.scrollTo(0,0);
+}
 function rendre(){
   $("#nav").innerHTML = '<div class="in">' +
     '<button data-act="nav" data-tab="prep" class="' + (ui.tab==="prep"?"act":"") + '"><span class="ic">◈</span>Préparation</button>' +
     '<button data-act="nav" data-tab="rev" class="' + (ui.tab==="rev"?"act":"") + '"><span class="ic">◇</span>Révision</button></div>';
   const ecrans = {
     "prep/accueil":ecranPrep, "prep/lecon":ecranLecon, "prep/parcours":ecranParcours,
-    "prep/exercices":ecranExercicesPrep, "prep/session":ecranSession,
+    "prep/exercices":ecranExercicesPrep, "prep/session":ecranSession, "prep/finLecon":ecranFinLecon,
     "rev/accueil":ecranRev, "rev/import":ecranImport, "rev/fiches":ecranFiches, "rev/fiche":ecranFiche,
-    "rev/valider":ecranValider, "rev/comprendre":ecranComprendre, "rev/lire":ecranLire, "rev/tri":ecranTri, "rev/visuels":ecranVisuels, "rev/decoupe":ecranDecoupe,
+    "rev/valider":ecranValider, "rev/comprendre":ecranComprendre, "rev/lire":ecranLire, "rev/tri":ecranTri,
+    "rev/visuels":ecranVisuels, "rev/decoupe":ecranDecoupe,
     "rev/reviser":ecranReviser, "rev/session":ecranSession,
     "rev/examen":ecranExamen, "rev/planning":ecranPlanning, "rev/moyennes":ecranMoyennes,
-    "rev/sae":ecranSae, "rev/questions":ecranQuestions, "rev/lexique":ecranLexique, "rev/oral":ecranOral, "rev/oralSeance":ecranOralSeance,
-    "reglages":ecranReglages
+    "rev/sae":ecranSae, "rev/questions":ecranQuestions, "rev/lexique":ecranLexique,
+    "rev/oral":ecranOral, "rev/oralSeance":ecranOralSeance, "reglages":ecranReglages
   };
   const f = ecrans[ui.ecran === "reglages" ? "reglages" : ui.tab + "/" + ui.ecran] || ecranPrep;
   let h = "";
@@ -4712,63 +4759,170 @@ function encartHtml(e){
 }
 
 /* ---- onglet Préparation ---- */
+/* ---- briques du tableau de bord ---- */
+
+/* Anneau à trois segments : jamais fait, fait sans être acquis, acquis.
+   Le fond gris porte le premier état. */
+function anneau3(c, taille, centre){
+  const t = Math.max(1, c.total);
+  const r = (taille - 9) / 2, circ = 2 * Math.PI * r;
+  const seg = (n, coul, debut) => {
+    const l = circ * n / t;
+    if(l <= 0) return "";
+    return '<circle cx="' + taille/2 + '" cy="' + taille/2 + '" r="' + r + '" fill="none" stroke="' + coul +
+      '" stroke-width="7" stroke-dasharray="' + l.toFixed(1) + " " + (circ - l).toFixed(1) +
+      '" stroke-dashoffset="' + (-circ * debut / t).toFixed(1) + '" ' +
+      'transform="rotate(-90 ' + taille/2 + " " + taille/2 + ')"></circle>';
+  };
+  const val = centre !== undefined ? centre : (c.total ? Math.round(c.acquis / c.total * 100) + "%" : "\u2014");
+  return '<svg width="' + taille + '" height="' + taille + '" viewBox="0 0 ' + taille + ' ' + taille +
+    '" role="img" aria-label="' + c.acquis + " acquis, " + c.encours + " en cours, " + c.jamais + ' jamais faits">' +
+    '<circle cx="' + taille/2 + '" cy="' + taille/2 + '" r="' + r + '" fill="none" stroke="var(--trait2)" stroke-width="7"></circle>' +
+    seg(c.acquis, "var(--c2)", 0) +
+    seg(c.encours, "var(--rouge)", c.acquis) +
+    '<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" ' +
+    'font-family="IBM Plex Mono, monospace" font-size="' + Math.round(taille/4) + '" font-weight="600" ' +
+    'fill="var(--encre)">' + esc(String(val)) + "</text></svg>";
+}
+function legendeSegments(){
+  return '<div class="legSeg"><span><i style="background:var(--c2)"></i>acquis</span>' +
+    '<span><i style="background:var(--rouge)"></i>fait, pas acquis</span>' +
+    '<span><i style="background:var(--trait2)"></i>jamais fait</span></div>';
+}
+/* Couverture d'une matière : combien d'exercices existent, et dans quel état. */
+function couverture(ressId, banque){
+  const l = (banque === "prep" ? itemsPrep() : tousItems()).filter(i => i.ressId === ressId);
+  const t = banque === "prep" ? S.prepProgres : S.progres;
+  let jamais = 0, encours = 0, acquis = 0;
+  l.forEach(i => {
+    const p = t[i.id];
+    if(!p || !p.vus) jamais++;
+    else if(p.boite === 3) acquis++;
+    else encours++;
+  });
+  return {total:l.length, jamais, encours, acquis,
+    part: l.length ? Math.round(acquis / l.length * 100) : 0,
+    cours: banque === "prep" ? 0 : S.cours.filter(c => c.ressId === ressId).length};
+}
+/* Ce qui pèse lourd et qui n'est pas su passe devant. */
+function priorite(r, banque){
+  return coefTotal(r) * (1 - couverture(r.id, banque).part / 100);
+}
+function ligneMatiere(r, banque){
+  const c = couverture(r.id, banque);
+  const coef = String(coefTotal(r)).replace(".", ",");
+  const etatChiffre = c.acquis + " acquis · " + c.encours + " à reprendre · " + c.jamais + " jamais faits";
+  let etat = "", bouton = "";
+  if(banque === "prep"){
+    const L = LECONS[r.id], p = L ? progLecon(r.id) : null;
+    if(!L) etat = "leçon à venir";
+    else if(!p.termine) etat = p.index > 0 ? "leçon commencée · écran " + (p.index + 1) + " sur " + L.diapos.length : "leçon à lire";
+    else etat = etatChiffre;
+    if(L && p.termine && c.total)
+      bouton = '<button class="btn mini" data-act="session-prep" data-source="prep-lecon" data-lecon="' + esc(r.id) + '">Exercices</button>';
+    else if(L) bouton = '<button class="btn mini" data-act="ouvrir-lecon" data-l="' + esc(r.id) + '">Lire</button>';
+  } else {
+    etat = c.cours ? etatChiffre : "aucun cours importé";
+    bouton = c.total ? '<button class="btn mini" data-act="session" data-source="ress" data-ress="' + esc(r.id) + '">Réviser</button>'
+                     : '<button class="btn mini" data-act="ecran" data-e="import">Importer</button>';
+  }
+  return '<div class="ligneMat">' + anneau3(c, 46) +
+    '<span class="tx"><b>' + esc(r.id + " · " + tronquer(r.nom, 26)) + "</b><small>" + esc(etat) + "</small>" +
+    '<small style="color:var(--encre3)">coefficient ' + coef + (r.h ? " · " + r.h + " h" : "") + "</small></span>" +
+    bouton + "</div>";
+}
+function listeMatieres(banque, semestre){
+  return RESS.filter(r => r.s === (semestre || 1)).slice()
+    .sort((a,b) => priorite(b, banque) - priorite(a, banque))
+    .map(r => ligneMatiere(r, banque)).join("");
+}
+function grapheActivite(b){
+  const l = activite(b, 14);
+  const max = Math.max(1, ...l.map(x => x.n));
+  const jours = l.filter(x => x.n > 0).length;
+  const total = l.reduce((s,x) => s + x.n, 0);
+  let h = '<div class="activite">' + l.map(x =>
+    '<div class="j' + (x.n ? "" : " vide") + '" title="' + esc(x.jour + " · " + x.n) + '">' +
+    (x.n ? '<i style="height:' + Math.max(8, Math.round(x.n / max * 100)) + '%"></i>' : "") + "</div>").join("") + "</div>" +
+    '<div class="legJours"><span>il y a 14 jours</span><span>aujourd\'hui</span></div>';
+  return {html:h, jours, total};
+}
+function bandeauCompetences(banque){
+  let h = '<div class="anneaux">';
+  [1,2,3].forEach(u => {
+    const l = (banque === "prep" ? itemsPrep() : tousItems())
+      .filter(i => { const r = RESSOURCE(i.ressId); return r && r.c[u]; });
+    const t = banque === "prep" ? S.prepProgres : S.progres;
+    let jamais = 0, encours = 0, acquis = 0;
+    l.forEach(i => { const p = t[i.id];
+      if(!p || !p.vus) jamais++; else if(p.boite === 3) acquis++; else encours++; });
+    h += '<div class="anneau">' + anneau3({total:l.length, jamais, encours, acquis}, 78) +
+      '<span class="lab">' + esc(COMP[u].nom) + "<br>" + (l.length ? l.length + " ex." : "aucun") + "</span></div>";
+  });
+  return h + "</div>" + legendeSegments();
+}
+function blocActivite(banque){
+  const a = grapheActivite(banque);
+  return '<p class="kick">Ces quatorze jours</p>' + a.html +
+    '<p style="font-size:13px;color:var(--encre2);margin-bottom:16px">' +
+    (a.total ? a.total + " exercice" + (a.total>1?"s":"") + " sur " + a.jours + " jour" + (a.jours>1?"s":"") + "."
+      : "Aucune séance enregistrée sur la période.") + "</p>";
+}
+function grilleOutils(l){
+  return '<div class="grilleOutils">' + l.map(x =>
+    '<button class="outil" data-act="ecran" data-e="' + x.e + '">' +
+    '<span class="ic">' + x.ic + '</span><span class="nom">' + esc(x.n) + "</span>" +
+    (x.b ? '<span class="pastille">' + esc(String(x.b)) + "</span>" : "") + "</button>").join("") + "</div>";
+}
+
 function ecranPrep(){
   const j = joursRentree();
-  const parRess = Object.keys(LECONS).filter(k => LECONS[k].ressId);
-  const faites = parRess.filter(k => S.prep[k] && S.prep[k].termine).length;
+  const lecons = Object.keys(LECONS).filter(k => LECONS[k].ressId);
+  const faites = lecons.filter(k => S.prep[k] && S.prep[k].termine).length;
+  const items = itemsPrep(), dus = itemsDusPrep().length;
+  let jamais = 0, encours = 0, acquis = 0;
+  items.forEach(i => { const p = S.prepProgres[i.id];
+    if(!p || !p.vus) jamais++; else if(p.boite === 3) acquis++; else encours++; });
+  const glob = {total:items.length, jamais, encours, acquis};
+
   let h = '<div class="ecran">' + entete("Préparation",
     "Prendre de l'avance avant la rentrée", j !== null ? "J–" + j : null);
 
-  const p0 = progLecon("SOCLE");
-  h += '<button class="carteAct" data-act="ouvrir-lecon" data-l="SOCLE">' +
-    '<span class="ic">◈</span><span class="tx"><b>Comprendre le BUT</b><small>' +
-    (p0.termine ? "revoir · " : (p0.index > 0 ? "reprendre · " : "")) + LECONS.SOCLE.diapos.length +
-    " écrans · " + LECONS.SOCLE.duree + "</small></span><span class=\"fl\">›</span></button>";
-  h += carte("◆", "Choisir mon parcours", "les cinq spécialisations, et où les faire", "parcours");
+  h += '<div class="grandAnneau">' + anneau3({total:15, jamais:15-faites, encours:0, acquis:faites}, 92, faites + "/15") +
+    '<div class="chiffres"><b>' + faites + " / 15</b><small>matières préparées</small>" +
+    '<b style="font-size:16px;margin-top:8px">' + items.length + "</b><small>exercices débloqués</small></div></div>";
 
-  h += '<p class="kick" style="margin-top:20px">Les matières du semestre 1</p>';
-  h += '<div class="progLigne"><div class="jauge"><i style="width:' +
-    Math.round(faites / 15 * 100) + '%"></i></div><span>' + faites + "/15 préparées</span></div>";
-  RESS.filter(r => r.s === 1).forEach(r => {
-    const L = LECONS[r.id];
-    const ue = ueDominante(r);
-    if(!L){
-      h += '<div class="bloc" style="opacity:.55"><div class="bloc-t">' +
-        '<span class="point" style="background:' + COMP[ue].coul + '"></span>' +
-        '<span class="bloc-nom">' + esc(r.id + " · " + tronquer(r.nom, 34)) + "</span>" +
-        '<span class="bloc-meta">bientôt</span></div></div>';
-      return;
-    }
-    const p = progLecon(r.id);
-    h += '<button class="carteAct" data-act="ouvrir-lecon" data-l="' + r.id + '">' +
-      '<span class="ic" style="background:' + COMP[ue].coul + ';color:#fff;font-family:\'IBM Plex Mono\',monospace;font-size:12px">' +
-      esc(r.id.replace("R1.", "")) + "</span>" +
-      '<span class="tx"><b>' + esc(tronquer(r.nom, 36)) + "</b><small>" +
-      (p.termine ? "préparée · " : (p.index > 0 ? "reprendre · " : "")) +
-      L.diapos.length + " écrans · " + L.duree +
-      (L.exos ? " · " + L.exos.length + " exercices" : "") + "</small></span>" +
-      '<span class="fl">›</span></button>';
-  });
+  const suivante = RESS.filter(r => r.s === 1).find(r => LECONS[r.id] && !(S.prep[r.id] && S.prep[r.id].termine));
+  if(suivante){
+    const p = progLecon(suivante.id);
+    h += '<button class="cta" data-act="ouvrir-lecon" data-l="' + esc(suivante.id) + '">' +
+      (p.index > 0 ? "Reprendre " : "Lire ") + esc(suivante.id) + " · " + esc(tronquer(suivante.nom, 28)) + "</button>";
+  } else if(dus){
+    h += '<button class="cta" data-act="session-prep" data-source="prep-dus">M\'entraîner · ' + dus +
+      " exercice" + (dus>1?"s":"") + " à revoir</button>";
+  }
 
-  const sp = statsPrep(), dusP = itemsDusPrep().length;
-  if(sp.total) h += carte("◇", "M'entraîner sur les leçons",
-    dusP ? dusP + " exercice" + (dusP>1?"s":"") + " à revoir · " + sp.part + " % acquis"
-         : sp.total + " exercices · " + sp.part + " % acquis", "exercices");
+  h += '<div class="grilleOutils" style="margin-top:12px">' +
+    '<button class="outil" data-act="ouvrir-lecon" data-l="SOCLE"><span class="ic">◈</span>' +
+    '<span class="nom">Comprendre le BUT</span></button>' +
+    '<button class="outil" data-act="ecran" data-e="parcours"><span class="ic">◆</span>' +
+    '<span class="nom">Ma spécialité</span></button>' +
+    '<button class="outil" data-act="ecran" data-e="exercices"><span class="ic">◇</span>' +
+    '<span class="nom">M\'entraîner</span>' + (dus ? '<span class="pastille">' + dus + "</span>" : "") + "</button></div>";
 
-  h += '<p class="kick" style="margin-top:20px">Les trois compétences</p>';
-  [1,2,3].forEach(u => {
-    h += '<div class="bloc"><div class="bloc-t"><span class="point" style="background:' + COMP[u].coul + '"></span>' +
-      '<span class="bloc-nom">' + esc(COMP[u].code + " · " + COMP[u].nom) + "</span>" +
-      '<span class="bloc-meta">10 ECTS</span></div>' +
-      '<div style="font-size:13.5px;color:var(--encre2);line-height:1.45">' + esc(COMP[u].verbe) + "</div></div>";
-  });
-  h += '<div class="avis" style="margin-top:14px"><b>Ce que sont ces leçons</b>' +
-    "Elles ne remplacent pas le cours : elles te disent ce qui sera probablement abordé, avec le vocabulaire " +
-    "et le cadre légal, pour que tu arrives avec des choses à dire et des questions à poser. " +
-    "Chaque leçon finit par ses sources. En cas d'écart, c'est ton IUT qui fait foi.</div>";
+  h += '<p class="kick" style="margin-top:18px">Par compétence</p>' + bandeauCompetences("prep");
+  if(items.length) h += blocActivite("prep");
+
+  h += '<p class="kick">Les quinze matières du semestre 1</p>' +
+    '<p class="sousTitre">Les plus lourdes et les moins préparées en premier.</p>' +
+    listeMatieres("prep", 1);
+
+  h += '<div class="avis" style="margin-top:16px"><b>Ce que sont ces leçons</b>' +
+    "Elles ne remplacent pas le cours : elles disent ce qui sera probablement abordé, avec le vocabulaire et " +
+    "le cadre légal, pour arriver avec des choses à dire et des questions à poser. Chaque leçon finit par ses sources.</div>";
   h += '<div class="avis info"><b>Deux onglets étanches</b>' +
-    "Les exercices de préparation restent ici, avec leur propre progression. L'onglet Révision ne contient " +
-    "que ce que tu y importes toi-même. Rien ne passe d'un côté à l'autre.</div>";
+    "Les exercices de préparation restent ici, avec leur propre progression. L\'onglet Révision ne contient que " +
+    "ce que tu y importes toi-même.</div>";
   return h + "</div>";
 }
 
@@ -4777,36 +4931,93 @@ function ecranExercicesPrep(){
   let h = '<div class="ecran">' + retour("accueil", "M'entraîner");
   if(!total){
     return h + '<div class="vide"><div class="em">◇</div><h3>Aucun exercice pour l\'instant</h3>' +
-      "<p>Les exercices d'une leçon apparaissent une fois que tu l'as terminée.</p></div></div>";
+      "<p>Les exercices d'une matière apparaissent une fois sa leçon terminée.</p></div></div>";
   }
-  const dus = itemsDusPrep().length, err = erreursPrep().length;
-  const st = statsPrep();
-  h += '<p class="sousTitre">Ces exercices portent sur les leçons de préparation. Ils sont séparés de ceux ' +
-    "de l'onglet Révision, qui viennent de tes propres cours.</p>";
-  h += '<div class="progLigne"><div class="jauge"><i style="width:' + st.part + '%"></i></div>' +
-    "<span>" + st.sus + "/" + st.total + " acquis</span></div>";
-  h += carteSession("↻", "À revoir aujourd'hui", dus + " exercice" + (dus>1?"s":"") + " à échéance", "prep-dus", dus);
-  h += carteSession("✎", "Ce que je rate", err ? err + " en attente" : "rien en attente", "prep-erreurs", err);
-  const m = itemsPrep().filter(i => viseeDe(i) === "memo").length;
-  const c = itemsPrep().filter(i => viseeDe(i) === "comprehension").length;
-  h += carteSession("▪", "Mémoriser", m + " exercice" + (m>1?"s":""), "prep-memo", m);
-  h += carteSession("◎", "Comprendre", c + " exercice" + (c>1?"s":""), "prep-comprehension", c);
+  const fam = ui.famPrep || "";
+  const memo = itemsPrep().filter(i => viseeDe(i) === "memo");
+  const comp = itemsPrep().filter(i => viseeDe(i) === "comprehension");
 
-  h += '<p class="kick" style="margin-top:18px">Par matière</p>';
-  Object.keys(LECONS).forEach(k => {
-    const L = LECONS[k];
-    if(!L.ressId || !L.exos) return;
-    const s = statsPrep(k);
-    if(!s.total) return;
-    const r = RESSOURCE(L.ressId), ue = r ? ueDominante(r) : 3;
-    h += '<button class="carteAct" data-act="session-prep" data-source="prep-lecon" data-lecon="' + k + '">' +
-      '<span class="ic" style="background:' + COMP[ue].coul + ';color:#fff;font-family:\'IBM Plex Mono\',monospace;font-size:12px">' +
-      esc(String(L.ressId).replace("R1.", "").replace("R2.", "")) + "</span>" +
-      '<span class="tx"><b>' + esc(tronquer(L.titre, 34)) + "</b><small>" +
-      s.total + " exercices · " + s.part + " % acquis</small></span><span class=\"fl\">›</span></button>";
+  if(!fam){
+    h += '<p class="sousTitre">Deux façons de travailler, à ne pas mélanger. Choisis d\'abord laquelle.</p>';
+    h += '<div class="choixGros">' +
+      '<button data-act="fam-prep" data-v="memo"><span class="ic">▪</span><b>Mémoriser</b>' +
+      '<small>Restituer une définition, un chiffre, une liste</small>' +
+      '<span class="puce mono">' + memo.length + " exercices</span></button>" +
+      '<button data-act="fam-prep" data-v="comprehension"><span class="ic">◎</span><b>Comprendre</b>' +
+      '<small>Expliquer, distinguer, justifier, appliquer</small>' +
+      '<span class="puce mono">' + comp.length + " exercices</span></button></div>";
+    const dus = itemsDusPrep().length, err = erreursPrep().length;
+    h += '<p class="kick" style="margin-top:16px">Ou reprendre directement</p>';
+    h += carteSession("↻", "À revoir aujourd'hui", dus + " exercice" + (dus>1?"s":"") + " à échéance", "prep-dus", dus);
+    h += carteSession("✎", "Ce que je rate", err ? err + " en attente" : "rien en attente", "prep-erreurs", err);
+    return h + "</div>";
+  }
+
+  const l = fam === "memo" ? memo : comp;
+  h += '<div class="liste-puces">' +
+    '<button class="puce' + (fam==="memo"?" on":"") + '" data-act="fam-prep" data-v="memo">Mémoriser</button>' +
+    '<button class="puce' + (fam==="comprehension"?" on":"") + '" data-act="fam-prep" data-v="comprehension">Comprendre</button>' +
+    '<button class="puce" data-act="fam-prep" data-v="">Revenir au choix</button></div>';
+
+  if(fam === "memo"){
+    const t = itemsDusPrep().filter(i => viseeDe(i) === "memo").length;
+    h += '<p class="sousTitre">Restituer ce qui doit être su par cœur. ' + DELAIS_TXT + "</p>";
+    h += carteSession("↻", "À revoir aujourd'hui", t + " exercice" + (t>1?"s":""), "prep-dus-memo", t);
+    h += carteSession("▪", "Tout reprendre", l.length + " exercices de mémorisation", "prep-memo", l.length);
+    h += '<p class="kick" style="margin-top:16px">Par matière</p>';
+    RESS.filter(r => r.s === 1).forEach(r => {
+      const n = l.filter(i => i.ressId === r.id).length;
+      if(!n) return;
+      const c = couverture(r.id, "prep"), ue = ueDominante(r);
+      h += '<div class="ligneMat">' + anneau3(c, 42) +
+        '<span class="tx"><b>' + esc(r.id + " · " + tronquer(r.nom, 26)) + "</b><small>" + n + " en mémorisation</small></span>" +
+        '<button class="btn mini" data-act="session-prep" data-source="prep-lecon" data-lecon="' + esc(r.id) + '">Réviser</button></div>';
+    });
+    return h + "</div>";
+  }
+
+  h += '<p class="sousTitre">Quatre étapes, de la plus simple à la plus exigeante. ' +
+    "Rien ne t'empêche de sauter, mais l'ordre est là pour une raison.</p>";
+  [1,2,3,4].forEach(n => {
+    const li = l.filter(i => niveauDe(i) === n);
+    const t = S.prepProgres;
+    let jamais = 0, encours = 0, acquis = 0;
+    li.forEach(i => { const p = t[i.id];
+      if(!p || !p.vus) jamais++; else if(p.boite === 3) acquis++; else encours++; });
+    h += '<div class="ligneMat">' + anneau3({total:li.length, jamais, encours, acquis}, 46, li.length ? undefined : "—") +
+      '<span class="tx"><b>' + n + ". " + esc(NIVEAUX[n].nom) + "</b><small>" + esc(NIVEAUX[n].desc) + "</small>" +
+      '<small style="color:var(--encre3)">' + (li.length ? li.length + " exercices" : "aucun exercice") + "</small></span>" +
+      (li.length ? '<button class="btn mini" data-act="session-prep" data-source="prep-niveau" data-lecon="' + n + '">Faire</button>' : "") +
+      "</div>";
   });
-  return h + '<p style="font-size:12.5px;color:var(--encre3)">Même système de boîtes que la révision, ' +
-    "mais un compteur distinct : ce que tu fais ici ne touche pas à tes révisions de cours, et l'inverse est vrai aussi.</p></div>";
+  h += '<div class="avis" style="margin-top:14px"><b>Le niveau 4 est corrigé par l\'intelligence artificielle</b>' +
+    "Ta réponse rédigée est relue et notée sur 3. Sans clé Gemini, la correction se limite aux mots attendus, " +
+    "ce qui est beaucoup plus grossier.</div>";
+  return h + "</div>";
+}
+
+function ecranFinLecon(){
+  const L = LECONS[ui.lecon];
+  if(!L){ ui.ecran = "accueil"; return ecranPrep(); }
+  const r = RESSOURCE(L.ressId);
+  const c = couverture(L.ressId, "prep");
+  const v = compteVisees(itemsPrep(ui.lecon));
+  let h = '<div class="ecran">' + entete("Leçon terminée", esc(L.titre));
+  h += '<div class="grandAnneau">' + anneau3(c, 88) +
+    '<div class="chiffres"><b>' + c.total + "</b><small>exercices débloqués sur cette matière</small>" +
+    '<b style="font-size:16px;margin-top:8px">' + v.memo + " / " + v.comprehension +
+    "</b><small>en mémorisation / en compréhension</small></div></div>";
+  h += '<p class="sousTitre">C\'est maintenant que le contenu est le plus frais. Un premier passage tout de suite ' +
+    "fixe beaucoup mieux qu'une révision dans trois jours.</p>";
+  h += '<button class="cta" data-act="session-prep" data-source="prep-lecon" data-lecon="' + esc(ui.lecon) + '">' +
+    "M'entraîner sur " + esc(r ? r.id : ui.lecon) + "</button>";
+  h += '<button class="cta sec" data-act="ecran" data-e="accueil" style="margin-top:9px">Revenir plus tard</button>';
+  const suivante = RESS.filter(x => x.s === 1).find(x => LECONS[x.id] && !(S.prep[x.id] && S.prep[x.id].termine));
+  if(suivante) h += '<div class="avis info" style="margin-top:16px"><b>La suite</b>' +
+    "Prochaine matière non préparée : " + esc(suivante.id + " · " + tronquer(suivante.nom, 34)) +
+    '<div class="rang" style="margin-bottom:0"><button class="btn mini" data-act="ouvrir-lecon" data-l="' +
+    esc(suivante.id) + '">La lire maintenant</button></div></div>';
+  return h + "</div>";
 }
 
 function ecranLecon(){
@@ -4902,33 +5113,60 @@ function ecranParcours(){
 
 /* ---- onglet Révision ---- */
 function ecranRev(){
-  const items = tousItems().length, dus = itemsDus().length, err = carnetErreurs().length;
-  let h = '<div class="ecran">' + entete("Révision",
-    "Fiches et exercices tirés de tes propres notes", items ? items + " exercices" : null);
-  if(!S.cours.length){
-    h += '<div class="vide"><div class="em">◇</div><h3>Rien à réviser pour l\'instant</h3>' +
-      "<p>Cet onglet ne contient que ce que tu y déposes. Importe des notes de cours : l'application en tire une fiche imprimable et des exercices.</p></div>" +
-      '<button class="cta" data-act="ecran" data-e="import">Importer un premier cours</button>';
-    return h + "</div>";
+  const items = tousItems();
+  const dus = itemsDus().length, err = carnetErreurs().length, conf = erreursConfiantes().length;
+  let jamais = 0, encours = 0, acquis = 0;
+  items.forEach(i => { const p = S.progres[i.id];
+    if(!p || !p.vus) jamais++; else if(p.boite === 3) acquis++; else encours++; });
+  const glob = {total:items.length, jamais, encours, acquis};
+  const avecCours = new Set(S.cours.map(c => c.ressId)).size;
+
+  let h = '<div class="ecran">' + entete("Révision", "Tes cours, tes fiches, tes exercices",
+    items.length ? items.length + " exercices" : null);
+
+  h += '<button class="cta" data-act="ecran" data-e="import">＋ Importer un cours</button>';
+
+  if(!items.length){
+    h += '<div class="avis info" style="margin-top:14px"><b>Rien d\'importé pour l\'instant</b>' +
+      "Cet onglet ne contient que ce que tu y déposes. Le tableau de bord ci-dessous montre les quinze matières " +
+      "du semestre : il se remplira au fur et à mesure.</div>";
+  } else {
+    h += '<div class="grandAnneau" style="margin-top:12px">' + anneau3(glob, 92) +
+      '<div class="chiffres"><b>' + acquis + " / " + items.length + "</b><small>exercices acquis</small>" +
+      '<b style="font-size:16px;margin-top:8px">' + dus + "</b><small>à revoir aujourd\'hui</small></div></div>";
+    if(dus) h += '<button class="cta" data-act="session" data-source="dus">Réviser mes ' + dus +
+      " exercice" + (dus>1?"s":"") + " du jour</button>";
+    else h += '<div class="avis info"><b>Rien à revoir aujourd\'hui</b>' +
+      "Les exercices reviennent selon leur boîte : le jour même, à deux jours, puis à une semaine.</div>";
+    h += '<div class="rang" style="justify-content:center"><button class="btn mini" data-act="ecran" data-e="reviser">' +
+      "Choisir un autre mode de révision</button></div>";
   }
-  h += '<div class="progLigne"><div class="jauge"><i style="width:' +
-    (items ? Math.round((items - dus)/items*100) : 0) + '%"></i></div><span>' + dus + " à revoir</span></div>";
-  h += carte("↻", "Réviser maintenant", dus + " exercice" + (dus>1?"s":"") + " à échéance", "reviser");
-  h += carte("✎", "Carnet d'erreurs", err ? err + " à reprendre" : "aucune erreur en attente", "reviser");
-  h += carte("▤", "Mes fiches", S.cours.length + " cours importé" + (S.cours.length>1?"s":""), "fiches");
-  h += carte("＋", "Importer un cours", "coller des notes ou déposer un fichier", "import");
-  h += carte("◷", "Épreuve blanche", "série chronométrée sur tes exercices", "examen");
-  h += carte("▦", "Planning", S.reglages.dateExamen ? "rétroplanning actif" : "définir une échéance", "planning");
-  const qs = toutesQuestions().filter(q => !questionPosee(q.cle)).length;
-  h += carte("?", "À demander en TD", qs ? qs + " question" + (qs>1?"s":"") + " en attente" : "rien en attente", "questions");
-  const my = moyenneSemestre(ui.semestre || 1);
-  h += carte("◫", "Mes moyennes", my === null ? "aucune note saisie" : my.toFixed(2) + "/20 au semestre " + (ui.semestre||1), "moyennes");
-  const enCours = Object.keys(S.sae || {}).filter(k => S.sae[k].statut === "encours").length;
-  h += carte("◧", "Mes SAÉ", enCours ? enCours + " en cours" : "suivre les rendus", "sae");
-  const nlex = (S.lexique || []).length;
-  h += carte("语", "Lexique", nlex ? nlex + " mot" + (nlex>1?"s":"") + " en mémoire" : "anglais et espagnol", "lexique");
-  const nor = (S.oral || []).length;
-  h += carte("◍", "Entraînement oral", nor ? nor + " mise" + (nor>1?"s":"") + " en situation" : "jeux de rôle et soutenances", "oral");
+
+  h += '<p class="kick" style="margin-top:18px">Par compétence</p>' + bandeauCompetences("rev");
+
+  if(items.length){
+    h += blocActivite("rev");
+    if(err || conf) h += '<div class="avis" style="margin-bottom:14px"><b>Ce qui résiste</b>' +
+      err + " exercice" + (err>1?"s":"") + " dans le carnet d\'erreurs" +
+      (conf ? ", dont " + conf + " raté" + (conf>1?"s":"") + " en te croyant sûre" : "") +
+      '<div class="rang" style="margin-bottom:0"><button class="btn plein mini" data-act="session" data-source="erreurs">Les reprendre</button></div></div>';
+  }
+
+  h += '<p class="kick">Matière par matière</p>' +
+    '<p class="sousTitre">Les plus lourdes et les moins sues en premier. ' + avecCours + " matière" + (avecCours>1?"s":"") +
+    " alimentée" + (avecCours>1?"s":"") + " sur 15.</p>" + listeMatieres("rev", 1);
+
+  h += '<p class="kick" style="margin-top:20px">Le reste</p>' + grilleOutils([
+    {ic:"▤", n:"Mes fiches", e:"fiches", b:S.cours.length || ""},
+    {ic:"◷", n:"Épreuve blanche", e:"examen"},
+    {ic:"▦", n:"Planning", e:"planning"},
+    {ic:"◫", n:"Mes moyennes", e:"moyennes"},
+    {ic:"◧", n:"Mes SAÉ", e:"sae"},
+    {ic:"?", n:"À demander", e:"questions", b:toutesQuestions().filter(q => !questionPosee(q.cle)).length || ""},
+    {ic:"语", n:"Lexique", e:"lexique", b:(S.lexique||[]).length || ""},
+    {ic:"◍", n:"Oral", e:"oral", b:(S.oral||[]).length || ""},
+    {ic:"⚙", n:"Réglages", e:"reglages"}
+  ]);
   return h + "</div>";
 }
 
@@ -5710,6 +5948,8 @@ function lancerSessionPrep(source, lecon){
   else if(source === "prep-erreurs") l = erreursPrep();
   else if(source === "prep-lecon") l = itemsPrep(lecon);
   else if(source === "prep-memo") l = itemsPrep().filter(i => viseeDe(i) === "memo");
+  else if(source === "prep-dus-memo") l = itemsDusPrep().filter(i => viseeDe(i) === "memo");
+  else if(source === "prep-niveau") l = itemsPrep().filter(i => viseeDe(i) === "comprehension" && niveauDe(i) === Number(lecon));
   else if(source === "prep-comprehension") l = itemsPrep().filter(i => viseeDe(i) === "comprehension");
   banqueSession = "prep";
   ouvrirSession(l, "libre");
@@ -6498,8 +6738,12 @@ document.addEventListener("click", async e => {
       const p = progLecon(ui.lecon), L = LECONS[ui.lecon];
       if(p.index >= L.diapos.length - 1){
         p.termine = true; p.index = L.diapos.length - 1; sauver();
-        ui.ecran = "accueil"; ui.quizRep = null;
-        ui.message = {type:"info", titre:"Leçon terminée", txt:L.titre + " — tu peux la reprendre quand tu veux."};
+        ui.quizRep = null;
+        if(L.ressId && (L.exos || []).length){ ui.ecran = "finLecon"; }
+        else {
+          ui.ecran = "accueil";
+          ui.message = {type:"info", titre:"Leçon terminée", txt:L.titre + " — tu peux la reprendre quand tu veux."};
+        }
       } else { p.index++; ui.quizRep = null; sauver(); }
       rendre(); window.scrollTo(0,0); break;
     }
@@ -6549,6 +6793,7 @@ document.addEventListener("click", async e => {
     case "photo-retirer": ui.photos.splice(Number(el.dataset.i), 1); rendre(); break;
     case "transcrire": await transcrire(); break;
     case "analyser": await analyser(); break;
+    case "fam-prep": ui.famPrep = el.dataset.v; rendre(); window.scrollTo(0,0); break;
     case "oral-ouvrir": await ouvrirOral(el.dataset.id); break;
     case "oral-creer": await creerOral(); break;
     case "oral-suppr-ress":
