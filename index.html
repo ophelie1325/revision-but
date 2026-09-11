@@ -555,7 +555,8 @@ let memoire = null, stockageOk = true;
 const etatVierge = () => ({
   version:1,
   reglages:{moteur:"gemini", cleGemini:"", modele:"", modeles:[], complements:true,
-    dateRentree:"", dateExamen:"", debitVoix:1, voix:""},
+    dateRentree:"", dateExamen:"", debitVoix:1, voix:"",
+    modeleVoix:"", modelesVoix:[], voixIA:""},
   cours:[], progres:{}, examens:[], prep:{}, notes:[], sae:{}, questions:{}, lexique:[],
   oral:[], oralPassages:[], codes2022:true, prepProgres:{}, journal:{}, journalPrep:{}
 });
@@ -1423,6 +1424,174 @@ const FORME = [
   {critere:"As-tu évité de meubler ?", aide:"Le silence vaut mieux qu'une série de « euh »."},
   {critere:"As-tu tenu jusqu'au bout sans t'interrompre ?", aide:"Aller au terme de son idée."}
 ];
+
+/* =========================================================================
+   8 quater. PODCAST
+   Deux étapes séparées : écrire un texte fait pour l'oreille, puis le
+   synthétiser en un vrai fichier audio. La lecture par le navigateur
+   s'interrompt dès que l'écran s'éteint : un fichier, non.
+   ========================================================================= */
+/* Les trente voix préenregistrées de l'API, avec le caractère que leur prête
+   la documentation Google. Cette liste peut évoluer : si un nom est refusé,
+   l'erreur de l'API le dit et il suffit d'en choisir un autre. */
+const VOIX = [
+ ["Zephyr","lumineuse"],["Puck","entraînante"],["Charon","informative"],["Kore","ferme"],
+ ["Fenrir","enthousiaste"],["Leda","jeune"],["Orus","ferme"],["Aoede","détendue"],
+ ["Callirrhoe","détendue"],["Autonoe","lumineuse"],["Enceladus","calme"],["Iapetus","claire"],
+ ["Umbriel","détendue"],["Algieba","douce"],["Despina","douce"],["Erinome","claire"],
+ ["Algenib","graveleuse"],["Rasalgethi","informative"],["Laomedeia","entraînante"],["Achernar","douce"],
+ ["Alnilam","ferme"],["Schedar","équilibrée"],["Gacrux","mature"],["Pulcherrima","directe"],
+ ["Achird","amicale"],["Zubenelgenubi","décontractée"],["Vindemiatrix","douce"],["Sadachbia","vive"],
+ ["Sadaltager","informée"],["Sulafat","chaleureuse"]
+];
+const EXTRAIT_VOIX = "Segmenter, cibler, positionner. Voilà les trois temps de la démarche marketing.";
+const DUREES_PODCAST = {court:"environ 3 minutes", moyen:"environ 6 minutes", long:"environ 10 minutes"};
+const MOTS_PODCAST = {court:400, moyen:800, long:1300};
+
+function consignePodcast(ressId, duree){
+  const r = RESSOURCE(ressId);
+  return [
+"Tu écris le texte d'un podcast de révision, destiné à être écouté en voiture par une étudiante",
+"de première année de B.U.T. Techniques de commercialisation.",
+r ? "Matière : « " + r.nom + " »." : "",
+"",
+"RÈGLES ABSOLUES :",
+"1. Tu ne dis QUE ce que contient le contenu fourni. Aucun ajout, aucun chiffre, aucun exemple inventé.",
+"2. Si le contenu ne suffit pas à tenir la durée, fais plus court. Ne meuble jamais.",
+"3. Le texte est lu à voix haute par une machine : écris pour l'oreille.",
+"",
+"ÉCRIRE POUR L'OREILLE :",
+"— Phrases courtes. Une idée par phrase.",
+"— Aucune énumération à puces, aucun titre, aucun tiret, aucune parenthèse, aucun symbole.",
+"— Les nombres et les abréviations sont écrits en toutes lettres.",
+"— Annonce ce qui vient, développe, puis récapitule. L'auditrice ne peut pas revenir en arrière.",
+"— Tutoiement, ton posé, comme quelqu'un qui explique à côté de toi. Pas de ton commercial.",
+"— Pas de salutation d'animateur radio, pas de musique décrite, pas de mention de sponsor.",
+"",
+"STRUCTURE :",
+"— Une phrase d'ouverture qui annonce la matière et ce qu'on va voir.",
+"— Le corps, notion par notion, avec une transition parlée entre chacune.",
+"— Un récapitulatif final de trois ou quatre points, introduit clairement.",
+"",
+"Vise " + (MOTS_PODCAST[duree] || 800) + " mots environ, soit " + (DUREES_PODCAST[duree] || "") + " de lecture.",
+"",
+"Réponds UNIQUEMENT par le texte à lire, sans titre, sans commentaire, sans mise en forme."
+  ].filter(Boolean).join("\n");
+}
+
+/* Le contenu de départ : une fiche importée, ou une leçon de préparation. */
+function matierePodcast(source){
+  if(source.kind === "cours"){
+    const c = S.cours.find(x => x.id === source.id);
+    if(!c) return null;
+    const f = ficheRetenue(c);
+    const bl = (t, l) => l.length ? "\n" + t + "\n" + l.join("\n") : "";
+    return {ressId:c.ressId, titre:c.titre, texte:
+      (f.resume ? f.resume + "\n" : "") +
+      bl("NOTIONS :", (f.notions||[]).map(x => "- " + x.terme + " : " + x.def)) +
+      bl("À SAVOIR :", (f.parCoeur||[]).map(x => "- " + x.txt)) +
+      bl("FORMULES :", (f.calculs||[]).map(x => "- " + x.txt)) +
+      bl("CADRE JURIDIQUE :", (f.juridique||[]).map(x => "- " + x.txt)) +
+      bl("ERREURS CLASSIQUES :", (f.pieges||[]).map(x => "- " + x.txt)) +
+      bl("EXEMPLES :", (f.exemples||[]).map(x => "- " + x.txt)) +
+      bl("SIGLES :", (f.sigles||[]).map(x => "- " + x.sigle + " : " + x.sens))};
+  }
+  const L = LECONS[source.id];
+  if(!L) return null;
+  const morceaux = [];
+  L.diapos.forEach(d => {
+    if(d.t === "sources" || d.t === "quiz") return;
+    if(d.titre) morceaux.push("## " + d.titre);
+    if(d.texte) morceaux.push(d.texte);
+    if(d.paras) morceaux.push(d.paras.join(" "));
+    if(d.mots) d.mots.forEach(m => morceaux.push("- " + m.m + " : " + m.d));
+    if(d.etapes) d.etapes.forEach((e,i) => morceaux.push((i+1) + ". " + e));
+    if(d.lignes) d.lignes.forEach(l => morceaux.push("- " + l.v + " : " + l.l));
+    if(d.encart) morceaux.push(d.encart.titre + " : " + d.encart.texte);
+    if(d.note) morceaux.push(d.note);
+  });
+  return {ressId:L.ressId, titre:L.titre, texte:morceaux.join("\n")};
+}
+
+async function scriptPodcast(m, duree, cle, modele){
+  const d = await appelGemini(cle, modele, {
+    systemInstruction:{parts:[{text:consignePodcast(m.ressId, duree)}]},
+    contents:[{role:"user", parts:[{text:"CONTENU À RESTITUER :\n\n" + m.texte}]}],
+    generationConfig:{temperature:0.35, maxOutputTokens:4096}
+  });
+  const cand = (d.candidates || [])[0];
+  if(!cand) throw new Error("Rien n'est revenu. Le contenu est peut-être trop court.");
+  const txt = ((cand.content && cand.content.parts) || []).map(p => p.text || "").join("").trim();
+  if(txt.length < 200) throw new Error("Le texte produit est trop court pour un podcast.");
+  return txt;
+}
+
+/* ---- synthèse vocale par l'API ---- */
+async function modelesVoix(cle){
+  const r = await fetch(API + "/models?key=" + encodeURIComponent(cle));
+  if(!r.ok) throw new Error("La clé a été refusée (code " + r.status + ").");
+  const d = await r.json();
+  return (d.models || [])
+    .filter(m => /tts/i.test(m.name))
+    .filter(m => (m.supportedGenerationMethods || []).includes("generateContent"))
+    .map(m => ({id:m.name.replace(/^models\//,""), nom:m.displayName || m.name}));
+}
+function base64VersOctets(b64){
+  const bin = atob(b64);
+  const o = new Uint8Array(bin.length);
+  for(let i = 0; i < bin.length; i++) o[i] = bin.charCodeAt(i);
+  return o;
+}
+/* L'API renvoie du son brut : on lui ajoute l'en-tête d'un fichier WAV. */
+function wavDepuisPcm(pcm, taux){
+  const n = pcm.length, buf = new ArrayBuffer(44 + n), v = new DataView(buf);
+  const txt = (o, s) => { for(let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  txt(0, "RIFF"); v.setUint32(4, 36 + n, true); txt(8, "WAVE");
+  txt(12, "fmt "); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, taux, true); v.setUint32(28, taux * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  txt(36, "data"); v.setUint32(40, n, true);
+  new Uint8Array(buf, 44).set(pcm);
+  return new Blob([buf], {type:"audio/wav"});
+}
+/* Découpe en segments courts, sur des fins de phrase, pour rester sous les limites. */
+function segmenter(texte, max){
+  const out = [];
+  let courant = "";
+  String(texte || "").split(/(?<=[.!?])\s+/).forEach(p => {
+    if((courant + " " + p).trim().length > (max || 1400) && courant){ out.push(courant.trim()); courant = p; }
+    else courant += " " + p;
+  });
+  if(courant.trim()) out.push(courant.trim());
+  return out;
+}
+async function synthetiser(texte, cle, modele, voix, avance){
+  const seg = segmenter(texte, 1400);
+  const blocs = [];
+  let taux = 24000;
+  for(let i = 0; i < seg.length; i++){
+    if(avance) avance(i + 1, seg.length);
+    const corps = {
+      contents:[{role:"user", parts:[{text: seg[i]}]}],
+      generationConfig:{responseModalities:["AUDIO"]}
+    };
+    if(voix) corps.generationConfig.speechConfig =
+      {voiceConfig:{prebuiltVoiceConfig:{voiceName: voix}}};
+    const d = await appelGemini(cle, modele, corps);
+    const cand = (d.candidates || [])[0];
+    const part = cand && cand.content && (cand.content.parts || [])
+      .find(p => p.inlineData && p.inlineData.data);
+    if(!part) throw new Error("Aucun son renvoyé pour le passage " + (i + 1) + ".");
+    const mt = part.inlineData.mimeType || "";
+    const m = mt.match(/rate=(\d+)/);
+    if(m) taux = Number(m[1]);
+    blocs.push(base64VersOctets(part.inlineData.data));
+  }
+  const total = blocs.reduce((s, b) => s + b.length, 0);
+  const tout = new Uint8Array(total);
+  let o = 0;
+  blocs.forEach(b => { tout.set(b, o); o += b.length; });
+  return {blob: wavDepuisPcm(tout, taux), secondes: Math.round(total / 2 / taux)};
+}
 
 /* =========================================================================
    9. PROGRESSION — trois boîtes, erreurs confiantes
@@ -4697,6 +4866,7 @@ let ui = {tab:"prep", ecran:"accueil", lecon:null, parcours:null, fiche:null, se
   photos:[], transcrit:false, illisibles:0, lirePos:0,
   semestre:1, noteRess:"", noteLib:"", noteVal:"", minutes:20,
   langue:"A", lexFr:"", lexEtr:"", lexEx:"", lexTexte:"", lexColler:false, famPrep:"",
+  podcast:null, podSrc:"", podDuree:"moyen", podScript:"", essaiUrl:null,
   oral:null, oralCours:""};
 
 function progLecon(k){ if(!S.prep[k]) S.prep[k] = {index:0, termine:false, quiz:{}}; return S.prep[k]; }
@@ -4712,6 +4882,7 @@ function rendre(){
   const ecrans = {
     "prep/accueil":ecranPrep, "prep/lecon":ecranLecon, "prep/parcours":ecranParcours,
     "prep/exercices":ecranExercicesPrep, "prep/session":ecranSession, "prep/finLecon":ecranFinLecon,
+    "prep/podcast":ecranPodcast, "rev/podcast":ecranPodcast,
     "rev/accueil":ecranRev, "rev/import":ecranImport, "rev/fiches":ecranFiches, "rev/fiche":ecranFiche,
     "rev/valider":ecranValider, "rev/comprendre":ecranComprendre, "rev/lire":ecranLire, "rev/tri":ecranTri,
     "rev/visuels":ecranVisuels, "rev/decoupe":ecranDecoupe,
@@ -4908,7 +5079,9 @@ function ecranPrep(){
     '<button class="outil" data-act="ecran" data-e="parcours"><span class="ic">◆</span>' +
     '<span class="nom">Ma spécialité</span></button>' +
     '<button class="outil" data-act="ecran" data-e="exercices"><span class="ic">◇</span>' +
-    '<span class="nom">M\'entraîner</span>' + (dus ? '<span class="pastille">' + dus + "</span>" : "") + "</button></div>";
+    '<span class="nom">M\'entraîner</span>' + (dus ? '<span class="pastille">' + dus + "</span>" : "") + "</button>" +
+    '<button class="outil" data-act="ecran" data-e="podcast"><span class="ic">◉</span>' +
+    '<span class="nom">Podcast</span></button></div>';
 
   h += '<p class="kick" style="margin-top:18px">Par compétence</p>' + bandeauCompetences("prep");
   if(items.length) h += blocActivite("prep");
@@ -5165,6 +5338,7 @@ function ecranRev(){
     {ic:"?", n:"À demander", e:"questions", b:toutesQuestions().filter(q => !questionPosee(q.cle)).length || ""},
     {ic:"语", n:"Lexique", e:"lexique", b:(S.lexique||[]).length || ""},
     {ic:"◍", n:"Oral", e:"oral", b:(S.oral||[]).length || ""},
+    {ic:"◉", n:"Podcast", e:"podcast"},
     {ic:"⚙", n:"Réglages", e:"reglages"}
   ]);
   return h + "</div>";
@@ -6480,6 +6654,140 @@ async function creerOral(){
   ui.occupe = false; ui.etape = ""; rendre();
 }
 
+/* ---- podcast ---- */
+function sourcesPodcast(){
+  if(ui.tab === "prep"){
+    return RESS.filter(r => r.s === 1 && LECONS[r.id] && S.prep[r.id] && S.prep[r.id].termine)
+      .map(r => ({kind:"lecon", id:r.id, titre:r.id + " · " + tronquer(r.nom, 32)}));
+  }
+  return S.cours.map(c => ({kind:"cours", id:c.id, titre:tronquer(c.titre, 38)}));
+}
+function ecranPodcast(){
+  const ia = S.reglages.moteur === "gemini";
+  const src = sourcesPodcast();
+  const p = ui.podcast || {};
+  let h = '<div class="ecran">' + retour("accueil", "Podcast");
+  h += '<p class="sousTitre">Transformer un contenu en audio à écouter en voiture. ' +
+    "Le fichier se télécharge : il continue à jouer écran éteint, contrairement à la lecture du navigateur.</p>";
+
+  if(!ia){
+    return h + '<div class="avis"><b>Gemini est nécessaire</b>' +
+      "Écrire un texte fait pour l'oreille et le synthétiser demandent l'API. En mode local, seule la lecture " +
+      "à voix haute des fiches est disponible, et elle s'arrête dès que l'écran s'éteint.</div></div>";
+  }
+  if(!src.length){
+    return h + '<div class="vide"><div class="em">◉</div><h3>Aucun contenu disponible</h3><p>' +
+      (ui.tab === "prep" ? "Termine une leçon pour pouvoir en faire un podcast."
+                         : "Importe un cours pour pouvoir en faire un podcast.") + "</p></div></div>";
+  }
+
+  h += '<label class="champ" for="p-src">Contenu</label>' +
+    '<select id="p-src" data-bind="podSrc"><option value="">— choisir —</option>' +
+    src.map(x => '<option value="' + esc(x.kind + ":" + x.id) + '"' +
+      (ui.podSrc === x.kind + ":" + x.id ? " selected" : "") + ">" + esc(x.titre) + "</option>").join("") + "</select>";
+
+  h += '<label class="champ" for="p-duree" style="margin-top:12px">Durée</label><div class="liste-puces">' +
+    Object.keys(DUREES_PODCAST).map(k => '<button class="puce' + ((ui.podDuree||"moyen")===k?" on":"") +
+      '" data-act="pod-duree" data-v="' + k + '">' + esc(DUREES_PODCAST[k]) + "</button>").join("") + "</div>";
+
+  h += '<label class="champ" for="p-voix">Voix</label>' +
+    '<select id="p-voix" data-bind="voixIA"><option value="">Voix par défaut</option>' +
+    VOIX.map(v => '<option value="' + esc(v[0]) + '"' + (S.reglages.voixIA===v[0]?" selected":"") + ">" +
+      esc(v[0] + " · " + v[1]) + "</option>").join("") + "</select>" +
+    '<div class="rang"><button class="btn mini" data-act="pod-essai"' + (ui.occupe?" disabled":"") + ">" +
+    (ui.occupe && ui.etape === "essai" ? "Un instant…" : "Écouter un extrait") + "</button>" +
+    (ui.essaiUrl ? '<audio controls src="' + ui.essaiUrl + '" style="flex:1;min-width:150px;height:34px"></audio>' : "") +
+    "</div>";
+
+  if(!S.reglages.modeleVoix) h += '<div class="avis"><b>Aucun modèle vocal choisi</b>' +
+    "Va dans les réglages, section Podcast, et charge la liste des modèles de synthèse vocale.</div>";
+
+  h += '<button class="cta" data-act="pod-faire"' +
+    (ui.occupe || !ui.podSrc || !S.reglages.modeleVoix ? " disabled" : "") + ">" +
+    (ui.occupe && ui.etape !== "essai" ? esc(ui.etape || "En cours…") : (p.url ? "Refaire le podcast" : "Faire le podcast")) + "</button>";
+
+  if(p.url){
+    h += '<p class="kick" style="margin-top:20px">' + esc(tronquer(p.titre || "Podcast", 34)) + " · " + mmss(p.secondes || 0) + "</p>" +
+      '<div class="vign"><audio controls src="' + p.url + '" style="width:100%"></audio></div>' +
+      '<div class="rang"><button class="btn plein mini" data-act="pod-telecharger">Télécharger</button></div>' +
+      '<p style="font-size:12.5px;color:var(--encre3);margin-top:-4px">Enregistre le fichier sur ton téléphone : ' +
+      "il s'écoute alors comme n'importe quel morceau, écran éteint.</p>";
+    const mots = (p.script || "").trim().split(/\s+/).length;
+    h += '<details class="depli" style="margin-top:12px"><summary>Le texte lu · ' + mots + " mots</summary>" +
+      '<div class="corps"><textarea id="p-txt" data-bind="podScript" style="min-height:170px">' + esc(p.script || "") + "</textarea>" +
+      '<div class="rang" style="margin-bottom:0"><button class="btn mini" data-act="pod-revoix"' +
+      (ui.occupe?" disabled":"") + ">Refaire la voix sur ce texte</button></div>" +
+      '<p style="font-size:12.5px;color:var(--encre3);margin:0">Utile pour corriger un mot mal prononcé : ' +
+      "change son orthographe et relance la voix.</p></div></details>";
+  }
+  return h + "</div>";
+}
+
+/* Un seul geste : écrire le texte puis le mettre en voix.
+   Le contenu de départ a déjà été validé point par point à l'import. */
+async function podcastFaire(){
+  const [kind, id] = String(ui.podSrc || "").split(":");
+  const m = matierePodcast({kind, id});
+  if(!m){ ui.message = {type:"err", titre:"Contenu introuvable", txt:"Choisis un autre point de départ."}; rendre(); return; }
+  if(!S.reglages.cleGemini || !S.reglages.modele){
+    ui.message = {type:"err", titre:"Clé manquante", txt:"Renseigne la clé et le modèle dans les réglages."};
+    rendre(); return;
+  }
+  if(!S.reglages.modeleVoix){
+    ui.message = {type:"err", titre:"Modèle vocal manquant", txt:"Charge la liste dans les réglages, section Podcast."};
+    rendre(); return;
+  }
+  ui.occupe = true; ui.etape = "Écriture du texte…"; ui.message = null; rendre();
+  try{
+    const s = await scriptPodcast(m, ui.podDuree || "moyen", S.reglages.cleGemini, S.reglages.modele);
+    ui.etape = "Mise en voix…"; rendre();
+    const r = await synthetiser(s, S.reglages.cleGemini, S.reglages.modeleVoix, S.reglages.voixIA,
+      (n, t) => { ui.etape = "Mise en voix · passage " + n + " sur " + t + "…"; rendre(); });
+    const p = ui.podcast;
+    if(p && p.url) try{ URL.revokeObjectURL(p.url); }catch(e){}
+    ui.podcast = {script:s, titre:m.titre, ressId:m.ressId,
+      blob:r.blob, url:URL.createObjectURL(r.blob), secondes:r.secondes};
+    ui.podScript = s;
+    ui.message = {type:"info", titre:"Podcast prêt", txt:mmss(r.secondes) + " d'audio. Télécharge-le pour l'écouter hors ligne."};
+  }catch(e){ ui.message = {type:"err", titre:"Interrompu", txt:e.message}; }
+  ui.occupe = false; ui.etape = ""; rendre(); window.scrollTo(0,0);
+}
+
+/* Refaire la voix sur un texte corrigé, sans réécrire le script. */
+async function podcastRevoix(){
+  const p = ui.podcast;
+  if(!p) return;
+  const texte = (ui.podScript || p.script || "").trim();
+  if(texte.length < 100){ ui.message = {type:"err", titre:"Texte trop court", txt:"Il ne reste presque rien à lire."}; rendre(); return; }
+  ui.occupe = true; ui.etape = "Mise en voix…"; ui.message = null; rendre();
+  try{
+    const r = await synthetiser(texte, S.reglages.cleGemini, S.reglages.modeleVoix, S.reglages.voixIA,
+      (n, t) => { ui.etape = "Mise en voix · passage " + n + " sur " + t + "…"; rendre(); });
+    if(p.url) try{ URL.revokeObjectURL(p.url); }catch(e){}
+    p.script = texte; p.blob = r.blob; p.url = URL.createObjectURL(r.blob); p.secondes = r.secondes;
+    ui.message = {type:"info", titre:"Voix refaite", txt:mmss(r.secondes) + " d'audio."};
+  }catch(e){ ui.message = {type:"err", titre:"Interrompu", txt:e.message}; }
+  ui.occupe = false; ui.etape = ""; rendre(); window.scrollTo(0,0);
+}
+
+/* Extrait court, pour choisir une voix sans lancer un podcast entier. */
+async function podcastEssai(){
+  if(!S.reglages.cleGemini || !S.reglages.modeleVoix){
+    ui.message = {type:"err", titre:"Réglages incomplets", txt:"Il faut la clé et un modèle vocal."};
+    rendre(); return;
+  }
+  ui.occupe = true; ui.etape = "essai"; ui.message = null; rendre();
+  try{
+    const r = await synthetiser(EXTRAIT_VOIX, S.reglages.cleGemini, S.reglages.modeleVoix, S.reglages.voixIA);
+    if(ui.essaiUrl) try{ URL.revokeObjectURL(ui.essaiUrl); }catch(e){}
+    ui.essaiUrl = URL.createObjectURL(r.blob);
+  }catch(e){
+    ui.message = {type:"err", titre:"Voix indisponible",
+      txt:e.message + " Si le nom de voix est refusé, choisis-en un autre dans la liste."};
+  }
+  ui.occupe = false; ui.etape = ""; rendre();
+}
+
 function ecranReglages(){
   const r = S.reglages;
   const voix = (window.speechSynthesis ? speechSynthesis.getVoices() : []).filter(v => /fr/i.test(v.lang));
@@ -6511,6 +6819,19 @@ function ecranReglages(){
       '<p style="font-size:13px;color:var(--encre2)">La clé reste sur cet appareil. Sur l\'offre gratuite, Google peut ' +
       "utiliser les contenus transmis pour entraîner ses modèles.</p>";
   }
+  h += '<p class="kick" style="margin-top:20px">Podcast</p>';
+  if(r.moteur !== "gemini"){
+    h += '<p style="font-size:14px;color:var(--encre2)">Le podcast demande Gemini : passe le moteur en mode Gemini ci-dessus.</p>';
+  } else {
+    h += '<label class="champ" for="v-mod">Modèle de synthèse vocale</label>' +
+      '<select id="v-mod" data-bind="modeleVoix">' + ((r.modelesVoix || []).length ? r.modelesVoix.map(m =>
+        '<option value="' + esc(m.id) + '"' + (r.modeleVoix===m.id?" selected":"") + ">" + esc(m.nom) + "</option>").join("")
+        : '<option value="">— charger la liste —</option>') + "</select>" +
+      '<div class="rang"><button class="btn mini" data-act="charger-voix">Charger les modèles vocaux</button></div>' +
+      '<p style="font-size:13px;color:var(--encre2)">La voix se choisit sur l\'écran Podcast, ' +
+      "où un extrait permet de l'essayer avant de lancer un enregistrement complet.</p>";
+  }
+
   h += '<p class="kick" style="margin-top:20px">Lecture audio</p>' +
     '<label class="champ" for="v-voix">Voix</label>' +
     '<select id="v-voix" data-bind="voix"><option value="">Voix par défaut</option>' +
@@ -6794,6 +7115,33 @@ document.addEventListener("click", async e => {
     case "transcrire": await transcrire(); break;
     case "analyser": await analyser(); break;
     case "fam-prep": ui.famPrep = el.dataset.v; rendre(); window.scrollTo(0,0); break;
+    case "pod-duree": ui.podDuree = el.dataset.v; rendre(); break;
+    case "pod-faire": await podcastFaire(); break;
+    case "pod-revoix": await podcastRevoix(); break;
+    case "pod-essai": await podcastEssai(); break;
+    case "pod-telecharger": {
+      const p = ui.podcast;
+      if(!p || !p.blob) break;
+      const a = document.createElement("a");
+      a.href = p.url;
+      a.download = "podcast-" + normaliser(p.titre || "revision").replace(/\s+/g, "-").slice(0, 40) + ".wav";
+      document.body.appendChild(a); a.click();
+      setTimeout(() => a.remove(), 400);
+      break;
+    }
+    case "charger-voix": {
+      if(!S.reglages.cleGemini){ ui.message = {titre:"Clé manquante", txt:"Colle d'abord ta clé Google AI Studio."}; rendre(); break; }
+      el.textContent = "Chargement…";
+      try{
+        const m = await modelesVoix(S.reglages.cleGemini);
+        S.reglages.modelesVoix = m;
+        if(!S.reglages.modeleVoix && m.length) S.reglages.modeleVoix = m[0].id;
+        sauver();
+        ui.message = m.length ? {type:"info", titre:"Modèles vocaux chargés", txt:m.length + " disponible" + (m.length>1?"s":"") + "."}
+          : {titre:"Aucun modèle vocal", txt:"Ta clé ne donne pas accès à la synthèse vocale. Le podcast restera indisponible."};
+      }catch(err){ ui.message = {type:"err", titre:"Clé refusée", txt:err.message}; }
+      rendre(); break;
+    }
     case "oral-ouvrir": await ouvrirOral(el.dataset.id); break;
     case "oral-creer": await creerOral(); break;
     case "oral-suppr-ress":
@@ -7101,7 +7449,7 @@ document.addEventListener("change", async e => {
 });
 document.addEventListener("input", e => {
   const b = e.target.dataset.bind;
-  if(["importTexte","importTitre","noteLib","noteVal","lexFr","lexEtr","lexEx","lexTexte"].includes(b))
+  if(["importTexte","importTitre","noteLib","noteVal","lexFr","lexEtr","lexEx","lexTexte","podScript"].includes(b))
     ui[b] = e.target.value;
 });
 document.addEventListener("keydown", e => {
