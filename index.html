@@ -495,6 +495,34 @@ textarea{min-height:150px;resize:vertical;line-height:1.5}
 .carteAct,.outil,.ligneMat{animation:surgit .22s ease both}
 .occupe{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.45);
   border-top-color:#fff;border-radius:50%;animation:tourne .7s linear infinite;vertical-align:-2px;margin-right:7px}
+/* ---- prise en main : tutos guidés ---- */
+.tutoB{position:fixed;left:50%;transform:translateX(-50%);z-index:60;
+  bottom:calc(var(--hautNav) + 8px + env(safe-area-inset-bottom));width:min(500px, calc(100% - 20px));
+  background:var(--encre);color:var(--fond);border-radius:18px;padding:13px 15px 12px;
+  box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.tutoB .tutoH{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;
+  font-size:11.5px;font-weight:700;letter-spacing:.02em;opacity:.8}
+.tutoB .tutoN{font-variant-numeric:tabular-nums}
+.tutoB .tutoTxt{font-size:15px;line-height:1.45;margin:0}
+.tutoB .tutoAlerte{margin:8px 0 0;font-size:13.5px;background:var(--or);color:#2A1D00;border-radius:10px;padding:7px 10px}
+.tutoB .tutoBtns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.tutoB button{border:0;border-radius:11px;padding:9px 13px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;
+  background:rgba(127,127,127,.22);color:inherit}
+.tutoB button.fort{background:var(--or);color:#2A1D00}
+.tutoB button.quitter{margin-left:auto;background:transparent;text-decoration:underline;opacity:.8}
+body.enTuto .app{padding-bottom:calc(var(--hautNav) + 230px + env(safe-area-inset-bottom))}
+.tutoCible{outline:3px solid var(--or) !important;outline-offset:3px;position:relative;z-index:5;
+  animation:tutoHalo 1.3s ease-in-out infinite}
+@keyframes tutoHalo{0%,100%{box-shadow:0 0 0 0 rgba(242,160,7,.55)}50%{box-shadow:0 0 0 9px rgba(242,160,7,0)}}
+.bandeauTuto{display:inline-block;font-size:11px;font-weight:700;background:var(--or);color:#2A1D00;
+  border-radius:999px;padding:3px 9px;margin-bottom:8px}
+.guideFiche{background:var(--carte);border-radius:var(--r2);box-shadow:var(--ombre);padding:13px 15px;margin-bottom:10px}
+.guideFiche h3{font-size:15.5px;margin-bottom:4px;letter-spacing:-.01em}
+.guideFiche p{font-size:14px;color:var(--encre2);margin:0 0 6px}
+.guideFiche ol{margin:4px 0 8px 20px;font-size:14px;color:var(--encre2)}
+.guideFiche .piege{font-size:13px;color:var(--rouge);margin-top:4px}
+.nouveautes li{margin:0 0 5px 18px;font-size:14px}
+.icones{display:flex;gap:8px;flex:none}
 @media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
 </style>
 </head>
@@ -718,7 +746,8 @@ const etatVierge = () => ({
     dateRentree:"", dateExamen:"", debitVoix:1, voix:"", themeFiche:"", reformImprimee:"",
     modeleVoix:"", modelesVoix:[], voixIA:"", theme:"auto"},
   cours:[], progres:{}, examens:[], prep:{}, notes:[], sae:{}, questions:{}, lexique:[],
-  oral:[], oralPassages:[], codes2022:true, prepProgres:{}, journal:{}, journalPrep:{}
+  oral:[], oralPassages:[], codes2022:true, prepProgres:{}, journal:{}, journalPrep:{},
+  guideVu:false, versionVue:""
 });
 let S = etatVierge();
 /* Les codes de ressources ont d'abord suivi l'ordre de la maquette de l'IUT.
@@ -754,6 +783,7 @@ function charger(){
   }catch(e){ stockageOk = false; }
 }
 function sauver(){
+  if(TUTO.actif) return;   // un tuto ne laisse aucune trace
   if(!stockageOk){ memoire = S; return; }
   try{ localStorage.setItem(CLE, JSON.stringify(S)); }
   catch(e){ stockageOk = false; memoire = S; }
@@ -1216,7 +1246,7 @@ function itemsLocaux(fiche, ressId){
 const API = "https://generativelanguage.googleapis.com/v1beta";
 
 async function listerModeles(cle){
-  const r = await fetch(API + "/models?key=" + encodeURIComponent(cle));
+  const r = await fetch(API + "/models", {headers:{"x-goog-api-key": cle}});
   if(!r.ok) throw new Error("La clé a été refusée (code " + r.status + ").");
   const d = await r.json();
   return (d.models || [])
@@ -1426,7 +1456,7 @@ async function testerCle(){
 
   // étape 1 : forme de la clé
   if(/\s/.test(cle)) pousser("Forme de la clé", "ko", "La clé contient un espace ou un retour à la ligne. Recopie-la sans rien autour.");
-  else if(cle.length < 30) pousser("Forme de la clé", "ko", "La clé paraît trop courte (" + cle.length + " caractères). Une clé Google AI Studio en compte une trentaine.");
+  else if(cle.length < 20) pousser("Forme de la clé", "ko", "La clé paraît incomplète (" + cle.length + " caractères). Recopie-la en entier depuis Google AI Studio.");
   else pousser("Forme de la clé", "ok", cle.length + " caractères, aucun espace parasite.");
 
   // étape 2 : la clé est-elle acceptée
@@ -1440,6 +1470,7 @@ async function testerCle(){
     let aide = "Réponse inattendue du serveur.";
     if(/Failed to fetch|NetworkError|Load failed/i.test(m))
       aide = "Aucune réponse du serveur. Causes possibles : pas de connexion, réseau d'établissement qui bloque le domaine, ou extension de navigateur qui filtre les requêtes.";
+    else if(/ 401|\(code 401\)/.test(m)) aide = "Clé refusée : elle est invalide ou révoquée. Crée une nouvelle clé sur Google AI Studio.";
     else if(/ 400|\(code 400\)/.test(m)) aide = "Clé refusée : elle est invalide, révoquée, ou recopiée partiellement. Régénère-la sur Google AI Studio.";
     else if(/ 403|\(code 403\)/.test(m)) aide = "Clé reconnue mais interdite d'usage ici : restriction par site ou par adresse IP dans la console Google, ou API Generative Language non activée sur le projet.";
     else if(/ 429|\(code 429\)/.test(m)) aide = "Quota atteint pour cette clé. Attends la réinitialisation ou change de projet.";
@@ -1505,8 +1536,8 @@ async function appelGemini(cle, modele, corps){
   const minuterie = ctrl ? setTimeout(() => { try{ ctrl.abort(); }catch(e){} }, DELAI_APPEL) : null;
   let r;
   try{
-    r = await fetch(API + "/models/" + encodeURIComponent(modele) + ":generateContent?key=" + encodeURIComponent(cle),
-      {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(corps),
+    r = await fetch(API + "/models/" + encodeURIComponent(modele) + ":generateContent",
+      {method:"POST", headers:{"Content-Type":"application/json", "x-goog-api-key": cle}, body:JSON.stringify(corps),
        signal: ctrl ? ctrl.signal : undefined});
   }catch(e){
     if(e && (e.name === "AbortError" || /abort/i.test(e.message || "")))
@@ -1518,6 +1549,7 @@ async function appelGemini(cle, modele, corps){
   }
   if(!r.ok){
     let d = ""; try{ d = (await r.json()).error.message; }catch(e){}
+    if(r.status === 401) throw new Error("Clé refusée (401) : elle est invalide ou révoquée. Crée une nouvelle clé sur Google AI Studio.");
     if(r.status === 429) throw new Error("Quota Google atteint (429). Attends une minute, ou repasse en mode local.");
     if(r.status === 403) throw new Error("Clé refusée pour cet usage (403) : restriction par site ou par adresse IP dans la console Google, ou API non activée.");
     throw new Error("Gemini a renvoyé une erreur " + r.status + (d ? " : " + d : "") + ".");
@@ -2096,7 +2128,7 @@ async function scriptPodcast(m, duree, cle, modele, langue){
 
 /* ---- synthèse vocale par l'API ---- */
 async function modelesVoix(cle){
-  const r = await fetch(API + "/models?key=" + encodeURIComponent(cle));
+  const r = await fetch(API + "/models", {headers:{"x-goog-api-key": cle}});
   if(!r.ok) throw new Error("La clé a été refusée (code " + r.status + ").");
   const d = await r.json();
   return (d.models || [])
@@ -5891,7 +5923,8 @@ function rendre(){
     "rev/examen":ecranExamen, "rev/planning":ecranPlanning, "rev/moyennes":ecranMoyennes,
     "rev/sae":ecranSae, "rev/questions":ecranQuestions, "rev/lexique":ecranLexique,
     "rev/oral":ecranOral, "rev/oralSeance":ecranOralSeance, "reglages":ecranReglages,
-    "rev/stats":ecranStats, "prep/stats":ecranStats, "rev/recherche":ecranRecherche, "prep/recherche":ecranRecherche
+    "rev/stats":ecranStats, "prep/stats":ecranStats, "rev/recherche":ecranRecherche, "prep/recherche":ecranRecherche,
+    "rev/guide":ecranGuide, "prep/guide":ecranGuide
   };
   const f = ecrans[ui.ecran === "reglages" ? "reglages" : ui.tab + "/" + ui.ecran] || ecranPrep;
   let h = "";
@@ -5901,20 +5934,25 @@ function rendre(){
     if(!stockageOk) h += '<div class="ecran" style="padding-bottom:0"><div class="avis"><b>Rien ne sera conservé</b>' +
       "Le navigateur bloque l'enregistrement local. Ouvre le fichier depuis ton appareil pour garder ta progression.</div></div>";
   }
+  if(ui.ecran === "accueil") h += blocAccueil();
   $("#app").innerHTML = h + f();
   if(ui.tab === "rev" && ui.ecran === "decoupe" && ui.pdfBuf) setTimeout(dessinerPage, 30);
   if(ui.ecran === "oralSeance" && ui.oral && ui.oral.phase === "parle") lancerChronoOral();
+  if(TUTO.actif) suivreTuto();
+}
+function iconesHaut(){
+  return '<div class="icones"><button class="iconeBtn" data-act="ecran" data-e="guide" aria-label="Prise en main">?</button>' +
+    '<button class="iconeBtn" data-act="ecran" data-e="reglages" aria-label="Réglages">⚙</button></div>';
 }
 function entete(titre, sous, badge){
   return '<div class="enTete"><div><h1>' + titre + "</h1></div>" +
-    (badge ? '<span class="jour">' + badge + "</span>" : "") +
-    '<button class="iconeBtn" data-act="ecran" data-e="reglages" aria-label="Réglages">⚙</button></div>' +
+    (badge ? '<span class="jour">' + badge + "</span>" : "") + iconesHaut() + "</div>" +
     (sous ? '<p class="sousTitre">' + sous + "</p>" : "");
 }
 function retour(vers, titre){
   return '<div class="enTete"><div style="display:flex;align-items:center;gap:10px">' +
     '<button class="iconeBtn" data-act="ecran" data-e="' + vers + '" aria-label="Retour">‹</button><h1>' + titre + "</h1></div>" +
-    '<button class="iconeBtn" data-act="ecran" data-e="reglages" aria-label="Réglages">⚙</button></div>';
+    iconesHaut() + "</div>";
 }
 function carte(ic, titre, sous, ecran, coul){
   const st = coul ? ' style="background:' + coul + '22;color:' + coul + '"' : "";
@@ -8232,6 +8270,494 @@ function ecranRecherche(){
   return h + "</div>";
 }
 
+/* =========================================================================
+   PRISE EN MAIN DE L'APPLICATION
+   Les tutos rejouent la vraie application sur des données d'exemple :
+   mêmes écrans, même code. Une modification de l'interface s'y retrouve
+   d'elle-même, et le diagnostic rejoue chaque parcours pour s'assurer
+   qu'aucune étape ne vise un bouton disparu.
+   Pendant un tuto, rien n'est enregistré, aucun appel ne part chez Google,
+   et les vraies données sont rendues intactes à la sortie.
+   ========================================================================= */
+const TUTO = {actif:null, enCours:false};
+
+/* Le cours d'exemple reprend le contenu déjà vérifié de la leçon R1.01. */
+function texteDemo(){
+  const L = LECONS["R1.01"];
+  const out = ["Fondamentaux du marketing — notes d'exemple", ""];
+  L.diapos.forEach(d => {
+    if(d.t === "vocab"){ out.push("Vocabulaire"); (d.mots || []).forEach(m => out.push(m.m + " : " + m.d)); out.push(""); }
+    else if(d.t === "etapes"){ out.push(d.titre || "Étapes"); (d.etapes || []).forEach((e,i) => out.push((i+1) + ". " + e)); out.push(""); }
+    else if(d.t === "notion" && d.titre){ out.push(d.titre); (d.paras || []).forEach(p => out.push(p)); out.push(""); }
+  });
+  return out.join("\n");
+}
+function coursDemo(){
+  const texte = texteDemo();
+  const fiche = analyseLocale({texte, blocs:decouper(texte), forts:[]}, "R1.01").fiche;
+  const items = itemsLocaux(Object.assign({procedures: fiche.procedures || []}, fiche), "R1.01")
+    .map(i => Object.assign(i, {ressId:"R1.01"}));
+  return {id:"demo-cours", titre:"Exemple · fondamentaux du marketing", ressId:"R1.01",
+    date:new Date().toISOString(), origine:"local", fiche, items, texte,
+    tri:{off:{}, fort:{}}, visuels:[]};
+}
+function etatDemo(P){
+  const d = etatVierge();
+  d.reglages.moteur = "local";
+  d.reglages.theme = S.reglages.theme;
+  d.guideVu = true; d.versionVue = VERSION_APP;
+  if(P.cours){
+    const c = coursDemo();
+    d.cours = [c];
+    // quelques erreurs pour que le carnet ne soit pas vide
+    const hier = Date.now() - JOUR;
+    c.items.slice(0, 3).forEach((it, k) => {
+      d.progres[it.id] = {boite:1, vus:1, ok:0, ko:1, dernier:hier, prochain:hier, erreurConfiante: k === 0};
+    });
+    d.journal[new Date(hier).toISOString().slice(0,10)] = {n:3, ok:0};
+  }
+  return d;
+}
+/* Google n'est jamais appelé pendant un tuto : les réponses sont simulées. */
+async function fetchDemo(url){
+  const u = String(url);
+  const rep = o => ({ok:true, status:200, json: async () => o});
+  if(/:generateContent/.test(u))
+    return rep({candidates:[{content:{parts:[{text:'{"test":"ok"}'}]}, finishReason:"STOP"}]});
+  if(/\/models/.test(u))
+    return rep({models:[{name:"models/demo-tuto", displayName:"Modèle de démonstration",
+      supportedGenerationMethods:["generateContent"]}]});
+  return {ok:false, status:404, json: async () => ({})};
+}
+
+/* ---- les parcours ----
+   cible : ce qu'il faut toucher (entouré en jaune) ; tous : entourer chaque occurrence
+   quand : condition qui fait passer à l'étape suivante ; sans elle, bouton « Continuer »
+   avant : préparation de l'écran en entrant dans l'étape
+   action : bouton supplémentaire dans le bandeau (coller un exemple…)
+   ecran : où se trouve la cible, pour « Me ramener » */
+const seanceTuto = () => ui.session || {};
+const PARCOURS_TUTO = [
+ {id:"decouvrir", titre:"Découvrir l'application", duree:"3 min", depart:["prep","accueil"],
+  desc:"Les deux onglets, les réglages, la prise en main.", etapes:[
+  {txt:"Bienvenue ! Ce tuto te fait visiter l'application. Tout ce que tu fais ici est un exercice : tes vraies données ne sont pas touchées."},
+  {txt:"En bas, deux onglets. Touche « Révision » : c'est là que tu déposes tes propres cours.",
+   cible:'#nav [data-tab="rev"]', quand:() => ui.tab === "rev"},
+  {txt:"Dans Révision, tout vient de tes cours : fiches, exercices, séances. Ici, rien n'est encore importé, c'est normal."},
+  {txt:"Reviens sur « Préparation » : des leçons pour prendre de l'avance avant la rentrée.",
+   cible:'#nav [data-tab="prep"]', quand:() => ui.tab === "prep"},
+  {txt:"La roue dentée, en haut à droite, ouvre les réglages. Touche-la.",
+   cible:'#app .enTete [data-e="reglages"]', ecran:["prep","accueil"], quand:() => ui.ecran === "reglages"},
+  {txt:"Ici se trouvent les dates, le moteur d'analyse, l'affichage clair ou sombre et la sauvegarde. Chacun a son tuto."},
+  {txt:"La flèche en haut à gauche te ramène en arrière. Touche-la.",
+   cible:'#app .enTete [data-act="ecran"][data-e="accueil"]', ecran:["prep","reglages"], quand:() => ui.ecran === "accueil"},
+  {txt:"Le point d'interrogation ouvre la prise en main : toutes les fonctions expliquées, et ces tutos. Touche-le.",
+   cible:'#app .enTete [data-e="guide"]', ecran:["prep","accueil"], quand:() => ui.ecran === "guide"},
+  {txt:"C'est fini pour la visite. Touche « Terminer » pour retrouver ta vraie application.", fin:true}
+ ]},
+ {id:"lecon", titre:"Suivre une leçon", duree:"3 min", depart:["prep","accueil"],
+  desc:"Avancer écran par écran, répondre à un quiz, reprendre plus tard.", etapes:[
+  {txt:"Touche le grand bouton pour ouvrir la première leçon.",
+   cible:'#app [data-act="ouvrir-lecon"]:not([data-l="SOCLE"])', ecran:["prep","accueil"], quand:() => ui.ecran === "lecon"},
+  {txt:"Une leçon, c'est une idée par écran. Lis, puis touche « Continuer ».",
+   cible:'#app [data-act="diapo-suiv"]', quand:() => ui.lecon && progLecon(ui.lecon).index >= 1},
+  {txt:"Encore une fois, « Continuer ».",
+   cible:'#app [data-act="diapo-suiv"]', quand:() => ui.lecon && progLecon(ui.lecon).index >= 2},
+  {txt:"Pour relire l'écran précédent, touche « Retour ».",
+   cible:'#app [data-act="diapo-prec"]', quand:() => ui.lecon && progLecon(ui.lecon).index <= 1},
+  {txt:"Voici un quiz. Touche la réponse qui te semble juste : il n'y a pas de piège.",
+   avant:() => { const L = LECONS[ui.lecon]; const q = L ? L.diapos.findIndex(d => d.t === "quiz") : -1;
+     if(q >= 0){ progLecon(ui.lecon).index = q; ui.quizRep = null; } },
+   cible:'#app [data-act="quiz"]', tous:true, quand:() => ui.quizRep !== null && ui.quizRep !== undefined},
+  {txt:"L'explication s'affiche, que tu aies juste ou non. Le bouton « Continuer » reste bloqué tant que tu n'as pas répondu."},
+  {txt:"La croix, en haut à gauche, ferme la leçon. Ta progression est gardée : tu reprendras au même endroit.",
+   cible:'#app [data-act="fermer-lecon"]', quand:() => ui.ecran === "accueil"},
+  {txt:"Une fois une leçon terminée, ses exercices apparaissent dans « M'entraîner ». Touche « Terminer ».", fin:true}
+ ]},
+ {id:"importer", titre:"Importer un cours", duree:"4 min", depart:["rev","accueil"],
+  desc:"Déposer ses notes, les faire analyser, relire, créer la fiche et les exercices.", etapes:[
+  {txt:"Touche « Importer un cours ».",
+   cible:'#app .cta[data-act="ecran"][data-e="import"]', ecran:["rev","accueil"], quand:() => ui.ecran === "import"},
+  {txt:"Tu peux déposer un fichier avec ce bouton : Word, PDF, Pages, texte ou image. Avec Gemini, tu peux aussi photographier tes pages ou choisir des photos. Pour ce tuto, on va plutôt coller du texte.",
+   cible:'label[for="i-fic"]'},
+  {txt:"Dans la vraie vie, tu colles ici le texte de tes notes. Touche « Coller l'exemple ».",
+   cible:'#i-txt', ecran:["rev","import"],
+   action:{lib:"Coller l'exemple", faire:() => { ui.importTexte = texteDemo(); ui.importTitre = "Exemple · marketing";
+     ui.importRess = "R1.01"; ui.avisRGPD = null; rendre(); }},
+   quand:() => (ui.importTexte || "").length > 200},
+  {txt:"Touche « Analyser ». En mode local, tout se passe sur ton appareil, sans connexion.",
+   cible:'#app [data-act="analyser"]', ecran:["rev","import"], quand:() => ui.ecran === "valider"},
+  {txt:"Rien n'est encore créé. C'est le moment de relire : décoche ce qui est faux ou inutile, et vérifie la matière proposée. Fais défiler pour voir."},
+  {txt:"Si tout te convient, touche le bouton du bas pour créer les exercices.",
+   cible:'#app [data-act="valider-import"]', quand:() => S.cours.length > 0},
+  {txt:"Ta fiche est prête, avec ses exercices. Tu la retrouveras dans « Mes fiches ». Touche « Terminer ».", fin:true}
+ ]},
+ {id:"reviser", titre:"Faire une séance de révision", duree:"3 min", depart:["rev","accueil"], cours:true,
+  desc:"Répondre, dire si l'on est sûre, vérifier, passer à la suite.", etapes:[
+  {txt:"Des exercices t'attendent. Touche le bouton « Réviser mes … exercices du jour ».",
+   cible:'#app [data-act="session"][data-source="dus"]', ecran:["rev","accueil"], quand:() => ui.ecran === "session" && !!ui.session},
+  {txt:"Lis la question, puis touche la réponse de ton choix.",
+   avant:() => { const s = ui.session; if(!s) return;
+     const k = s.liste.findIndex((it, j) => j >= s.i && ["qcm","vf","choix"].includes(it.type));
+     if(k > s.i){ const t = s.liste[s.i]; s.liste[s.i] = s.liste[k]; s.liste[k] = t; preparerQuestion(); } },
+   cible:'#app [data-act="choix"]', tous:true,
+   quand:() => { const c = seanceTuto().choix; return c !== null && c !== undefined && !(Array.isArray(c) && !c.length); }},
+  {txt:"Avant de vérifier, dis si tu es sûre de toi. Une erreur commise en étant sûre est mise à part : c'est la plus importante à retravailler.",
+   cible:'#app [data-act="sur"]', tous:true, quand:() => seanceTuto().sur === true || seanceTuto().sur === false},
+  {txt:"Touche « Vérifier ».",
+   cible:'#app [data-act="valider"]', quand:() => !!ui.session && ui.session.etat !== "q"},
+  {txt:() => "La correction s'affiche. " + DELAIS_TXT + " Raté, il revient dès le lendemain."},
+  {txt:"Touche « Suivant » pour passer à l'exercice d'après.",
+   cible:'#app [data-act="suivant"]', quand:() => !ui.session || ui.session.i >= 1},
+  {txt:"Tu peux t'arrêter quand tu veux avec la croix en haut à gauche : ce qui est fait est compté.",
+   cible:'#app [data-act="quitter-session"]', quand:() => !ui.session},
+  {txt:"Chaque jour, l'accueil de Révision t'indique combien d'exercices sont à revoir. Touche « Terminer ».", fin:true}
+ ]},
+ {id:"fiches", titre:"Fiches et carnet d'erreurs", duree:"3 min", depart:["rev","accueil"], cours:true,
+  desc:"Retrouver une fiche, l'imprimer, reprendre ses erreurs.", etapes:[
+  {txt:"Touche « Mes fiches ».",
+   cible:'#app [data-act="ecran"][data-e="fiches"]', ecran:["rev","accueil"], quand:() => ui.ecran === "fiches"},
+  {txt:"Chaque cours importé a sa fiche. Touche-la pour l'ouvrir.",
+   cible:'#app [data-act="ouvrir-fiche"]', quand:() => ui.ecran === "fiche"},
+  {txt:"La fiche reprend ce que tu as validé. « Fiches et impression » la prépare pour le papier : en couleur, en noir et blanc, compacte, à trous, ou en flashcards à découper.",
+   cible:'#app [data-act="ecran"][data-e="tri"]'},
+  {txt:"Retourne à l'accueil de Révision avec l'onglet du bas.",
+   cible:'#nav [data-tab="rev"]', quand:() => ui.tab === "rev" && ui.ecran === "accueil"},
+  {txt:"Le bloc « Ce qui résiste » rassemble tes erreurs. Touche « Les reprendre ».",
+   cible:'#app [data-act="session"][data-source="erreurs"]', ecran:["rev","accueil"], quand:() => ui.ecran === "session" && !!ui.session},
+  {txt:"Ce sont seulement les exercices ratés. Depuis « Réviser », tu peux aussi les imprimer avec « Imprimer mes points faibles »."},
+  {txt:"Ferme la séance avec la croix.",
+   cible:'#app [data-act="quitter-session"]', quand:() => !ui.session},
+  {txt:"Voilà. Touche « Terminer ».", fin:true}
+ ]},
+ {id:"sauvegarder", titre:"Sauvegarder ses données", duree:"2 min", depart:["rev","accueil"], cours:true,
+  desc:"Exporter son travail dans un fichier, et le récupérer.", etapes:[
+  {txt:"Ton travail est gardé dans le navigateur de cet appareil. Si tu effaces les données des sites, ou si tu changes de téléphone, il disparaît. D'où la sauvegarde."},
+  {txt:"Touche la roue dentée pour ouvrir les réglages.",
+   cible:'#app .enTete [data-e="reglages"]', ecran:["rev","accueil"], quand:() => ui.ecran === "reglages"},
+  {txt:"Dans « Sauvegarde », touche « Exporter ». Un fichier est créé avec tout ton travail.",
+   cible:'#app [data-act="exporter"]', ecran:["rev","reglages"], quand:() => !!(TUTO.actif && TUTO.actif.exporte)},
+  {txt:"En vrai, ton appareil te propose d'enregistrer ce fichier. Range-le en lieu sûr : dans l'app Fichiers, dans ton espace de stockage en ligne, ou envoie-le toi par courriel. « Exporter avec les images » ajoute les schémas, le fichier est alors plus lourd."},
+  {txt:"Pour tout récupérer, sur ce téléphone ou sur un autre, c'est « Importer » : tu choisis le fichier sauvegardé.",
+   cible:'#app label[for="i-json"]'},
+  {txt:"Prends l'habitude d'exporter une fois par semaine. Touche « Terminer ».", fin:true}
+ ]},
+ {id:"gemini", titre:"Brancher Gemini", duree:"4 min", depart:["rev","accueil"],
+  desc:"Obtenir une clé Google, la coller, la tester.", etapes:[
+  {txt:"Touche la roue dentée pour ouvrir les réglages.",
+   cible:'#app .enTete [data-e="reglages"]', ecran:["rev","accueil"], quand:() => ui.ecran === "reglages"},
+  {txt:"Deux moteurs d'analyse. « Local » fonctionne sans connexion mais repère moins de choses. « Gemini » lit vraiment ton cours. Touche « Gemini ».",
+   cible:'#app [data-act="moteur"][data-v="gemini"]', ecran:["rev","reglages"], quand:() => S.reglages.moteur === "gemini"},
+  {txt:"Il te faut une clé Google. Ouvre la page aistudio.google.com/apikey, connecte-toi avec un compte Google, accepte les conditions si on te le demande, puis touche « Create API key » et copie la clé."},
+  {txt:"Colle ta clé dans ce champ. Pour le tuto, touche « Coller une fausse clé ».",
+   cible:'#g-cle', ecran:["rev","reglages"],
+   action:{lib:"Coller une fausse clé", faire:() => { S.reglages.cleGemini = "CLE-DE-DEMONSTRATION-" + "X".repeat(18); rendre(); }},
+   quand:() => (S.reglages.cleGemini || "").trim().length >= 20},
+  {txt:"Touche « Charger les modèles » : l'application demande à Google la liste des modèles que ta clé autorise.",
+   cible:'#app [data-act="charger-modeles"]', ecran:["rev","reglages"], quand:() => (S.reglages.modeles || []).length > 0},
+  {txt:"Un modèle est choisi pour toi. Tu peux en changer dans cette liste. En vrai, elle vient de Google ; ici, c'est un modèle de démonstration.",
+   cible:'#g-mod'},
+  {txt:"Touche « Tester la clé » : l'application vérifie la clé, le modèle, puis une vraie réponse.",
+   cible:'#app [data-act="tester-cle"]', ecran:["rev","reglages"], quand:() => !!(ui.testCle && ui.testCle.fini)},
+  {txt:"Tout est vert : c'est prêt. Si une ligne est rouge, lis son explication, elle dit quoi faire."},
+  {txt:"Ta clé est comme un mot de passe : ne la partage pas. Touche « Terminer ».", fin:true}
+ ]}
+];
+
+function etapeTuto(){ const t = TUTO.actif; return t ? t.P.etapes[t.i] : null; }
+function lancerTuto(id){
+  const P = PARCOURS_TUTO.find(p => p.id === id);
+  if(!P) return;
+  if(TUTO.actif) quitterTuto(true);
+  // la visite compte comme vue, sur les vraies données
+  if(!S.guideVu){ S.guideVu = true; sauver(); }
+  clearInterval(minuteur);
+  TUTO.actif = {P, i:0, S0:S, ui0:Object.assign({}, ui), fetch0:window.fetch, tel0:telecharger,
+    exporte:false, horsCible:false, defiler:true};
+  S = etatDemo(P);
+  Object.assign(ui, {session:null, brouillon:null, importTexte:"", importTitre:"", importRess:"", importSrc:null,
+    message:null, testCle:null, lecon:null, fiche:null, quizRep:null, avisRGPD:null, rgpdIgnore:false,
+    photos:[], requete:"", occupe:false, etape:""});
+  window.fetch = fetchDemo;
+  telecharger = (nom) => {
+    if(TUTO.actif) TUTO.actif.exporte = true;
+    ui.message = {type:"info", titre:"Export simulé", txt:"En vrai, le fichier « " + nom + " » serait enregistré sur ton appareil."};
+    rendre();
+  };
+  document.body.classList.add("enTuto");
+  ui.tab = P.depart[0]; ui.ecran = P.depart[1];
+  entrerEtape();
+  rendre(); window.scrollTo(0,0);
+}
+function entrerEtape(){
+  const t = TUTO.actif; if(!t) return;
+  t.horsCible = false; t.defiler = true;
+  const e = etapeTuto();
+  if(e && e.avant) try{ e.avant(); }catch(err){}
+}
+function quitterTuto(silence){
+  const t = TUTO.actif; if(!t) return;
+  clearInterval(minuteur);
+  S = t.S0; window.fetch = t.fetch0; telecharger = t.tel0;
+  Object.keys(ui).forEach(k => { if(!(k in t.ui0)) delete ui[k]; });
+  Object.assign(ui, t.ui0);
+  ui.session = null;
+  TUTO.actif = null;
+  document.body.classList.remove("enTuto");
+  afficherBandeauTuto();
+  if(!silence){
+    ui.ecran = "guide";
+    ui.message = {type:"info", titre:"Tuto terminé", txt:"Tu retrouves ta vraie application et tes données, intactes."};
+    rendre(); window.scrollTo(0,0);
+  }
+}
+function etapeSuivante(){
+  const t = TUTO.actif; if(!t) return;
+  if(t.i >= t.P.etapes.length - 1){ quitterTuto(); return; }
+  t.i++; entrerEtape(); rendre();
+}
+/* Appelée après chaque affichage et chaque saisie : l'étape est-elle accomplie ? */
+function suivreTuto(){
+  const t = TUTO.actif; if(!t || TUTO.enCours) return;
+  TUTO.enCours = true;
+  let avance = false;
+  try{
+    let n = 0, e = etapeTuto();
+    while(e && e.quand && n < 6){
+      let ok = false; try{ ok = !!e.quand(); }catch(err){}
+      if(!ok) break;
+      if(t.i >= t.P.etapes.length - 1) break;
+      t.i++; n++; entrerEtape(); avance = true; e = etapeTuto();
+    }
+  } finally { TUTO.enCours = false; }
+  if(avance) setTimeout(() => { if(TUTO.actif) rendre(); }, 0);
+  afficherBandeauTuto(); entourerCible();
+}
+function entourerCible(){
+  document.querySelectorAll(".tutoCible").forEach(x => x.classList.remove("tutoCible"));
+  const t = TUTO.actif, e = etapeTuto();
+  if(!t || !e || !e.cible) return;
+  const l = Array.from(document.querySelectorAll(e.cible)).filter(x => !x.disabled || !e.quand);
+  const cibles = e.tous ? l : l.slice(0, 1);
+  cibles.forEach(x => x.classList.add("tutoCible"));
+  if(cibles[0] && t.defiler && typeof cibles[0].scrollIntoView === "function"){
+    t.defiler = false;
+    try{ cibles[0].scrollIntoView({block:"center", behavior:"smooth"}); }catch(err){}
+  }
+}
+function cibleVisible(){
+  const e = etapeTuto();
+  return !e || !e.cible || !!document.querySelector(e.cible);
+}
+function afficherBandeauTuto(){
+  let b = document.getElementById("tuto");
+  const t = TUTO.actif;
+  if(!t){ if(b) b.remove(); return; }
+  if(!b){ b = document.createElement("div"); b.id = "tuto"; b.className = "tutoB"; b.setAttribute("role", "status");
+    document.body.appendChild(b); }
+  const e = etapeTuto();
+  const txt = typeof e.txt === "function" ? e.txt() : e.txt;
+  const perdu = e.cible && e.quand && !cibleVisible();
+  let h = '<div class="tutoH"><span>TUTO · ' + esc(t.P.titre.toUpperCase()) + '</span><span class="tutoN">' +
+    (t.i + 1) + " / " + t.P.etapes.length + '</span></div><p class="tutoTxt">' + esc(txt) + "</p>";
+  if(t.horsCible) h += '<p class="tutoAlerte">Ce n\'est pas ce bouton-là. Cherche celui qui est entouré en jaune.</p>';
+  else if(perdu) h += '<p class="tutoAlerte">Le bouton à toucher n\'est pas sur cet écran.</p>';
+  h += '<div class="tutoBtns">';
+  if(e.action) h += '<button class="fort" data-tuto="action">' + esc(e.action.lib) + "</button>";
+  if(e.fin) h += '<button class="fort" data-tuto="fin">Terminer</button>';
+  else if(!e.quand) h += '<button class="fort" data-tuto="suivant">Continuer</button>';
+  if(perdu || t.horsCible) h += '<button data-tuto="ramener">Me ramener</button>';
+  if(!e.fin && e.quand) h += '<button data-tuto="passer">Passer l\'étape</button>';
+  h += '<button class="quitter" data-tuto="quitter">Quitter</button></div>';
+  b.innerHTML = h;
+}
+function ramenerTuto(){
+  const t = TUTO.actif, e = etapeTuto(); if(!t || !e) return;
+  if(e.ecran){ ui.session = null; clearInterval(minuteur); ui.tab = e.ecran[0]; ui.ecran = e.ecran[1]; }
+  t.horsCible = false; t.defiler = true;
+  rendre();
+}
+function passerEtapeTuto(){
+  const t = TUTO.actif; if(!t) return;
+  const e = etapeTuto();
+  // passer une étape doit laisser l'écran dans l'état attendu par la suivante
+  if(e && e.ecran && !cibleVisible()){ ui.tab = e.ecran[0]; ui.ecran = e.ecran[1]; }
+  etapeSuivante();
+}
+
+/* ---- nouveautés : ce qui a changé depuis la dernière visite ---- */
+const VERSION_APP = "2026-09-19";
+const NOUVEAUTES = [
+ {version:"2026-09-19", date:"19 septembre 2026", items:[
+  {txt:"Prise en main : toutes les fonctions expliquées, et sept tutos pas à pas sur la vraie application, sans toucher à tes données.", ecran:"guide"},
+  {txt:"Préparation : 238 nouveaux exercices au semestre 1, dont des QCM à plusieurs bonnes réponses et des textes à trous avec propositions."},
+  {txt:"Thème sombre, qui suit le réglage de ton téléphone ou de ton Mac.", ecran:"reglages"},
+  {txt:"Recherche dans les leçons, les fiches et les exercices.", ecran:"recherche"},
+  {txt:"Statistiques détaillées : activité, réussite par type d'exercice, acquis par matière.", ecran:"stats"},
+  {txt:"Import : documents Pages et photos de la galerie. Les logos et bandeaux des fichiers Word sont écartés automatiquement.", ecran:"import", tab:"rev"},
+  {txt:"Gemini : compatible avec les nouvelles clés Google AI Studio.", tuto:"gemini"},
+  {txt:"Corrections : codes de matières erronés dans les leçons R1.03 et R1.06."}
+ ]}
+];
+function aDejaServi(o){
+  return !!((o.cours || []).length || Object.keys(o.prep || {}).length || Object.keys(o.journal || {}).length ||
+    Object.keys(o.journalPrep || {}).length || (o.notes || []).length);
+}
+function blocAccueil(){
+  if(TUTO.actif) return "";
+  let h = "";
+  if(!S.versionVue && !aDejaServi(S)){ S.versionVue = VERSION_APP; sauver(); }
+  if(S.versionVue !== VERSION_APP){
+    const n = NOUVEAUTES.filter(x => !S.versionVue || x.version > S.versionVue);
+    h += '<div class="avis info nouveautes"><b>Mise à jour : ce qui a changé</b>' +
+      n.map(v => '<p style="font-size:12.5px;color:var(--encre2);margin:4px 0">' + esc(v.date) + "</p><ul>" +
+        v.items.map(x => "<li>" + esc(x.txt) + "</li>").join("") + "</ul>").join("") +
+      '<div class="rang" style="margin-bottom:0"><button class="btn plein mini" data-act="nouveautes-vues">J\'ai vu</button>' +
+      '<button class="btn mini" data-act="ecran" data-e="guide">Tout voir</button></div></div>';
+  }
+  if(!S.guideVu && ui.tab === "prep"){
+    h += '<div class="avis info"><b>Nouveau ici ?</b>Une visite guidée de trois minutes te montre comment tout marche, directement dans l\'application.' +
+      '<div class="rang" style="margin-bottom:0"><button class="btn plein mini" data-act="tuto" data-t="decouvrir">Faire la visite</button>' +
+      '<button class="btn mini" data-act="guide-vu">Plus tard</button></div></div>';
+  }
+  return h ? '<div class="ecran" style="padding-bottom:0">' + h + "</div>" : "";
+}
+
+/* ---- le guide : chaque écran de l'application y a sa fiche ---- */
+const GUIDE = [
+ {section:"Premiers pas", fiches:[
+  {titre:"Les deux onglets", ecran:["prep","accueil"], tuto:"decouvrir",
+   txt:"« Préparation » contient des leçons pour prendre de l'avance avant la rentrée. « Révision » ne contient que ce que tu y déposes : tes cours, tes fiches, tes exercices."},
+  {titre:"Les réglages", ecran:["rev","reglages"],
+   txt:"La roue dentée, en haut à droite de chaque écran. Dates de rentrée et d'échéance, moteur d'analyse, voix, affichage, sauvegarde."},
+  {titre:"Cette prise en main", ecran:["prep","guide"],
+   txt:"Le point d'interrogation, à côté de la roue dentée. Les tutos te font pratiquer sur des données d'exemple : tes vraies données ne sont jamais touchées."},
+  {titre:"Le cours de ton IUT fait foi",
+   txt:"Les leçons s'appuient sur le programme national et sur des sources officielles. En cas d'écart avec ce que dit ton enseignant, c'est son cours qui compte pour l'évaluation."}
+ ]},
+ {section:"Préparation", fiches:[
+  {titre:"Les leçons", ecran:["prep","accueil"], tuto:"lecon",
+   txt:"Une leçon par matière du semestre 1, une idée par écran, avec des quiz. La progression est gardée : tu reprends où tu t'étais arrêtée.",
+   etapes:["Touche une matière, ou le grand bouton de la leçon suivante.", "Lis, puis « Continuer ».", "Réponds aux quiz : « Continuer » reste bloqué tant que tu n'as pas répondu."]},
+  {titre:"M'entraîner", ecran:["prep","exercices"],
+   txt:"Les exercices des leçons terminées, en deux familles : mémoriser et comprendre. Ils ont leur propre suivi, séparé de celui de tes cours."},
+  {titre:"Ma spécialité", ecran:["prep","parcours"],
+   txt:"Les cinq parcours du BUT TC, dont les deux proposés à Carcassonne. Le choix se fait au semestre 3."},
+  {titre:"Podcast", ecran:["prep","podcast"],
+   txt:"Transforme une leçon ou une fiche en audio à écouter. Durée et niveau de langue au choix. Demande Gemini."}
+ ]},
+ {section:"Importer tes cours", fiches:[
+  {titre:"Importer un cours", ecran:["rev","import"], tuto:"importer",
+   txt:"Colle tes notes, photographie tes pages, choisis des photos ou dépose un fichier : Word, PDF, Pages, texte, images.",
+   etapes:["« Importer un cours » sur l'accueil de Révision.", "Apporte le texte.", "« Analyser ».", "Relis et décoche ce qui ne va pas.", "Crée les exercices."],
+   piege:"Un document Pages ne livre souvent que son aperçu. Exporte-le en PDF depuis Pages pour tout récupérer."},
+  {titre:"Relire avant de créer",
+   txt:"Après l'analyse, rien n'est enregistré tant que tu n'as pas confirmé. Vérifie la matière proposée et décoche ce qui est faux : les exercices ne portent que sur ce que tu gardes."},
+  {titre:"Données personnelles",
+   txt:"Si ton texte contient un nom précédé de Monsieur ou Madame, une adresse électronique ou un numéro de téléphone, l'application te prévient. Tu peux anonymiser en un geste, ou continuer s'il s'agit d'un cas fictif."}
+ ]},
+ {section:"Tes fiches", fiches:[
+  {titre:"Mes fiches", ecran:["rev","fiches"], tuto:"fiches",
+   txt:"Un cours importé devient une fiche : notions, à savoir par cœur, calculs, cadre juridique, erreurs classiques. Chaque point renvoie au passage de tes notes."},
+  {titre:"Fiches et impression", ecran:["rev","tri"], fiche:true,
+   txt:"Choisis ce qui apparaît et ce qui ressort, puis imprime : en couleur, en noir et blanc, compacte, version muette à compléter, ou flashcards à découper. Tu peux aussi écouter la fiche."},
+  {titre:"Lire sur le téléphone", ecran:["rev","lire"], fiche:true,
+   txt:"La fiche une idée par écran, comme une leçon. Pratique dans les transports."},
+  {titre:"Schémas", ecran:["rev","schemas"], fiche:true,
+   txt:"Enchaînement, arborescence, comparaison, carte mentale : le schéma est construit à partir de la fiche validée, rien d'autre. Demande Gemini."},
+  {titre:"Images et tableaux", ecran:["rev","visuels"], fiche:true,
+   txt:"Les schémas et tableaux d'un fichier Word sont repris automatiquement. Pour un PDF, découpe-les toi-même au doigt. Tu peux aussi ajouter une image."},
+  {titre:"À demander en TD", ecran:["rev","questions"],
+   txt:"Quand l'analyse repère un point que tes notes mentionnent sans l'expliquer, il atterrit ici. Pose la question à ton enseignant, puis coche-la."}
+ ]},
+ {section:"Réviser", fiches:[
+  {titre:"Les séances", ecran:["rev","reviser"], tuto:"reviser",
+   txt:"Révision du jour, mémorisation seule, compréhension seule, martelage, sprint chronométré, ou séance à la durée. Avant de vérifier, dis si tu es sûre : les erreurs commises en étant sûre sont isolées.",
+   etapes:["Choisis un mode.", "Réponds, puis indique « Sûre » ou « Pas sûre ».", "« Vérifier », lis la correction, « Suivant »."]},
+  {titre:"Les boîtes de révision",
+   txt:() => DELAIS_TXT + " Un exercice raté redescend dans la première boîte."},
+  {titre:"Comprendre, par niveaux", ecran:["rev","comprendre"],
+   txt:"Quatre niveaux : reconnaître, relier et organiser, compléter, rédiger. Le quatrième est corrigé par Gemini ; sans clé, la correction se limite aux mots attendus."},
+  {titre:"Carnet d'erreurs", ecran:["rev","reviser"], tuto:"fiches",
+   txt:"Tous tes exercices ratés, à reprendre en séance ou à imprimer avec « Imprimer mes points faibles »."},
+  {titre:"Épreuve blanche", ecran:["rev","examen"],
+   txt:"Choisis le nombre de questions et la durée : le sujet est tiré de tes exercices, et la correction arrive à la fin. Il faut au moins dix exercices disponibles."},
+  {titre:"Lexique", ecran:["rev","lexique"],
+   txt:"Ton vocabulaire de langue A et de langue B, révisé dans les deux sens. Ajoute un mot à la fois ou colle une liste."},
+  {titre:"Entraînement oral", ecran:["rev","oral"],
+   txt:"L'application joue un rôle et parle, tu réponds à voix haute, puis tu te réécoutes. Tes prises ne sont ni enregistrées sur l'appareil ni envoyées."}
+ ]},
+ {section:"T'organiser", fiches:[
+  {titre:"Planning", ecran:["rev","planning"],
+   txt:"Renseigne une échéance (contrôle, SAÉ, fin de semestre) : l'application construit un rétroplanning."},
+  {titre:"Mes moyennes", ecran:["rev","moyennes"],
+   txt:"Saisis tes notes : les moyennes par compétence sont calculées avec les coefficients du programme."},
+  {titre:"Mes SAÉ", ecran:["rev","sae"],
+   txt:"Tes situations d'apprentissage, leur état et leurs livrables. Les échéances viennent de ton IUT : saisis-les au fur et à mesure."}
+ ]},
+ {section:"Suivre tes progrès", fiches:[
+  {titre:"Statistiques", ecran:["rev","stats"],
+   txt:"Ton activité, ta réussite par type d'exercice et tes acquis par matière. Préparation et Révision sont comptées à part."},
+  {titre:"Recherche", ecran:["rev","recherche"],
+   txt:"Retrouve un mot dans les leçons, tes fiches et tes exercices. Accents et majuscules sont ignorés."}
+ ]},
+ {section:"Réglages et sauvegarde", fiches:[
+  {titre:"Brancher Gemini", ecran:["rev","reglages"], tuto:"gemini",
+   txt:"Gemini lit vraiment tes cours, écrit les schémas et corrige les rédactions. Il faut une clé Google AI Studio, à coller dans les réglages puis à tester.",
+   piege:"Ta clé est comme un mot de passe : ne la partage pas."},
+  {titre:"Sauvegarder", ecran:["rev","reglages"], tuto:"sauvegarder",
+   txt:"Ton travail reste dans le navigateur de cet appareil. Exporte-le régulièrement dans un fichier, et réimporte-le pour le retrouver sur un autre appareil.",
+   piege:"Effacer les données des sites dans Safari efface aussi ton travail, s'il n'est pas exporté."},
+  {titre:"Affichage", ecran:["rev","reglages"],
+   txt:"Clair, sombre, ou comme l'appareil."}
+ ]}
+];
+/* écrans qu'on n'ouvre pas seul : ils s'atteignent depuis un autre */
+const GUIDE_HORS = ["lecon","session","finLecon","oralSeance","valider","decoupe","fiche","accueil"];
+
+function ecranGuide(){
+  let h = '<div class="ecran">' + retour("accueil", "Prise en main");
+  h += '<p class="sousTitre">Les tutos te font pratiquer pas à pas sur la vraie application, avec des données d\'exemple. Tes vraies données ne sont pas touchées.</p>';
+  h += '<p class="kick">Tutos</p>';
+  PARCOURS_TUTO.forEach(p => {
+    h += '<button class="carteAct" data-act="tuto" data-t="' + p.id + '"><span class="tx"><b>' + esc(p.titre) +
+      "</b><small>" + esc(p.desc) + " · " + esc(p.duree) + '</small></span><span class="fl">›</span></button>';
+  });
+  GUIDE.forEach((s, k) => {
+    h += '<p class="kick" style="margin-top:18px">' + esc(s.section) + "</p>";
+    s.fiches.forEach((f, j) => {
+      const txt = typeof f.txt === "function" ? f.txt() : f.txt;
+      h += '<div class="guideFiche"><h3>' + esc(f.titre) + "</h3><p>" + esc(txt) + "</p>";
+      if(f.etapes) h += "<ol>" + f.etapes.map(x => "<li>" + esc(x) + "</li>").join("") + "</ol>";
+      if(f.piege) h += '<p class="piege">⚠ ' + esc(f.piege) + "</p>";
+      if(f.ecran || f.tuto){
+        h += '<div class="rang" style="margin:8px 0 0">';
+        if(f.tuto) h += '<button class="btn plein mini" data-act="tuto" data-t="' + f.tuto + '">Tuto pas à pas</button>';
+        if(f.ecran) h += '<button class="btn mini" data-act="guide-montrer" data-s="' + k + '" data-f="' + j + '">Me montrer</button>';
+        h += "</div>";
+      }
+      h += "</div>";
+    });
+  });
+  h += '<p class="kick" style="margin-top:18px">Historique des mises à jour</p>';
+  NOUVEAUTES.forEach(v => {
+    h += '<div class="guideFiche nouveautes"><h3>' + esc(v.date) + "</h3><ul>" +
+      v.items.map(x => "<li>" + esc(x.txt) + "</li>").join("") + "</ul></div>";
+  });
+  return h + "</div>";
+}
+function montrerGuide(k, j){
+  const f = GUIDE[k] && GUIDE[k].fiches[j]; if(!f || !f.ecran) return;
+  if(f.fiche){
+    if(!S.cours.length){ ui.tab = "rev"; ui.ecran = "fiches";
+      ui.message = {titre:"Aucune fiche pour l'instant", txt:"Cet écran s'ouvre depuis une fiche. Importe d'abord un cours."};
+      rendre(); window.scrollTo(0,0); return; }
+    if(!S.cours.some(c => c.id === ui.fiche)) ui.fiche = S.cours[0].id;
+  }
+  ui.tab = f.ecran[0]; ui.ecran = f.ecran[1]; ui.message = null;
+  rendre(); window.scrollTo(0,0);
+}
+
 function ecranReglages(){
   const r = S.reglages;
   const voix = (window.speechSynthesis ? speechSynthesis.getVoices() : []).filter(v => /fr/i.test(v.lang));
@@ -8254,7 +8780,7 @@ function ecranReglages(){
       "valeurs chiffrées, termes en gras et listes, mais ne hiérarchise pas ce qui est important.</p>";
   } else {
     h += '<label class="champ" for="g-cle">Clé Google AI Studio</label>' +
-      '<input type="password" id="g-cle" data-bind="cleGemini" value="' + esc(r.cleGemini) + '" placeholder="AIza…">' +
+      '<input type="password" id="g-cle" data-bind="cleGemini" value="' + esc(r.cleGemini) + '" placeholder="Colle ta clé ici">' +
       '<label class="champ" for="g-mod" style="margin-top:12px">Modèle</label>' +
       '<select id="g-mod" data-bind="modele">' + (r.modeles.length ? r.modeles.map(m =>
         '<option value="' + esc(m.id) + '"' + (r.modele===m.id?" selected":"") + ">" + esc(m.nom) + "</option>").join("")
@@ -8497,6 +9023,10 @@ document.addEventListener("click", async e => {
       aller(el.dataset.tab, "accueil"); break;
     case "ecran": ui.ecran = el.dataset.e; ui.message = null; rendre(); window.scrollTo(0,0); break;
     case "theme": S.reglages.theme = el.dataset.v; sauver(); rendre(); break;
+    case "tuto": lancerTuto(el.dataset.t); break;
+    case "guide-vu": S.guideVu = true; sauver(); rendre(); break;
+    case "nouveautes-vues": S.versionVue = VERSION_APP; sauver(); rendre(); break;
+    case "guide-montrer": montrerGuide(Number(el.dataset.s), Number(el.dataset.f)); break;
     case "aller-diapo": {
       ui.lecon = el.dataset.l;
       const p = progLecon(ui.lecon);
@@ -8966,6 +9496,36 @@ try{
   if(mq && mq.addEventListener) mq.addEventListener("change", suivre);
   else if(mq && mq.addListener) mq.addListener(suivre);
 }catch(e){}
+
+/* ---- tutos : bandeau, gestes attendus, gestes refusés ---- */
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("#tuto [data-tuto]");
+  if(!b || !TUTO.actif) return;
+  const et = etapeTuto();
+  switch(b.dataset.tuto){
+    case "suivant": etapeSuivante(); break;
+    case "fin": quitterTuto(); break;
+    case "quitter": quitterTuto(); break;
+    case "passer": passerEtapeTuto(); break;
+    case "ramener": ramenerTuto(); break;
+    case "action": if(et && et.action) et.action.faire(); break;
+  }
+});
+// pendant un tuto, seul le geste demandé passe ; le reste est expliqué, pas exécuté
+document.addEventListener("click", e => {
+  const t = TUTO.actif; if(!t) return;
+  if(e.target.closest("#tuto")) return;
+  if(/^(INPUT|SELECT|TEXTAREA|OPTION)$/.test(e.target.tagName)) return;
+  const el = e.target.closest("[data-act], label[for], a[href]");
+  if(!el) return;
+  const et = etapeTuto();
+  if(et && et.cible && et.quand && el.closest(".tutoCible")) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  t.horsCible = true; afficherBandeauTuto();
+}, true);
+["input","change"].forEach(ev => document.addEventListener(ev, () => {
+  if(TUTO.actif) setTimeout(suivreTuto, 30);
+}));
 
 charger();
 if(!S.prep) S.prep = {};
