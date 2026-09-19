@@ -1,14 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F3F4FB">
-<title>Prépa BUT TC</title>
+<title>Prépa BUT TC — Préparation et révision</title>
+<meta name="description" content="Préparez votre BUT Techniques de commercialisation, révisez vos cours et suivez votre progression.">
+<meta property="og:title" content="Prépa BUT TC — Préparation et révision">
+<meta property="og:description" content="Cours, fiches, quiz et outils de révision pour le BUT Techniques de commercialisation.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
+
 :root{
   /* Signalétique de rayon : fond froid, encre bleu nuit, trois couleurs de compétence
      qui servent de code couleur dans toute l'application. */
@@ -524,12 +529,814 @@ body.enTuto .app{padding-bottom:calc(var(--hautNav) + 230px + env(safe-area-inse
 .nouveautes li{margin:0 0 5px 18px;font-size:14px}
 .icones{display:flex;gap:8px;flex:none}
 @media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+
+:root{--font-sans:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--font-mono:"Space Grotesk",ui-monospace,monospace}
+
+
+
+
+:root {
+  --radius: 1.25rem;
+  --background: oklch(0.982 0.006 270);
+  --foreground: oklch(0.24 0.045 278);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.24 0.045 278);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.24 0.045 278);
+  --primary: oklch(0.57 0.225 285);
+  --primary-foreground: oklch(0.99 0.004 270);
+  --secondary: oklch(0.955 0.016 280);
+  --secondary-foreground: oklch(0.3 0.06 282);
+  --muted: oklch(0.955 0.012 275);
+  --muted-foreground: oklch(0.53 0.04 278);
+  --accent: oklch(0.93 0.055 285);
+  --accent-foreground: oklch(0.42 0.19 285);
+  --destructive: oklch(0.63 0.22 18);
+  --destructive-foreground: oklch(0.99 0.004 270);
+  --border: oklch(0.92 0.015 280);
+  --input: oklch(0.92 0.015 280);
+  --ring: oklch(0.57 0.225 285);
+
+  /* Legacy variable bridge — vibrant palette */
+  --fond: var(--background);
+  --carte: var(--card);
+  --encre: var(--foreground);
+  --encre2: var(--muted-foreground);
+  --encre3: oklch(0.64 0.03 278);
+  --trait: var(--border);
+  --trait2: oklch(0.93 0.015 280);
+  --terre: var(--primary);
+  --terre-fonce: oklch(0.47 0.23 288);
+  --terre-pale: oklch(0.95 0.04 285);
+  --c1: oklch(0.6 0.21 262);
+  --c1p: oklch(0.95 0.045 262);
+  --c2: oklch(0.68 0.16 165);
+  --c2p: oklch(0.95 0.05 165);
+  --c3: oklch(0.66 0.21 15);
+  --c3p: oklch(0.95 0.045 15);
+  --or: oklch(0.79 0.16 78);
+  --or-pale: oklch(0.96 0.055 82);
+  --or-fonce: oklch(0.56 0.14 68);
+  --rouge: oklch(0.63 0.22 18);
+  --rouge-pale: oklch(0.955 0.04 18);
+  --ombre: 0 2px 4px oklch(0.24 0.05 278 / 0.05), 0 10px 28px oklch(0.24 0.05 278 / 0.07);
+  --ombre2: 0 6px 12px oklch(0.24 0.05 278 / 0.09), 0 22px 48px oklch(0.24 0.05 278 / 0.13);
+  --r: 24px;
+  --r2: 18px;
+  --r3: 14px;
+}
+
+body.sombre {
+  --background: oklch(0.18 0.03 282);
+  --foreground: oklch(0.96 0.008 275);
+  --card: oklch(0.235 0.035 283);
+  --card-foreground: oklch(0.96 0.008 275);
+  --popover: oklch(0.235 0.035 283);
+  --popover-foreground: oklch(0.96 0.008 275);
+  --primary: oklch(0.72 0.18 288);
+  --primary-foreground: oklch(0.18 0.03 282);
+  --secondary: oklch(0.3 0.04 283);
+  --secondary-foreground: oklch(0.95 0.01 275);
+  --muted: oklch(0.28 0.03 283);
+  --muted-foreground: oklch(0.75 0.03 278);
+  --accent: oklch(0.34 0.07 285);
+  --accent-foreground: oklch(0.95 0.01 275);
+  --destructive: oklch(0.72 0.18 18);
+  --destructive-foreground: oklch(0.99 0.004 270);
+  --border: oklch(0.34 0.04 283);
+  --input: oklch(0.34 0.04 283);
+  --ring: oklch(0.72 0.18 288);
+  --fond: var(--background);
+  --carte: var(--card);
+  --encre: var(--foreground);
+  --encre2: var(--muted-foreground);
+  --encre3: oklch(0.66 0.035 278);
+  --trait: var(--border);
+  --trait2: oklch(0.3 0.03 283);
+  --terre: var(--primary);
+  --terre-fonce: oklch(0.8 0.14 288);
+  --terre-pale: oklch(0.31 0.08 286);
+  --c1: oklch(0.74 0.15 262);
+  --c1p: oklch(0.3 0.07 262);
+  --c2: oklch(0.76 0.14 165);
+  --c2p: oklch(0.29 0.06 165);
+  --c3: oklch(0.74 0.17 15);
+  --c3p: oklch(0.3 0.07 15);
+  --or: oklch(0.82 0.15 80);
+  --or-pale: oklch(0.31 0.06 80);
+  --rouge-pale: oklch(0.31 0.07 18);
+  --ombre: 0 2px 5px oklch(0 0 0 / 0.3), 0 12px 30px oklch(0 0 0 / 0.32);
+  --ombre2: 0 6px 14px oklch(0 0 0 / 0.35), 0 26px 54px oklch(0 0 0 / 0.42);
+  background-image: none;
+}
+
+@layer base {
+  * { border-color: var(--border); }
+  html { background: var(--background); }
+  body {
+    min-width: 320px;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.005em;
+  }
+  button, input, select, textarea {
+    font-family: inherit;
+    letter-spacing: -0.005em;
+  }
+  h1, h2, h3, .enTete h1, .diapo h2 { letter-spacing: -0.035em; }
+}
+
+body,
+body button, body input, body select, body textarea {
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.005em;
+}
+
+/* ======================================================================
+   Shell
+   ====================================================================== */
+.app-shell { min-height: 100vh; }
+.desktop-sidebar { display: none; }
+.legacy-stage {
+  min-width: 0;
+  background:
+    radial-gradient(90rem 32rem at 8% -12%, color-mix(in oklab, var(--terre) 16%, transparent), transparent 62%),
+    radial-gradient(70rem 26rem at 96% -6%, color-mix(in oklab, var(--c2) 13%, transparent), transparent 60%),
+    var(--fond);
+}
+.app {
+  width: 100%;
+  max-width: 1180px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding-bottom: calc(var(--hautNav) + 26px + env(safe-area-inset-bottom));
+}
+.ecran { max-width: 1180px; margin-inline: auto; padding: 26px 18px 34px; }
+
+/* ======================================================================
+   Typography
+   ====================================================================== */
+.enTete { align-items: center; margin-bottom: 22px; }
+.enTete h1 { font-size: 32px; font-weight: 800; line-height: 1.05; }
+.sousTitre { max-width: 62ch; margin-bottom: 20px; color: var(--encre2); font-size: 15px; line-height: 1.6; }
+.kick {
+  margin-top: 34px !important;
+  margin-bottom: 14px;
+  color: var(--encre2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.kick::after { background: color-mix(in oklab, var(--trait) 80%, transparent); }
+
+/* ======================================================================
+   Surfaces — soft, rounded, shadow driven (no hard borders)
+   ====================================================================== */
+.bloc, .carteAct, .outil, .ligneMat, .guideFiche, .depli, .niv, .triLigne, .vign,
+.choixGros button, .vocab li, .anneau {
+  border: 1px solid color-mix(in oklab, var(--trait) 55%, transparent);
+  border-radius: var(--r);
+  background: var(--carte);
+  box-shadow: 0 1px 2px oklch(0.24 0.05 278 / 0.04), 0 12px 30px oklch(0.24 0.05 278 / 0.06);
+  transition: transform .18s cubic-bezier(.2,.8,.3,1), box-shadow .18s ease, border-color .18s ease;
+}
+.bloc, .carteAct, .ligneMat { padding: 20px 22px; }
+.bloc:hover, .carteAct:hover, .outil:hover, .ligneMat:hover, .choixGros button:hover {
+  border-color: color-mix(in oklab, var(--terre) 45%, transparent);
+  box-shadow: var(--ombre2);
+  transform: translateY(-3px);
+}
+.carteAct:active, .outil:active, .ligneMat:active { transform: translateY(0) scale(.985); }
+
+.resource-grid, .sheet-grid, .activity-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.resource-grid .ligneMat, .sheet-grid .bloc, .activity-grid .carteAct {
+  width: 100% !important;
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+}
+
+/* Matter cards — colour coded per UE, progression first */
+.resource-grid .ligneMat {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-height: 118px;
+  align-content: center;
+  gap: 14px;
+  overflow: hidden;
+  padding-top: 24px;
+}
+.ligneMat::before { inset: 0 0 auto 0; width: 100%; height: 6px; border-radius: 0; }
+.ligneMat.u1 { background: linear-gradient(180deg, color-mix(in oklab, var(--c1p) 60%, var(--carte)), var(--carte) 58%); }
+.ligneMat.u2 { background: linear-gradient(180deg, color-mix(in oklab, var(--c2p) 60%, var(--carte)), var(--carte) 58%); }
+.ligneMat.u3 { background: linear-gradient(180deg, color-mix(in oklab, var(--c3p) 60%, var(--carte)), var(--carte) 58%); }
+.ligneMat .tx b { font-size: 15.5px; font-weight: 750; line-height: 1.35; }
+.ligneMat .tx small { margin-top: 4px; font-size: 12.5px; line-height: 1.45; }
+.sheet-grid .bloc { padding: 24px; }
+
+/* ======================================================================
+   Progress — the hero of the interface
+   ====================================================================== */
+.grandAnneau {
+  position: relative;
+  overflow: hidden;
+  min-height: 178px;
+  padding: 30px 34px;
+  border: 0;
+  border-radius: var(--r);
+  background: linear-gradient(130deg, var(--terre-fonce) 0%, var(--terre) 52%, color-mix(in oklab, var(--c1) 76%, var(--terre)) 100%);
+  box-shadow: 0 20px 48px color-mix(in oklab, var(--terre) 30%, transparent);
+  color: #fff;
+}
+.grandAnneau::after {
+  content: "";
+  position: absolute;
+  top: -55%;
+  right: -12%;
+  width: 58%;
+  height: 210%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 255 255 / 0.16), transparent 68%);
+  pointer-events: none;
+}
+.grandAnneau .chiffres b { color: #fff; font-size: 38px; font-weight: 800; letter-spacing: -0.04em; }
+.anneau svg text, .ligneMat svg text { font-family: "Plus Jakarta Sans", sans-serif !important; font-weight: 800 !important; }
+.grandAnneau svg text { display: none; }
+.grandAnneau svg circle:first-child { stroke: rgb(255 255 255 / 0.28); }
+.grandAnneau .chiffres small { font-size: 13.5px; opacity: .88; }
+
+.jauge {
+  height: 14px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--trait2) 88%, transparent);
+  box-shadow: inset 0 1px 2px oklch(0.24 0.05 278 / 0.08);
+}
+.jauge i {
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--terre), color-mix(in oklab, var(--c1) 70%, var(--terre)));
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.35) inset;
+}
+.progLigne { gap: 14px; margin-bottom: 22px; font-weight: 650; }
+
+.anneaux {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 26px;
+}
+.anneau {
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px 12px;
+}
+.anneau .lab { max-width: none; font-size: 12px; font-weight: 600; text-align: center; }
+.anneau .val { font-weight: 800; }
+
+.activite {
+  height: 92px;
+  gap: 6px;
+  padding: 16px 18px 0;
+  border: 1px solid color-mix(in oklab, var(--trait) 55%, transparent);
+  border-bottom: 0;
+  border-radius: var(--r) var(--r) 0 0;
+  background: var(--carte);
+}
+.activite .j { border-radius: 999px; background: color-mix(in oklab, var(--trait2) 80%, transparent); }
+.activite .j i { border-radius: 999px; background: linear-gradient(180deg, color-mix(in oklab, var(--c1) 80%, var(--terre)), var(--terre)); }
+.legJours {
+  padding: 8px 18px 14px;
+  border: 1px solid color-mix(in oklab, var(--trait) 55%, transparent);
+  border-top: 0;
+  border-radius: 0 0 var(--r) var(--r);
+  background: var(--carte);
+}
+
+/* ======================================================================
+   Buttons — tactile, pressable
+   ====================================================================== */
+.cta {
+  display: block;
+  width: 100%;
+  min-height: 58px;
+  margin-top: 16px;
+  border: 0;
+  border-radius: 18px;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--terre) 88%, #fff 12%), var(--terre));
+  color: #fff;
+  box-shadow: 0 5px 0 var(--terre-fonce), 0 14px 26px color-mix(in oklab, var(--terre) 26%, transparent);
+  font-size: 15px;
+  font-weight: 750;
+  transition: transform .12s ease, box-shadow .12s ease, filter .18s ease;
+}
+.cta:hover { filter: brightness(1.05); }
+.cta:not([disabled]):active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--terre-fonce), 0 6px 14px color-mix(in oklab, var(--terre) 22%, transparent);
+}
+.cta.sec {
+  background: var(--carte);
+  color: var(--encre);
+  box-shadow: 0 4px 0 color-mix(in oklab, var(--trait) 90%, transparent), 0 10px 22px oklch(0.24 0.05 278 / 0.07);
+}
+.cta.sec:not([disabled]):active { box-shadow: 0 1px 0 var(--trait); }
+
+.btn, .iconeBtn, .fermer {
+  min-height: 42px;
+  border: 1px solid color-mix(in oklab, var(--trait) 70%, transparent);
+  border-radius: 14px;
+  background: var(--carte);
+  font-weight: 650;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease;
+}
+.btn:hover, .iconeBtn:hover, .fermer:hover {
+  border-color: color-mix(in oklab, var(--terre) 55%, transparent);
+  background: var(--terre-pale);
+  color: var(--terre-fonce);
+}
+.btn:active, .iconeBtn:active { transform: scale(.94); }
+
+.puce {
+  min-height: 38px;
+  border: 1px solid color-mix(in oklab, var(--trait) 70%, transparent);
+  border-radius: 999px;
+  padding: 8px 15px;
+  font-weight: 620;
+}
+.puce.on { border-color: transparent; background: var(--terre-pale); color: var(--terre-fonce); box-shadow: none; }
+.liste-puces { gap: 9px; margin-bottom: 24px; }
+
+/* ======================================================================
+   Quiz — big tappable answers with clear feedback
+   ====================================================================== */
+.opt {
+  min-height: 66px;
+  padding: 18px 20px;
+  border: 2px solid color-mix(in oklab, var(--trait) 80%, transparent);
+  border-radius: 18px;
+  background: var(--carte);
+  box-shadow: 0 3px 0 color-mix(in oklab, var(--trait) 85%, transparent);
+  font-weight: 620;
+  line-height: 1.5;
+  transition: transform .12s ease, border-color .15s ease, background .15s ease;
+}
+.opt:hover:not(.juste):not(.faux) { border-color: var(--terre); background: var(--terre-pale); }
+.opt:active:not(.juste):not(.faux) { transform: translateY(3px); box-shadow: none; }
+.opt.juste {
+  border-color: var(--c2);
+  background: color-mix(in oklab, var(--c2p) 82%, var(--carte));
+  box-shadow: 0 3px 0 color-mix(in oklab, var(--c2) 55%, transparent);
+}
+.opt.faux {
+  border-color: var(--rouge);
+  background: color-mix(in oklab, var(--rouge-pale) 82%, var(--carte));
+  box-shadow: 0 3px 0 color-mix(in oklab, var(--rouge) 45%, transparent);
+}
+.choixGros button { min-height: 76px; font-weight: 700; }
+
+/* ======================================================================
+   Tools grid
+   ====================================================================== */
+.grilleOutils { gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.outil {
+  min-height: 124px;
+  justify-content: center;
+  gap: 11px;
+  padding: 20px 10px 16px;
+  border-radius: var(--r2);
+}
+.outil .ic {
+  width: 50px;
+  height: 50px;
+  border-radius: 17px;
+  background: linear-gradient(160deg, var(--terre-pale), color-mix(in oklab, var(--c1p) 70%, var(--carte)));
+  font-size: 22px;
+}
+.outil .nom { color: var(--encre); font-size: 12.5px; font-weight: 650; }
+.outil .pastille { top: 10px; right: 10px; border-radius: 999px; font-weight: 700; }
+
+/* ======================================================================
+   Callouts and study sheets
+   ====================================================================== */
+.avis {
+  padding: 18px 20px;
+  border: 0;
+  border-left: 5px solid var(--or);
+  border-radius: 18px;
+  background: color-mix(in oklab, var(--or-pale) 78%, var(--carte));
+  line-height: 1.6;
+}
+.avis.info { border-left-color: var(--terre); background: color-mix(in oklab, var(--terre-pale) 78%, var(--carte)); }
+.avis.err { border-left-color: var(--rouge); background: color-mix(in oklab, var(--rouge-pale) 78%, var(--carte)); }
+
+.lecon { max-width: 980px; }
+.lecon::before { height: 280px; opacity: .55; }
+.diapo { width: 100%; max-width: 780px; margin-inline: auto; }
+.diapo h2 { font-size: 34px; font-weight: 800; line-height: 1.15; }
+.diapo p { color: var(--encre2); font-size: 16.5px; line-height: 1.78; }
+.vocab { gap: 12px; }
+.vocab li { padding: 18px 20px; border-radius: var(--r2); }
+
+/* ======================================================================
+   Mobile dock
+   ====================================================================== */
+.nav {
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  left: 12px;
+  border: 1px solid color-mix(in oklab, var(--trait) 60%, transparent);
+  border-radius: 24px;
+  background: color-mix(in oklab, var(--carte) 86%, transparent);
+  backdrop-filter: blur(20px) saturate(1.5);
+  box-shadow: 0 10px 34px oklch(0.24 0.05 278 / 0.16);
+}
+body.sombre .nav { background: color-mix(in oklab, var(--carte) 84%, transparent); }
+.nav .in { max-width: 560px; padding: 8px; gap: 4px; }
+.nav button {
+  border-radius: 18px;
+  padding: 9px 0 8px;
+  font-size: 11.5px;
+  font-weight: 650;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+.nav button.act { background: var(--terre-pale); color: var(--terre-fonce); transform: translateY(-2px); }
+.nav .ic { font-size: 20px; }
+
+/* ======================================================================
+   Sidebar (desktop)
+   ====================================================================== */
+@media (min-width: 720px) {
+  .ecran { padding: 40px 34px 48px; }
+  .resource-grid, .sheet-grid, .activity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grilleOutils { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .choixGros { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vocab { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vocab li { margin-bottom: 0; }
+  .pages { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+  .page, .page img { width: 100%; }
+  .page img { height: 150px; }
+  .anneaux { gap: 14px; }
+}
+
+@media (min-width: 1024px) {
+  :root { --hautNav: 0px; }
+  .app-shell { display: grid; grid-template-columns: 264px minmax(0, 1fr); }
+  .desktop-sidebar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+    border-right: 1px solid color-mix(in oklab, var(--trait) 60%, transparent);
+    background: var(--carte);
+    padding: 26px 18px 22px;
+  }
+  .brand-lockup { display: flex; min-width: 0; align-items: center; gap: 12px; margin-bottom: 34px; padding: 0 6px; }
+  .brand-mark {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    flex: none;
+    place-items: center;
+    border-radius: 16px;
+    background: linear-gradient(140deg, var(--terre-fonce), var(--terre));
+    color: #fff;
+    box-shadow: 0 8px 20px color-mix(in oklab, var(--terre) 32%, transparent);
+  }
+  .brand-copy { display: flex; min-width: 0; flex-direction: column; }
+  .brand-copy strong { font-size: 16.5px; font-weight: 800; letter-spacing: -0.03em; }
+  .brand-copy small { color: var(--encre3); font-size: 12px; }
+  .sidebar-section-label {
+    padding: 0 12px 8px;
+    color: var(--encre3);
+    font: 700 10.5px/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .sidebar-nav, .sidebar-secondary { display: flex; flex-direction: column; gap: 6px; }
+  .sidebar-link {
+    width: 100%;
+    height: 48px;
+    justify-content: flex-start;
+    border-radius: 16px;
+    padding: 0 14px;
+    font-weight: 650;
+  }
+  .sidebar-link:hover { background: var(--terre-pale); color: var(--terre-fonce); }
+  .sidebar-link.is-active {
+    background: linear-gradient(120deg, var(--terre-fonce), var(--terre));
+    color: #fff;
+    box-shadow: 0 8px 20px color-mix(in oklab, var(--terre) 28%, transparent);
+  }
+  .sidebar-link.is-active:hover { background: linear-gradient(120deg, var(--terre-fonce), var(--terre)); color: #fff; }
+  .sidebar-secondary { margin-top: auto; }
+  .offline-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-top: 18px;
+    border-radius: 16px;
+    background: color-mix(in oklab, var(--c2p) 60%, var(--carte));
+    padding: 13px 14px;
+    color: var(--encre2);
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+  .offline-note span { width: 8px; height: 8px; flex: none; margin-top: 4px; border-radius: 50%; background: var(--c2); }
+  .legacy-stage { min-height: 100vh; }
+  .app { max-width: none; padding-bottom: 0; }
+  .nav { display: none; }
+  .ecran { padding: 56px clamp(38px, 5vw, 76px) 76px; }
+  .enTete h1 { font-size: 42px; }
+  .resource-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sheet-grid, .activity-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grilleOutils { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .grandAnneau { max-width: none; }
+  .anneaux { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .lecon { min-height: 100vh; max-width: 860px; margin: 0 auto; padding: 40px 48px; }
+  .diapo { justify-content: flex-start; padding-top: 48px; }
+  .pdfZone { max-width: 860px; }
+}
+
+@media (min-width: 1480px) {
+  .resource-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ecran { max-width: 1280px; }
+}
+
+@media (max-width: 1023px) {
+  .app { padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
+  body.enTuto .app { padding-bottom: calc(112px + 230px + env(safe-area-inset-bottom)); }
+}
+
+@media (max-width: 719px) {
+  .ecran { padding: 22px 16px 34px; }
+  .enTete { margin-bottom: 18px; }
+  .enTete h1 { font-size: 27px; }
+  .grandAnneau { min-height: 150px; padding: 22px 24px; }
+  .grandAnneau .chiffres b { font-size: 30px; }
+  .anneau { padding: 12px 6px; }
+  .anneau .lab { font-size: 11px; }
+  .resource-grid .ligneMat { min-height: 104px; padding: 22px 16px 16px; }
+  .outil { min-height: 108px; padding: 15px 7px 13px; }
+  .outil .ic { width: 44px; height: 44px; border-radius: 15px; }
+  .diapo h2 { font-size: 27px; }
+}
+
+/* ======================================================================
+   Lucide icons injected into the legacy markup
+   ====================================================================== */
+.ic svg, .fl svg, .iconeBtn svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.1;
+}
+.outil .ic svg { width: 24px; height: 24px; }
+.carteAct .ic svg { width: 23px; height: 23px; }
+.nav .ic svg { width: 21px; height: 21px; }
+.fl svg { width: 18px; height: 18px; opacity: .55; }
+.iconeBtn { display: inline-grid; place-items: center; width: 42px; padding: 0; }
+.iconeBtn svg { width: 19px; height: 19px; }
+
+@media print {
+  .desktop-sidebar { display: none !important; }
+  .app-shell { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bloc, .carteAct, .outil, .ligneMat, .cta, .opt, .nav button { transition: none; animation: none; }
+}
+
+
+.desktop-sidebar svg{width:20px;height:20px;flex:none;display:block}
+.brand-mark svg{width:22px;height:22px}
+.sidebar-link{display:flex;align-items:center;gap:12px;border:0;background:none;color:var(--encre);font-size:14.5px;cursor:pointer;text-align:left}
+.sidebar-link [data-side-ic]{display:grid;place-items:center}
+
 </style>
 </head>
 <body>
-<div class="app" id="app"></div>
-<nav class="nav" id="nav"></nav>
-<div id="impression"></div>
+
+<div class="app-shell">
+  <aside class="desktop-sidebar" aria-label="Navigation principale">
+    <div class="brand-lockup">
+      <span class="brand-mark" data-side-ic="graduation-cap" aria-hidden="true"></span>
+      <span class="brand-copy"><strong>Prépa BUT TC</strong><small>Mon espace de travail</small></span>
+    </div>
+    <div class="sidebar-section-label">Apprendre</div>
+    <nav class="sidebar-nav">
+      <button type="button" class="sidebar-link is-active" data-side-tab="prep"><span data-side-ic="book-open-text"></span><span>Préparation</span></button>
+      <button type="button" class="sidebar-link" data-side-tab="rev"><span data-side-ic="rotate-ccw"></span><span>Révision</span></button>
+    </nav>
+    <div class="sidebar-secondary">
+      <button type="button" class="sidebar-link" data-side-ecran="recherche"><span data-side-ic="search"></span><span>Recherche</span></button>
+      <button type="button" class="sidebar-link" data-side-ecran="reglages"><span data-side-ic="settings"></span><span>Réglages</span></button>
+      <div class="offline-note"><span aria-hidden="true"></span>Progression enregistrée sur cet appareil</div>
+    </div>
+  </aside>
+  <main class="legacy-stage">
+    <div class="app" id="app" aria-live="polite"></div>
+  </main>
+  <nav class="nav" id="nav" aria-label="Navigation mobile"></nav>
+  <div id="impression"></div>
+</div>
+<script>
+
+const LEGACY_ICONS = {
+  "file-text": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>',
+  "clipboard-check": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>',
+  "calendar-days": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>',
+  "calculator": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>',
+  "briefcase": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>',
+  "message-circle-question-mark": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
+  "languages": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>',
+  "mic": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></svg>',
+  "headphones": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>',
+  "chart-column": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>',
+  "search": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>',
+  "settings": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>',
+  "lightbulb": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>',
+  "graduation-cap": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>',
+  "compass": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/></svg>',
+  "dumbbell": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></svg>',
+  "book-open-text": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M16 12h2"/><path d="M16 8h2"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/><path d="M6 12h2"/><path d="M6 8h2"/></svg>',
+  "rotate-ccw": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>',
+  "circle-question-mark": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
+  "chevron-left": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>',
+  "chevron-right": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>',
+  "brain": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 18V5"/><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4"/><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg>',
+  "printer": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>',
+  "layers": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>',
+  "timer": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>',
+  "sparkles": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>',
+  "target": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  "flame": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg>',
+  "play": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></svg>',
+  "volume-2": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.364 18.364a9 9 0 0 0 0-12.728"/></svg>',
+  "upload": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>',
+  "list-checks": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/></svg>',
+};
+
+
+const RULES = [
+  [/fiche/, "file-text"],
+  [/epreuve|examen|blanche/, "clipboard-check"],
+  [/planning|agenda|calendrier/, "calendar-days"],
+  [/moyenne|note|calcul/, "calculator"],
+  [/sae|projet|stage/, "briefcase"],
+  [/demander|question/, "message-circle-question-mark"],
+  [/lexique|vocabulaire|mot/, "languages"],
+  [/oral|micro/, "mic"],
+  [/podcast|audio|ecoute/, "headphones"],
+  [/statistique|progression|suivi/, "chart-column"],
+  [/recherche|chercher/, "search"],
+  [/reglage|parametre/, "settings"],
+  [/comprendre le but|but tc|socle/, "graduation-cap"],
+  [/specialite|parcours/, "compass"],
+  [/entrainer|entrainement|exercice/, "dumbbell"],
+  [/memoriser|memoire/, "brain"],
+  [/comprendre|comprehension/, "lightbulb"],
+  [/imprimer|impression/, "printer"],
+  [/carte/, "layers"],
+  [/chrono|minuteur|temps/, "timer"],
+  [/importer|import/, "upload"],
+  [/lire|lecon|preparation/, "book-open-text"],
+  [/revision|reviser|repasser/, "rotate-ccw"],
+  [/lecture|ecouter/, "volume-2"],
+  [/prise en main|guide|aide/, "circle-question-mark"],
+  [/retour/, "chevron-left"],
+];
+
+const GLYPHS = {
+  "◈": "graduation-cap",
+  "◆": "compass",
+  "◇": "dumbbell",
+  "◉": "headphones",
+  "◍": "mic",
+  "◎": "lightbulb",
+  "▥": "chart-column",
+  "▤": "file-text",
+  "▦": "calendar-days",
+  "◫": "calculator",
+  "◧": "briefcase",
+  "◷": "clipboard-check",
+  "▯": "layers",
+  "▭": "layers",
+  "▪": "target",
+  "⌕": "search",
+  "⚙": "settings",
+  "?": "circle-question-mark",
+  "语": "languages",
+  "‹": "chevron-left",
+  "›": "chevron-right",
+};
+
+function normalize(text) {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/['’]/g, " ");
+}
+
+function pick(label, glyph) {
+  const l = normalize(label);
+  for (const [re, name] of RULES) if (re.test(l)) return name;
+  const g = GLYPHS[glyph.trim()];
+  return g ?? null;
+}
+
+function paint(el, name) {
+  const svg = LEGACY_ICONS[name];
+  if (!svg) return;
+  el.dataset["luc"] = name;
+  el.innerHTML = svg;
+}
+
+function modernizeIcons(root) {
+  root.querySelectorAll(".ic").forEach((ic) => {
+    if (ic.dataset["luc"]) return;
+    const host = ic.closest("button, a, div");
+    const label =
+      host?.querySelector(".nom")?.textContent ??
+      host?.querySelector(".tx b")?.textContent ??
+      host?.textContent ??
+      "";
+    const name = pick(label, ic.textContent ?? "");
+    if (name) paint(ic, name);
+  });
+
+  root.querySelectorAll(".fl").forEach((fl) => {
+    if (!fl.dataset["luc"]) paint(fl, "chevron-right");
+  });
+
+  root.querySelectorAll(".iconeBtn").forEach((btn) => {
+    if (btn.dataset["luc"]) return;
+    const name = pick(btn.getAttribute("aria-label") ?? "", btn.textContent ?? "");
+    if (name) paint(btn, name);
+  });
+}
+
+(function(){
+  var app=document.getElementById("app"), nav=document.getElementById("nav");
+  document.querySelectorAll("[data-side-ic]").forEach(function(el){
+    var n=LEGACY_ICONS[el.getAttribute("data-side-ic")]; if(n) el.innerHTML=n;
+  });
+  function emit(action,data){
+    var b=document.createElement("button"); b.dataset.act=action;
+    Object.keys(data||{}).forEach(function(k){ b.dataset[k]=data[k]; });
+    document.body.appendChild(b); b.click(); b.remove();
+  }
+  document.querySelectorAll("[data-side-tab]").forEach(function(b){
+    b.addEventListener("click",function(){ emit("nav",{tab:b.getAttribute("data-side-tab")}); });
+  });
+  document.querySelectorAll("[data-side-ecran]").forEach(function(b){
+    b.addEventListener("click",function(){ emit("ecran",{e:b.getAttribute("data-side-ecran")}); });
+  });
+  function syncTab(){
+    var act=nav.querySelector("button.act"); if(!act) return;
+    var t=act.dataset.tab;
+    document.querySelectorAll("[data-side-tab]").forEach(function(b){
+      b.classList.toggle("is-active", b.getAttribute("data-side-tab")===t);
+    });
+  }
+  function groupCards(sel, cls){
+    var cards=Array.prototype.slice.call(app.querySelectorAll(sel)).filter(function(c){
+      return !(c.parentElement && c.parentElement.classList.contains(cls));
+    });
+    cards.forEach(function(first){
+      if(!first.isConnected || (first.parentElement && first.parentElement.classList.contains(cls))) return;
+      var grid=document.createElement("div"); grid.className=cls; first.before(grid);
+      var cur=first;
+      while(cur && cur.matches && cur.matches(sel)){ var nx=cur.nextElementSibling; grid.appendChild(cur); cur=nx; }
+    });
+  }
+  var frame=0;
+  function decorate(){
+    cancelAnimationFrame(frame);
+    frame=requestAnimationFrame(function(){
+      groupCards(".ligneMat","resource-grid");
+      groupCards('.bloc[data-act="ouvrir-fiche"]',"sheet-grid");
+      groupCards(".carteAct","activity-grid");
+      modernizeIcons(app); modernizeIcons(nav); syncTab();
+    });
+  }
+  new MutationObserver(decorate).observe(app,{childList:true,subtree:true});
+  new MutationObserver(syncTab).observe(nav,{childList:true,subtree:true,attributes:true});
+  decorate();
+})();
+
+</script>
 <script>
 "use strict";
 /* =========================================================================
@@ -9530,6 +10337,7 @@ document.addEventListener("click", e => {
 charger();
 if(!S.prep) S.prep = {};
 rendre();
+
 </script>
 </body>
 </html>
